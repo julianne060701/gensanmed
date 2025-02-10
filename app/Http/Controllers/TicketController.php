@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class PurchaserController extends Controller
+class TicketController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('purchase.index');
+        return view('ticketing.index');
     }
 
     /**
@@ -19,7 +19,7 @@ class PurchaserController extends Controller
      */
     public function create()
     {
-        return view('purchase.create');
+        //
     }
 
     /**

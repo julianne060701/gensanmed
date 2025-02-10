@@ -351,7 +351,7 @@ return [
         [
             'text' => 'Manage Ticket',
             'icon' => 'fas fa-fw fa-ticket-alt',
-            'url' => '#',
+            'url' => 'ticketing',
         ],
         
 

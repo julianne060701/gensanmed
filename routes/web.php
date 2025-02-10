@@ -17,6 +17,11 @@ Route::delete('/events/{event}', [App\Http\Controllers\HomeController::class, 'd
 
 
 Route::get('/purchase', [App\Http\Controllers\PurchaserController::class, 'index'])->name('purchase.index');
+Route::get('/purchase/create', [App\Http\Controllers\PurchaserController::class, 'create'])->name('purchase.create');
 
+Route::get('/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('ticketing.index');
+
+
+Route::post('/staff/create', [App\Http\Controllers\Admin\StaffController::class, 'store'])->name('admin.staff.create');
 
 //Route::post('/user/create', [App\Http\Controllers\Admin\CustomerController::class, 'store'])->name('admin.customer.create');

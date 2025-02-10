@@ -5,13 +5,13 @@
 @section('plugins.DatatablesPlugin', true)
 
 @section('content_header')
-<h1 class="ml-1">Purchaser</h1>
+<h1 class="ml-1">Ticketing</h1>
 @stop
 
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('purchase.create') }}" class="btn btn-primary px-5">Add Purchaser</a>
+        <!-- <a href="#" class="btn btn-primary px-5">Add Purchase</a> -->
     </div>
 
     <div class="row">
