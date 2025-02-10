@@ -24,4 +24,15 @@ Route::get('/ticketing', [App\Http\Controllers\TicketController::class, 'index']
 
 Route::post('/staff/create', [App\Http\Controllers\Admin\StaffController::class, 'store'])->name('admin.staff.create');
 
+// For IT users
+Route::get('/IT/home', function () {
+    return view('IT.home'); // This should load resources/views/IT/home.blade.php
+})->middleware('auth'); // Optionally add role-specific middleware if needed
+
+// For admin users
+Route::get('/admin/home', function () {
+    return view('admin.home'); // This should load resources/views/admin/home.blade.php
+})->middleware('auth');
+
+
 //Route::post('/user/create', [App\Http\Controllers\Admin\CustomerController::class, 'store'])->name('admin.customer.create');
