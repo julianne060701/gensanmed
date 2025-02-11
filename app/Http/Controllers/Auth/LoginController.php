@@ -23,11 +23,7 @@ class LoginController extends Controller
     /**
      * Where to redirect users after login.
      *
-<<<<<<< HEAD
-     *  @return string
-=======
      * @return string
->>>>>>> 7f9afcd3d3b5969cc60d7c89e3766e0e8c4ffa42
      */
     protected function redirectTo()
     {
