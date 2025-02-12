@@ -4,43 +4,72 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
     /**
-     * Where to redirect users after login.
-     *
-     * @return string
+     * Handle user login.
      */
-    protected function redirectTo()
+    public function login(Request $request)
     {
-        $role = auth()->user()->role; // Assuming you have a 'role' field in your users table
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required',
+        ]);
 
-        if ($role === 'IT') {
-            return '/IT/home'; // Adjust the URL/path if necessary
-        } elseif ($role === 'admin') {
-            return '/admin/home';
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            return $this->redirectUser($user);
         }
 
-        // Default redirection if no role matches
-        return '/';
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
     }
+
+    /**
+     * Redirect users after successful login.
+     */
+    protected function redirectUser($user)
+    {
+        if ($user->hasRole('administrator')) {
+            return redirect()->route('admin/home');
+        } elseif ($user->hasRole('engineer')) {
+            return redirect()->route('engineer.index');
+        } elseif ($user->hasRole('IT')) {
+            return redirect()->route('IT.index');
+        }
+    
+        return redirect('/')->withErrors(['message' => 'You are not authorized.']);
+    }
+
+    /**
+     * Handle post-authentication redirection.
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        return $this->redirectUser($user);
+    }
+
+    /**
+     * Logout user and redirect to login page.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
+
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-        $this->middleware('auth')->only('logout');
     }
 }

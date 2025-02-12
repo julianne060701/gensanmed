@@ -11,7 +11,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary px-5">Add Purchaser</a>
+        <a href="{{ route('purchase.create') }}" class="btn btn-primary px-5">Add Purchaser</a>
     </div>
 
     <div class="row">

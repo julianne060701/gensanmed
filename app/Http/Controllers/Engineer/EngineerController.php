@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Engineer;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PurchaserController extends Controller
+class EngineerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('admin.purchase.index');
+        return view('engineer.home');
     }
 
     /**
@@ -19,7 +20,7 @@ class PurchaserController extends Controller
      */
     public function create()
     {
-        return view('admin.purchase.create');
+        //
     }
 
     /**

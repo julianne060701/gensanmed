@@ -5,7 +5,7 @@
 @section('plugins.DatatablesPlugin', true)
 
 @section('content_header')
-    <h1>Admin Dashboard</h1>
+    <h1>Engineer Dashboard</h1>
 @stop
 
 @section('content')

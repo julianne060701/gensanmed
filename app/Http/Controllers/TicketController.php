@@ -11,7 +11,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        return view('ticketing.index');
+        return view('admin.ticketing.index');
     }
 
     /**

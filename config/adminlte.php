@@ -298,63 +298,65 @@ return [
     |
     */
 
-    'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+   'menu' => [
+    // Navbar items:
+    [
+        'type'         => 'navbar-search',
+        'text'         => 'search',
+        'topnav_right' => true,
+    ],
+    [
+        'type'         => 'fullscreen-widget',
+        'topnav_right' => true,
+    ],
 
-        // Sidebar items:
+     // -----------------------------------------------------
+        // Administrator Sidebar Items (Only for Administrators)
+        // -----------------------------------------------------
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
+            'header' => 'ADMIN PANEL',
+            'can'    => 'view-admin-menu',
         ],
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
-            'text' => 'Schedule',
-            'url' => 'home',
-            'icon' => 'far fa-fw fa-calendar',
+            'text'        => 'Schedule',
+            'url'         => 'admin/home',
+            'icon'        => 'far fa-fw fa-calendar',
             'label_color' => 'success',
+            'can'         => 'view-admin-menu',
         ],
-        ['header' => 'PURCHASE'],
         [
-            'text' => 'Manage Purchase',
-            'icon' => '	fas fa-cart-plus',
-            'url' => 'purchase',
+            'text'  => 'Manage Purchase',
+            'icon'  => 'fas fa-cart-plus',
+            'url'   => 'admin/purchase',
+            'can'   => 'view-admin-menu',
         ],
-        ['header' => 'TICKETING'],
-
-        // [
-        //     'text' => 'Manage Ticket',
-        //     'icon' => 'fas fa-fw fa-ticket-alt',
-        //     'submenu' => [
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //         ],
-        //         [
-        //             'text' => 'level_one',
-        //             'url' => '#',
-        //         ],
-        //     ],
-        // ],      
         [
-            'text' => 'Manage Ticket',
-            'icon' => 'fas fa-fw fa-ticket-alt',
-            'url' => 'ticketing',
+            'text'  => 'Manage Ticket',
+            'icon'  => 'fas fa-fw fa-ticket-alt',
+            'url'   => 'admin/ticketing',
+            'can'   => 'view-admin-menu',
         ],
-        
 
+        // -----------------------------------------------------
+        // Engineer Sidebar Items (Only for Engineers)
+        // -----------------------------------------------------
+        [
+            'header' => 'ENGINEER PANEL',
+            'can'    => 'view-engineer-menu',
+        ],
+        [
+            'text'        => 'Schedule',
+            'url'         => 'engineer/home',
+            'icon'        => 'far fa-fw fa-calendar',
+            'label_color' => 'success',
+            'can'         => 'view-engineer-menu',
+        ],
+        [
+            'text'  => 'Manage Ticket',
+            'icon'  => 'fas fa-fw fa-ticket-alt',
+            'url'   => 'engineer/ticketing',
+            'can'   => 'view-engineer-menu',
+        ],
     ],
 
     /*
@@ -377,6 +379,7 @@ return [
         JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
         JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+       // App\Menu\Filters\RoleFilter::class,
     ],
 
     /*
