@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             [
                 'name' => 'IT',
                 'lname' => 'gensanmed',
-                'email' => 'specialstaff@anvy.com',
+                'email' => 'IT@gensanmed',
                 'role' => 'IT',
                // 'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
@@ -34,8 +34,16 @@ class UserSeeder extends Seeder
             [
                 'name' => 'engineer',
                 'lname' => 'gensanmed',
-                'email' => 'specialuser@anvy.com',
+                'email' => 'engineer@gensanmed',
                 'role' => 'engineer',
+                //'profile_image_url' => 'images/default-image.jpg',
+                'password' => 'password',
+            ],
+            [
+                'name' => 'purchaser',
+                'lname' => 'gensanmed',
+                'email' => 'purchaser@gensanmed',
+                'role' => 'purchaser',
                 //'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
             ],

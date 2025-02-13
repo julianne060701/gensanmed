@@ -26,5 +26,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-engineer-menu', function ($user) {
             return $user->hasRole('engineer');
         });
+        Gate::define('view-purchaser-menu', function ($user) {
+            return $user->hasRole('purchaser');
+        });
     }
 }

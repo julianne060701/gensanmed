@@ -298,66 +298,92 @@ return [
     |
     */
 
-   'menu' => [
-    // Navbar items:
-    [
-        'type'         => 'navbar-search',
-        'text'         => 'search',
-        'topnav_right' => true,
-    ],
-    [
-        'type'         => 'fullscreen-widget',
-        'topnav_right' => true,
-    ],
-
-     // -----------------------------------------------------
-        // Administrator Sidebar Items (Only for Administrators)
-        // -----------------------------------------------------
+    'menu' => [
+        // Navbar items:
         [
-            'header' => 'ADMIN PANEL',
-            'can'    => 'view-admin-menu',
+            'type'         => 'navbar-search',
+            'text'         => 'search',
+            'topnav_right' => true,
         ],
         [
-            'text'        => 'Schedule',
-            'url'         => 'admin/home',
-            'icon'        => 'far fa-fw fa-calendar',
-            'label_color' => 'success',
-            'can'         => 'view-admin-menu',
-        ],
-        [
-            'text'  => 'Manage Purchase',
-            'icon'  => 'fas fa-cart-plus',
-            'url'   => 'admin/purchase',
-            'can'   => 'view-admin-menu',
-        ],
-        [
-            'text'  => 'Manage Ticket',
-            'icon'  => 'fas fa-fw fa-ticket-alt',
-            'url'   => 'admin/ticketing',
-            'can'   => 'view-admin-menu',
+            'type'         => 'fullscreen-widget',
+            'topnav_right' => true,
         ],
 
         // -----------------------------------------------------
-        // Engineer Sidebar Items (Only for Engineers)
-        // -----------------------------------------------------
-        [
-            'header' => 'ENGINEER PANEL',
-            'can'    => 'view-engineer-menu',
+            // Administrator Sidebar Items (Only for Administrators)
+            // -----------------------------------------------------
+            [
+                'header' => 'ADMIN PANEL',
+                'can'    => 'view-admin-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'admin/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-admin-menu',
+            ],
+            [
+                'text'  => 'Manage Purchase',
+                'icon'  => 'fas fa-cart-plus',
+                'url'   => 'admin/purchase',
+                'can'   => 'view-admin-menu',
+            ],
+            [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'admin/ticketing',
+                'can'   => 'view-admin-menu',
+            ],
+
+            // -----------------------------------------------------
+            // Engineer Sidebar Items (Only for Engineers)
+            // -----------------------------------------------------
+            [
+                'header' => 'ENGINEER PANEL',
+                'can'    => 'view-engineer-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'engineer/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-engineer-menu',
+            ],
+            [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'engineer/ticketing',
+                'can'   => 'view-engineer-menu',
+            ],
+                    // -----------------------------------------------------
+            // Purchaser Sidebar Items (Only for Purchaser)
+            // -----------------------------------------------------
+            [
+                'header' => 'PURCHASER PANEL',
+                'can'    => 'view-purchaser-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'purchaser/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-purchaser-menu',
+            ],
+            [
+                'text'  => 'Manage Purchase',
+                'icon'  => 'fas fa-cart-plus',
+                'url'   => 'purchaser/purchase',
+                'can'   => 'view-purchaser-menu',
+            ],
+            // [
+            //     'text'  => 'Manage Ticket',
+            //     'icon'  => 'fas fa-fw fa-ticket-alt',
+            //     'url'   => 'purchaser/ticketing',
+            //     'can'   => 'view-purchaser-menu',
+            // ],
         ],
-        [
-            'text'        => 'Schedule',
-            'url'         => 'engineer/home',
-            'icon'        => 'far fa-fw fa-calendar',
-            'label_color' => 'success',
-            'can'         => 'view-engineer-menu',
-        ],
-        [
-            'text'  => 'Manage Ticket',
-            'icon'  => 'fas fa-fw fa-ticket-alt',
-            'url'   => 'engineer/ticketing',
-            'can'   => 'view-engineer-menu',
-        ],
-    ],
 
     /*
     |--------------------------------------------------------------------------

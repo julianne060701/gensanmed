@@ -38,23 +38,30 @@ class LoginController extends Controller
     protected function redirectUser($user)
     {
         if ($user->hasRole('administrator')) {
-            return redirect()->route('admin/home');
+            return redirect()->route('admin.home'); // Fix route naming
         } elseif ($user->hasRole('engineer')) {
-            return redirect()->route('engineer.index');
+            return redirect()->route('engineer.home');
         } elseif ($user->hasRole('IT')) {
             return redirect()->route('IT.index');
+        }elseif ($user->hasRole('purchaser')) {
+            return redirect()->route('purchaser.home');
         }
     
         return redirect('/')->withErrors(['message' => 'You are not authorized.']);
     }
+    
 
     /**
      * Handle post-authentication redirection.
      */
-    protected function authenticated(Request $request, $user)
-    {
-        return $this->redirectUser($user);
+    protected function redirectTo()
+{
+    if (Auth::check()) {
+        return $this->redirectUser(Auth::user());
     }
+    return '/'; // Fallback to home if not authenticated
+}
+    
 
     /**
      * Logout user and redirect to login page.
