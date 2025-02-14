@@ -3,60 +3,53 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1 class="ml-1">Create Pavilion</h1>
+    <h1 class="ml-1">Upload PO</h1>
 @stop
 
 @section('content')
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <form action="" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('purchaser.purchase.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    <!-- Pavilion Name -->
-                    <div class="form-group">
-                        <label for="pavilionName">Pavilion Name</label>
-                        <input type="text" name="name" id="pavilionName" class="form-control" placeholder="Enter pavilion name"
-                            required>
-                    </div>
-
+                    
                     <div class="form-row align-items-center mb-3">
-                        {{-- Status --}}
-                        <div class="col-md-4">
+                        <!-- Status -->
+                        <!-- <div class="col-md-4">
                             <label for="status">Status</label>
                             <select name="status" class="form-control" required>
                                 <option value="0" class="text-danger">Unavailable</option>
                                 <option value="1" class="text-success" selected>Available</option>
                             </select>
-                        </div>
-                        {{-- Rate --}}
+                        </div> -->
+                        
+                        {{-- PO Number --}}
                         <div class="col-md-4">
-                            <label for="rate">Rate</label>
-                            <input type="number" name="rate" class="form-control" placeholder="Enter Price"
-                                min="1" required>
-                        </div>
-                        {{-- Points --}}
-                        <div class="col-md-4">
-                            <label for="points">Points</label>
-                            <input type="number" name="points" class="form-control" placeholder="Enter Price"
-                                min="1" required>
+                            <label for="po_number">PO Number</label>
+                            <input type="number" name="po_number" class="form-control" placeholder="Enter PO Number" min="1" required>
                         </div>
                     </div>
 
-                    {{-- Description --}}
+                    <!-- Name of User -->
                     <div class="form-group">
-                        <label for="pavilionDescription">Description</label>
-                        <textarea name="description" id="pavilionDescription" class="form-control" rows="3"
-                            placeholder="Enter pavilion description"></textarea>
+                        <label for="userName">Name of User</label>
+                        <input type="text" name="name" id="userName" class="form-control" placeholder="Enter user name" required>
+                    </div>
+                    
+                    {{-- Remarks --}}
+                    <div class="form-group">
+                        <label for="remarks">Remarks</label>
+                        <textarea name="description" id="remarks" class="form-control" rows="3" placeholder="Enter remarks"></textarea>
                     </div>
 
                     {{-- Image Upload --}}
                     <div class="form-group">
-                        <label for="FoodImage">Pavilion Image</label>
+                        <label for="imageUpload"> Image</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="pavilion_image_url" id="FoodImage" accept="image/*">
-                                <label class="custom-file-label" for="FoodImage">Choose file</label>
+                            <input type="file" class="custom-file-input" name="image_url" id="imageUpload" accept="image/*">
+
+                                <label class="custom-file-label" for="imageUpload">Choose file</label>
                             </div>
                             <div class="input-group-append">
                                 <span class="input-group-text">Upload</span>
@@ -70,17 +63,16 @@
                         <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 200px; display: none;" />
                     </div>
 
-                    <button type="submit" class="btn btn-success mt-4">Create</button>
+                    <button type="submit" class="btn btn-success mt-4">Upload</button>
                 </form>
             </div>
         </div>
     </div>
 @endsection
 
-
 @section('js')
 <script>
-    document.getElementById('FoodImage').addEventListener('change', function(event) {
+    document.getElementById('imageUpload').addEventListener('change', function(event) {
         const inputFile = event.target;
         const fileName = inputFile.files[0]?.name || 'Choose file';
         const fileLabel = inputFile.nextElementSibling; // Label element
@@ -88,7 +80,6 @@
         const imagePreview = document.getElementById('imagePreview');
 
         fileLabel.textContent = fileName;
-
         fileNameDisplay.textContent = `Selected file: ${fileName}`;
 
         const file = inputFile.files[0];
