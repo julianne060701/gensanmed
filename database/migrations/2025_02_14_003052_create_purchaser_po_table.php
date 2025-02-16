@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('po_number')->unique();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->enum('status', ['Active',  'Declined', 'Inactive']);
             $table->string('image_url')->nullable();
             $table->timestamps();
             $table->softDeletes();

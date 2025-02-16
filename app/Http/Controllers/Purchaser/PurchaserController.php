@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Purchaser;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PurchaserPO;
+use Illuminate\Support\Facades\Storage;
 
 class PurchaserController extends Controller
 {
@@ -23,20 +24,27 @@ class PurchaserController extends Controller
     
         foreach ($purchases as $purchase) {
            
-            $btnEdit = '<a href="" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
+            $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
             <i class="fa fa-lg fa-fw fa-pen"></i>
             </a>';
+            
             
             $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" id="deletePurchaseID" title="Delete" data-delete="" data-toggle="modal" data-target="#deleteModal">
             <i class="fa fa-lg fa-fw fa-trash"></i>
             </button>';
     
+            // Ensure the image displays correctly
+            $imageDisplay = $purchase->image_url 
+                ? '<img src="' . asset('storage/' . $purchase->image_url) . '" alt="PO Image" width="50" height="50" style="object-fit: cover; border-radius: 5px;">' 
+                : 'No Image';
+    
             $rowData = [
                 $purchase->id,
-                $purchase->name,
                 $purchase->po_number,
+                $purchase->name,               
                 $purchase->description ?? 'N/A',
-                $purchase->image_url ? '<img src="' . asset('storage/' . $purchase->image_url) . '" width="50">' : 'No Image',
+                $purchase->status,
+                $imageDisplay,
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
             ];
@@ -116,7 +124,8 @@ class PurchaserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $purchase = PurchaserPO::findOrFail($id);
+        return view('purchaser.purchase.edit', compact('purchase'));
     }
 
     /**
@@ -124,7 +133,39 @@ class PurchaserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number,' . $id,
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'status' => 'required|string|in:Active,Declined,Inactive',
+            'image_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+        ]);
+
+        $purchase = PurchaserPO::findOrFail($id);
+
+        // Handle image upload
+        if ($request->hasFile('image_url')) {
+            // Delete the old image if it exists
+            if ($purchase->image_url) {
+                Storage::delete('public/' . $purchase->image_url);
+            }
+
+            // Store the new image
+            $imagePath = $request->file('image_url')->store('po_images', 'public');
+        } else {
+            $imagePath = $purchase->image_url;
+        }
+
+        // Update the purchase order
+        $purchase->update([
+            'po_number' => $validated['po_number'],
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'status' => $validated['status'],
+            'image_url' => $imagePath,
+        ]);
+
+        return redirect()->route('purchaser.purchase.index')->with('success', 'PO updated successfully!');
     }
 
     /**

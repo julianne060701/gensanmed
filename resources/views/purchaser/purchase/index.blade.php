@@ -25,11 +25,12 @@
 
                     @php
                         $heads = [
+                            'ID',
                             'PO #',
-                            'Name',
-                            'Image',
+                            'Name',                          
                             'Remarks',
                             'Status',
+                            'Image',
                             'Date Created',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];

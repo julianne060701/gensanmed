@@ -57,6 +57,7 @@
             <option value="">Select Role</option>
             <option value="IT">IT</option>
             <option value="Engineer">Engineer</option>
+            <option value="Purchaser">Purchaser</option>
         </select>
         <div class="input-group-append">
             <div class="input-group-text">

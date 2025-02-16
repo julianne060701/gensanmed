@@ -15,6 +15,7 @@ class PurchaserPO extends Model
         'po_number',
         'name',
         'description',
-        'pavilion_image_url',
+        'status',
+        'image_url',
     ];
 }
