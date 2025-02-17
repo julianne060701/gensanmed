@@ -325,6 +325,12 @@ return [
                 'can'         => 'view-admin-menu',
             ],
             [
+                'text'  => 'Manage User',
+                'icon'  => 'fas fa-user',
+                'url'   => 'admin/user',
+                'can'   => 'view-admin-menu',
+            ],
+            [
                 'text'  => 'Manage Purchase',
                 'icon'  => 'fas fa-cart-plus',
                 'url'   => 'admin/purchase',
