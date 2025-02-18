@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PurchaserPO;
 use Illuminate\Support\Facades\Storage;
-
+use App\Models\User;
 class PurchaserController extends Controller
 {
     /**
@@ -19,38 +19,40 @@ class PurchaserController extends Controller
 
     public function index()
     {
-        // Fetch all users
-        $users = User::all();
+        $purchases = PurchaserPO::all();
         $data = [];
-        
-        foreach ($users as $user) {
-    
-            // Define the Edit button (use the route for editing user)
-            $btnEdit = '<a href=" " class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
-                <i class="fa fa-lg fa-fw fa-pen"></i>
+
+        foreach ($purchases as $purchase) {
+
+            $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
+            <i class="fa fa-lg fa-fw fa-pen"></i>
             </a>';
-    
-            // Define the Delete button (trigger modal for deletion)
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" id="deleteUserID" title="Delete" data-delete="' . $user->id . '" data-toggle="modal" data-target="#deleteModal">
-                <i class="fa fa-lg fa-fw fa-trash"></i>
+
+            
+            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" id="deletePurchaseID" title="Delete" data-delete="" data-toggle="modal" data-target="#deleteModal">
+            <i class="fa fa-lg fa-fw fa-trash"></i>
             </button>';
+
+            // Ensure the image displays correctly
+            $imageDisplay = $purchase->image_url 
+                ? '<img src="' . asset('storage/' . $purchase->image_url) . '" alt="PO Image" width="50" height="50" style="object-fit: cover; border-radius: 5px;">' 
+                : 'No Image';
     
-            // Build the row data for the DataTable
             $rowData = [
-                $user->id,
-                $user->name,
-                $user->email,
-                $user->roles->pluck('name')->implode(', '),  // Assuming roles are set with Spatie
-                // $user->status,  // Assuming you have a status field
-                $user->created_at->format('m/d/Y'),
-                '<nobr>' . $btnEdit . $btnDelete . '</nobr>',  // Action buttons (Edit and Delete)
+                $purchase->id,
+                $purchase->po_number,
+                $purchase->name,               
+                $purchase->description ?? 'N/A',
+                $purchase->status,
+                $imageDisplay,
+                $purchase->created_at->format('m/d/Y'),
+                '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
             ];
-    
+
             $data[] = $rowData;
         }
-    
-        // Pass the processed data to the view
-        return view('admin.user.index', compact('data'));
+
+        return view('purchaser.purchase.index', compact('data'));
     }
     
     /**

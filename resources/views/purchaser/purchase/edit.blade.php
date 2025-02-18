@@ -36,21 +36,21 @@
                         <div class="col-md-4">
                             <label for="po_number">PO Number</label>
                             <input type="number" name="po_number" class="form-control" value="{{ $purchase->po_number }}"
-                                min="1" required>
+                                min="1" readonly required>
                         </div>
                     </div>
 
                     <!-- Name of User -->
                     <div class="form-group">
                         <label for="userName">Name of User</label>
-                        <input type="text" name="name" id="userName" class="form-control" value="{{ $purchase->name }}"
+                        <input type="text" name="name" id="userName" class="form-control" value="{{ $purchase->name }}" readonly
                             required>
                     </div>
 
                     <!-- Remarks -->
                     <div class="form-group">
                         <label for="remarks">Remarks</label>
-                        <textarea name="description" id="remarks" class="form-control"
+                        <textarea name="description" id="remarks" class="form-control" readonly
                             rows="3">{{ $purchase->description }}</textarea>
                     </div>
 

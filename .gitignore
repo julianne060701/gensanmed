@@ -1,3 +1,4 @@
+# Laravel
 /.phpunit.cache
 /node_modules
 /public/build
@@ -6,9 +7,13 @@
 /storage/*.key
 /storage/pail
 /vendor
+
+# Environment and backup files
 .env
 .env.backup
 .env.production
+
+# IDE and Editor config files
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -21,5 +26,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Composer and package lock files
 /composer.lock
 /package-lock.json
