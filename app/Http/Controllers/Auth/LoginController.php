@@ -37,13 +37,13 @@ class LoginController extends Controller
      */
     protected function redirectUser($user)
     {
-        if ($user->hasRole('administrator')) {
+        if ($user->hasRole('Administrator')) {
             return redirect()->route('admin.home'); // Fix route naming
-        } elseif ($user->hasRole('engineer')) {
+        } elseif ($user->hasRole('Engineer')) {
             return redirect()->route('engineer.home');
         } elseif ($user->hasRole('IT')) {
             return redirect()->route('IT.index');
-        }elseif ($user->hasRole('purchaser')) {
+        }elseif ($user->hasRole('Purchaser')) {
             return redirect()->route('purchaser.home');
         }
     

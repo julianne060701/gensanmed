@@ -19,7 +19,7 @@ class TicketController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.ticketing.create');
     }
 
     /**
@@ -27,7 +27,24 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'ticket_number' => 'required',
+            'department' => 'required',
+            'responsible_department' => 'required',
+            'concern_type' => 'required',
+            'remarks' => 'nullable',
+            'document' => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:2048',
+        ]);
+
+        // Handle file upload
+        if ($request->hasFile('document')) {
+            $validatedData['document'] = $request->file('document')->store('documents', 'public');
+        }
+
+        Ticket::create($validatedData);
+
+        return redirect()->route('admin.ticketing.index')->with('success', 'Ticket request submitted successfully.');
+    
     }
 
     /**

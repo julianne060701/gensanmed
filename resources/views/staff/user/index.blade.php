@@ -5,39 +5,52 @@
 @section('plugins.DatatablesPlugin', true)
 
 @section('content_header')
-<h1 class="ml-1">Ticketing</h1>
+<h1 class="ml-1">Users</h1>
 @stop
 
 @section('content')
+
 <div class="container-fluid">
+
+    <!-- Button to Create New User -->
     <div class="d-flex justify-content-end mb-3">
-         <a href="{{ route('admin.ticketing.create') }}" class="btn btn-primary px-5">Make Request</a> 
+        <a href="{{ route('admin.user.create') }}" class="btn btn-primary px-5">Create User</a>
     </div>
 
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+
                     @php
+                        // Columns for the DataTable
                         $heads = [
-                            'Ticket Number',
-                            'Department',
-                            'Responsible Department',
-                            'Concern type',
-                            'Status',
-                            'Date Submitted',
+                            'ID',
+                            'User Name',
+                            'Email',    
+                            'Role',                       
+                            'Date Created',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 
-                        $data = [
-                            [1, 'John Doe', '+63 9123456789', '5 purchases', 'Active', '2025-02-10', '<button class="btn btn-danger Delete" data-delete="1">Delete</button>'],
-                            [2, 'Jane Smith', '+63 9876543210', '10 purchases', 'Inactive', '2025-01-15', '<button class="btn btn-danger Delete" data-delete="2">Delete</button>'],
-                            [3, 'Michael Lee', '+63 9129876543', '3 purchases', 'Active', '2024-12-20', '<button class="btn btn-danger Delete" data-delete="3">Delete</button>'],
+                        // Configuration for the DataTable
+                        $config = [
+                            'data' => $data,  // $data should contain user data
+                            'order' => [[1, 'desc']],
+                            'columns' => [
+                                null, // ID column
+                                null, // User Name column
+                                null, // Email column
+                                null, // Role column
+                                null, // Date Created column
+                                ['orderable' => false] // Actions column (not orderable)
+                            ],
                         ];
                     @endphp
 
+                    <!-- Display DataTable with User Data -->
                     <x-adminlte-datatable id="table1" :heads="$heads" hoverable>
-                        @foreach ($data as $row)
+                        @foreach ($config['data'] as $row)
                             <tr>
                                 @foreach ($row as $cell)
                                     <td>{!! $cell !!}</td>
@@ -51,16 +64,17 @@
     </div>
 </div>
 
-{{-- Modal delete --}}
-<div class="modal fade" id="deleteModalBed" tabindex="-1" role="dialog" aria-labelledby="deleteModalBed" aria-hidden="true">
+{{-- Modal for Deleting User --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="deleteBed" action="#" method="post">
+        <form id="deleteUserForm" action="" method="post">
             @csrf
+            @method('DELETE')
             <div class="modal-content">
                 <div class="modal-header bg-danger">
                     <h4 class="modal-title">Delete</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
@@ -75,13 +89,19 @@
         </form>
     </div>
 </div>
+
 @stop
 
 @section('js')
+
 <script>
+    // Handle delete button click to pass the user ID and name to the modal form
     $(document).on('click', '.Delete', function () {
-        const deleteValue = $(this).data('delete');
-        $('#deleteId').val(deleteValue);
+        const userId = $(this).data('delete');
+        const userName = $(this).data('name');
+        $('#deleteId').val(userId);
+        $('#userNameDisplay').text(userName);
     });
 </script>
-@stop
+
+@endsection

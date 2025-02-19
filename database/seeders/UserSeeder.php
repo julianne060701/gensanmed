@@ -17,15 +17,13 @@ class UserSeeder extends Seeder
         $users = [
             [
                 'name' => 'admin',
-                'lname' => 'gensanmed',
                 'email' => 'admin@gensanmed.com',
-                'role' => 'administrator',
+                'role' => 'Administrator',
                 //'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
             ],
             [
                 'name' => 'IT',
-                'lname' => 'gensanmed',
                 'email' => 'IT@gensanmed',
                 'role' => 'IT',
                // 'profile_image_url' => 'images/default-image.jpg',
@@ -33,17 +31,29 @@ class UserSeeder extends Seeder
             ],
             [
                 'name' => 'engineer',
-                'lname' => 'gensanmed',
                 'email' => 'engineer@gensanmed',
-                'role' => 'engineer',
+                'role' => 'Engineer',
                 //'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
             ],
             [
                 'name' => 'purchaser',
-                'lname' => 'gensanmed',
                 'email' => 'purchaser@gensanmed',
-                'role' => 'purchaser',
+                'role' => 'Purchaser',
+                //'profile_image_url' => 'images/default-image.jpg',
+                'password' => 'password',
+            ],
+            [
+                'name' => 'staff',
+                'email' => 'staff@gensanmed',
+                'role' => 'Staff',
+                //'profile_image_url' => 'images/default-image.jpg',
+                'password' => 'password',
+            ],
+            [
+                'name' => 'employee',
+                'email' => 'employee@gensanmed',
+                'role' => 'Employee',
                 //'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
             ],
@@ -59,7 +69,6 @@ class UserSeeder extends Seeder
 
             User::create([
                 'name' => $userData['name'],
-                'lname' => $userData['lname'],
                 'email' => $userData['email'],
                 //'profile_image_url' => $userData['profile_image_url'],
                 'password' => Hash::make($userData['password']),

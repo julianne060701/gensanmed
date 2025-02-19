@@ -23,21 +23,24 @@ class PurchaserController extends Controller
         $data = [];
 
         foreach ($purchases as $purchase) {
-
-            $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
-            <i class="fa fa-lg fa-fw fa-pen"></i>
-            </a>';
-
-            
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" id="deletePurchaseID" title="Delete" data-delete="" data-toggle="modal" data-target="#deleteModal">
-            <i class="fa fa-lg fa-fw fa-trash"></i>
-            </button>';
-
-            // Ensure the image displays correctly
+            $isDisabled = ($purchase->status === 'inactive' || $purchase->status === 'declined') ? 'disabled' : '';
+        
+            $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" 
+                        class="btn btn-xs btn-default text-primary mx-1 shadow ' . $isDisabled . '" 
+                        title="Edit">
+                        <i class="fa fa-lg fa-fw fa-pen"></i>
+                        </a>';
+        
+            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+                          id="deletePurchaseID" title="Delete" data-delete="" data-toggle="modal" 
+                          data-target="#deleteModal">
+                          <i class="fa fa-lg fa-fw fa-trash"></i>
+                          </button>';
+        
             $imageDisplay = $purchase->image_url 
                 ? '<img src="' . asset('storage/' . $purchase->image_url) . '" alt="PO Image" width="50" height="50" style="object-fit: cover; border-radius: 5px;">' 
                 : 'No Image';
-    
+        
             $rowData = [
                 $purchase->id,
                 $purchase->po_number,
@@ -48,7 +51,7 @@ class PurchaserController extends Controller
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
             ];
-
+        
             $data[] = $rowData;
         }
 
