@@ -10,8 +10,7 @@
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('purchaser.purchase.update', $purchase->id) }}" method="POST"
-                    enctype="multipart/form-data">
+            <form action="{{ route('purchaser.purchase.update', $purchase->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -20,12 +19,12 @@
                         <div class="col-md-4">
                             <label for="status">Status</label>
                             <select name="status" class="form-control" required>
-                                <option value="Active" {{ $purchase->status === 'Active' ? 'selected' : '' }}>Active</option>
-                                <option value="Inactive" {{ $purchase->status === 'Inactive' ? 'selected' : '' }}>Inactive
-                                </option>
-                                <option value="Declined" {{ $purchase->status === 'Declined' ? 'selected' : '' }}>Declined
-                                </option>
+                                <!-- <option value="Pending" {{ $purchase->status === 'Pending' ? 'selected' : '' }}>Pending</option> -->
+                                <option value="Approved" {{ $purchase->status === 'Approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="Denied" {{ $purchase->status === 'Denied' ? 'selected' : '' }}>Denied</option>
+                                <option value="Send to Supplier" {{ $purchase->status === 'Send to Supplier' ? 'selected' : '' }}>Send to Supplier</option>
                             </select>
+
 
 
                         </div>

@@ -1,79 +1,50 @@
 @extends('adminlte::page')
 
-@section('title', 'Ticket Request')
+@section('title', 'Dashboard')
 
 @section('content_header')
-    <h1 class="ml-1">Ticket Request</h1>
+    <h1 class="ml-1">Upload PO</h1>
 @stop
 
 @section('content')
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.ticketing.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.purchase.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     
                     <div class="form-row align-items-center mb-3">
-                        {{-- Ticket Number --}}
+                        
+                        {{-- PO Number --}}
                         <div class="col-md-4">
-                            <label for="ticket_number">Ticket Number</label>
-                            <input type="text" name="ticket_number" class="form-control" placeholder="Enter Ticket Number" required>
+                            <label for="po_number">PO Number</label>
+                            <input type="number" name="po_number" class="form-control" placeholder="Enter PO Number" min="1" required>
                         </div>
                     </div>
 
-                    {{-- Department --}}
+                    <!-- Name of User -->
                     <div class="form-group">
-                        <label for="department">Department</label>
-                        <input type="text" name="department" class="form-control" placeholder="Enter Department" required>
-                    </div>
-
-                    {{-- Responsible Department --}}
-                    <div class="form-group">
-                        <label for="responsible_department">Responsible Department</label>
-                        <select name="responsible_department" class="form-control" required>
-                            <option value="">Select Responsible Department</option>
-                            <option value="HIMS">HIMS</option>
-                            <option value="Engineer">Engineer</option>
-                        </select>
+                        <label for="userName">Name of User</label>
+                        <input type="text" name="name" id="userName" class="form-control" placeholder="Enter user name" required>
                     </div>
                     
-                    {{-- Concern Type --}}
-                    <div class="form-group">
-                        <label for="concern_type">Concern Type</label>
-                        <select name="concern_type" class="form-control" required>
-                            <option value="repair">Repair</option>
-                            <option value="maintenance">Maintenance</option>
-                        </select>
-                    </div>
-                    
-                    {{-- Urgency --}}
-                    <div class="form-group">
-                        <label for="urgency">Urgency</label>
-                        <select name="urgency" class="form-control" required>
-                            <option value="urgent">Urgent</option>
-                            <option value="not urgent">Not Urgent</option>
-                        </select>
-                    </div>
-
-                    {{-- Serial Number --}}
-                    <div class="form-group">
-                        <label for="serial_number">Serial No.</label>
-                        <input type="text" name="serial_number" class="form-control" placeholder="Enter Serial Number" required>
-                    </div>
-
                     {{-- Remarks --}}
                     <div class="form-group">
                         <label for="remarks">Remarks</label>
-                        <textarea name="remarks" id="remarks" class="form-control" rows="3" placeholder="Enter remarks"></textarea>
+                        <textarea name="description" id="remarks" class="form-control" rows="3" placeholder="Enter remarks"></textarea>
                     </div>
 
-                    {{-- Supporting Document Upload --}}
+                    {{-- Image Upload --}}
                     <div class="form-group">
-                        <label for="imageUpload">Image</label>
+                        <label for="imageUpload"> Image</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="image_url" id="imageUpload" accept="image/*">
+                            <input type="file" class="custom-file-input" name="image_url" id="imageUpload" accept="image/*">
+
                                 <label class="custom-file-label" for="imageUpload">Choose file</label>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text">Upload</span>
                             </div>
                         </div>
                     </div>
@@ -84,7 +55,7 @@
                         <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 200px; display: none;" />
                     </div>
 
-                    <button type="submit" class="btn btn-success mt-4">Submit Request</button>
+                    <button type="submit" class="btn btn-success mt-4">Upload</button>
                 </form>
             </div>
         </div>
@@ -95,28 +66,25 @@
 <script>
     document.getElementById('imageUpload').addEventListener('change', function(event) {
         const inputFile = event.target;
-        const file = inputFile.files[0];
-        const fileLabel = inputFile.closest('.custom-file').querySelector('.custom-file-label');
+        const fileName = inputFile.files[0]?.name || 'Choose file';
+        const fileLabel = inputFile.nextElementSibling; // Label element
         const fileNameDisplay = document.getElementById('fileName');
         const imagePreview = document.getElementById('imagePreview');
 
-        if (file) {
-            fileLabel.textContent = file.name;
-            fileNameDisplay.textContent = `Selected file: ${file.name}`;
+        fileLabel.textContent = fileName;
+        fileNameDisplay.textContent = `Selected file: ${fileName}`;
 
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = 'none';
-            }
+        const file = inputFile.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
         } else {
-            fileLabel.textContent = 'Choose file';
-            fileNameDisplay.textContent = '';
             imagePreview.style.display = 'none';
         }
     });
