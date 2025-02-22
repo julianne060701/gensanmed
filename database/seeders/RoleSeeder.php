@@ -14,29 +14,36 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Create roles
-        $adminRole = Role::firstOrCreate(['name' => 'Administrator', 'guard_name' => 'web']);
-        $purchaserRole = Role::firstOrCreate(['name' => 'Purchaser', 'guard_name' => 'web']);
-        $itRole = Role::firstOrCreate(['name' => 'IT', 'guard_name' => 'web']);
-        $engineerRole = Role::firstOrCreate(['name' => 'Engineer', 'guard_name' => 'web']);
-        $staffRole = Role::firstOrCreate(['name' => 'Staff', 'guard_name' => 'web']);
-        $employeeRole = Role::firstOrCreate(['name' => 'Employee', 'guard_name' => 'web']);
+        $roles = [
+            'Administrator',
+            'Purchaser',
+            'IT',
+            'Engineer',
+            'Staff',
+            'Employee'
+        ];
+
+        foreach ($roles as $roleName) {
+            Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+        }
 
         // Create permissions
         $permissions = [
-            'view-admin-menu',
-            'view-engineer-menu',
-            'view-it-menu',
-            'view-purchaser-menu',
+            'Administrator' => ['view-admin-menu'],
+            'Purchaser' => ['view-purchaser-menu'],
+            'IT' => ['view-it-menu'],
+            'Engineer' => ['view-engineer-menu'],
+            'Staff' => ['view-staff-menu'],
+            'Employee' => ['view-employee-menu'],
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
-        }
+        foreach ($permissions as $roleName => $rolePermissions) {
+            $role = Role::where('name', $roleName)->first();
 
-        // Assign permissions to roles
-        $adminRole->givePermissionTo(['view-admin-menu']);
-        $purchaserRole->givePermissionTo(['view-purchaser-menu']);
-        $itRole->givePermissionTo(['view-it-menu']);
-        $engineerRole->givePermissionTo(['view-engineer-menu']);
+            foreach ($rolePermissions as $permission) {
+                $perm = Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
+                $role->givePermissionTo($perm);
+            }
+        }
     }
 }

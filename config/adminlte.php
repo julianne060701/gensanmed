@@ -342,6 +342,26 @@ return [
                 'url'   => 'admin/ticketing',
                 'can'   => 'view-admin-menu',
             ],
+                  // -----------------------------------------------------
+            // Staff Sidebar Items (Only for Staff)
+            // -----------------------------------------------------
+            [
+                'header' => 'STAFF PANEL',
+                'can'    => 'view-staff-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'staff/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-staff-menu',
+            ],
+            [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'staff/ticketing',
+                'can'   => 'view-staff-menu',
+            ],
 
             // -----------------------------------------------------
             // Engineer Sidebar Items (Only for Engineers)

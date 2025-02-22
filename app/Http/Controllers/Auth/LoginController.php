@@ -45,7 +45,12 @@ class LoginController extends Controller
             return redirect()->route('IT.index');
         }elseif ($user->hasRole('Purchaser')) {
             return redirect()->route('purchaser.home');
+        } elseif ($user->hasRole('Staff')) {
+            return redirect('/staff/home');
+        } elseif ($user->hasRole('Employee')) {
+            return redirect('/employee/home');
         }
+        
     
         return redirect('/')->withErrors(['message' => 'You are not authorized.']);
     }

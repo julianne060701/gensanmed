@@ -10,7 +10,7 @@
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('admin.ticketing.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('staff.ticketing.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     {{-- Ticket Number & Serial Number --}}

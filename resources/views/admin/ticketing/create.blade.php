@@ -43,6 +43,7 @@
                         <select name="concern_type" class="form-control" required>
                             <option value="repair">Repair</option>
                             <option value="maintenance">Maintenance</option>
+                            <option value="medsys">Medsys</option>
                         </select>
                     </div>
                     
@@ -50,8 +51,12 @@
                     <div class="form-group">
                         <label for="urgency">Urgency</label>
                         <select name="urgency" class="form-control" required>
-                            <option value="urgent">Urgent</option>
-                            <option value="not urgent">Not Urgent</option>
+                            <option value="">Select Urgency</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
                         </select>
                     </div>
 
@@ -63,7 +68,7 @@
 
                     {{-- Remarks --}}
                     <div class="form-group">
-                        <label for="remarks">Remarks</label>
+                        <label for="remarks">Remarks (Input anydesk number if the concern is medsys)</label>
                         <textarea name="remarks" id="remarks" class="form-control" rows="3" placeholder="Enter remarks"></textarea>
                     </div>
 

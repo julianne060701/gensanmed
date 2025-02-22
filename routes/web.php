@@ -13,7 +13,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
     Route::get('/engineer/home', [App\Http\Controllers\Engineer\EngineerController::class, 'index'])->name('engineer.home');
     Route::get('/purchaser/home', [App\Http\Controllers\Purchaser\PurchaserController::class, 'home'])->name('purchaser.home');
-    Route::get('/IT/home', [HomeController::class, 'index'])->name('IT.index');
+    Route::get('/staff/home', [App\Http\Controllers\Staff\StaffController::class, 'index'])->name('staff.home');
 });
 
 //admin route
@@ -46,4 +46,10 @@ Route::middleware(['auth'])->group(function () {
 // Engineer Routes
     Route::get('engineer/ticketing', [App\Http\Controllers\Engineer\TicketController::class, 'index'])->name('engineer.ticketing.index');
   
+//Staff Routes
+    Route::get('staff/ticketing', [App\Http\Controllers\Staff\TicketController::class, 'index'])->name('staff.ticketing.index');
+    Route::get('staff/ticketing/create', [App\Http\Controllers\Staff\TicketController::class, 'create'])->name('staff.ticketing.create');
+    Route::post('staff/ticketing', [App\Http\Controllers\Staff\TicketController::class, 'store'])->name('staff.ticketing.store');
 
+    Route::get('staff/ticketing/{id}/edit', [App\Http\Controllers\Staff\TicketController::class, 'edit'])->name('staff.ticketing.edit');
+    Route::put('staff/ticketing/{id}/update', [App\Http\Controllers\Staff\TicketController::class, 'update'])->name('staff.ticketing.update');
