@@ -11,14 +11,38 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        // Check if the request is AJAX (for fetching events)
+        if ($request->ajax()) {
+            $events = ScheduleList::all();
+    
+            $eventData = $events->map(function ($event) {
+                return [
+                    'title' => $event->title,
+                    'start' => $event->start_date,
+                    'end' => $event->end_date,
+                    'color' => $this->getEventColor(), // Assign a random color
+                ];
+            });
+    
+            return response()->json($eventData);
+        }
+    
+        // If it's NOT an AJAX request, return the view
         return view('admin.home');
     }
+    
+    private function getEventColor()
+    {
+        $colors = ['#28a745', '#dc3545', '#ffc107', '#007bff', '#17a2b8', '#6f42c1'];
+        return $colors[array_rand($colors)]; // Randomly select a color
+    }
+    
     public function fetchEvents()
     {
         $events = ScheduleList::all();
-
+    
         $formattedEvents = $events->map(function ($event) {
             return [
                 'id' => $event->id,
@@ -26,11 +50,14 @@ class HomeController extends Controller
                 'description' => $event->description,
                 'start' => $event->from_date,
                 'end' => $event->to_date,
+                'color' => $event->color ?? $this->getEventColor(), // Use event color if available, otherwise assign a random color
             ];
         });
-
+    
         return response()->json($formattedEvents);
     }
+    
+   
     public function store(Request $request)
     {
         $validated = $request->validate([
