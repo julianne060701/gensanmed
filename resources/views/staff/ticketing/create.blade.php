@@ -57,16 +57,19 @@
                         <div class="col-md-6">
                             <label for="urgency">Urgency</label>
                             <select name="urgency" class="form-control" required>
-                                <option value="">Select Urgency</option>
-                                <option value="urgent">Urgent</option>
-                                <option value="not urgent">Not Urgent</option>
+                            <option value="">Select Urgency</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
                             </select>
                         </div>
                     </div>
 
                     {{-- Remarks --}}
                     <div class="form-group">
-                        <label for="remarks">Remarks</label>
+                        <label for="remarks">Remarks (Input anydesk number if the concern is medsys)</label>
                         <textarea name="remarks" id="remarks" class="form-control" rows="3"
                             placeholder="Enter remarks"></textarea>
                     </div>

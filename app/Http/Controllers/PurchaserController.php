@@ -68,7 +68,7 @@ class PurchaserController extends Controller
             'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'image_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'image_url' => 'nullable|image|mimes:jpg,jpeg,png,gif,pdf|max:2048',
         ]);
     
         // Debug validation results

@@ -301,14 +301,33 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type'         => 'navbar-search',
-            'text'         => 'search',
+            'type'         => 'notification',
+            'icon'         => 'fas fa-envelope', // Notification bell icon
+            'text'         => '3', // Number of unread notifications (dynamic)
             'topnav_right' => true,
+            'url'          => '#', // Link to notification page
+            'dropdown'     => [
+                [
+                    'text' => '🔔 New order received',
+                    'url'  => 'orders',
+                ],
+                [
+                    'text' => '⚠️ Product stock running low',
+                    'url'  => 'inventory',
+                ],
+                [
+                    'text' => '👤 New user registered',
+                    'url'  => 'users',
+                ],
+                [
+                    'text'  => 'View all notifications',
+                    'url'   => 'notifications',
+                    'icon'  => 'fas fa-eye',
+                    'class' => 'text-primary', 
+                ],
+            ],
         ],
-        [
-            'type'         => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+        
 
         // -----------------------------------------------------
             // Administrator Sidebar Items (Only for Administrators)

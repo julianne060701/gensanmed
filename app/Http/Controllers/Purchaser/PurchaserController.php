@@ -44,9 +44,9 @@ class PurchaserController extends Controller
             $rowData = [
                 $purchase->id,
                 $purchase->po_number,
-                $purchase->name,               
+                $purchase->name,
                 $purchase->description ?? 'N/A',
-                $purchase->status,
+                '<span class="badge badge-info">' . $purchase->status . '</span>',
                 $imageDisplay,
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
@@ -71,8 +71,9 @@ class PurchaserController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the incoming data
-        $validated = $request->validate([
+        
+         // Validate the incoming data
+         $validated = $request->validate([
             'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -141,7 +142,7 @@ class PurchaserController extends Controller
             'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number,' . $id,
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'status' => 'required|string|in:Active,Declined,Inactive',
+            'status' => 'required|in:Pending,Approved,Denied,Send to Supplier',
             'image_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
 

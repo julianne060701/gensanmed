@@ -1,8 +1,5 @@
 <IfModule mod_rewrite.c>
-    <IfModule mod_negotiation.c>
-        Options -MultiViews -Indexes
-    </IfModule>
-
+    # Enable rewrite engine
     RewriteEngine On
 
     # Handle Authorization Header
@@ -22,4 +19,17 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    # Allow access to the storage folder for public files
+    RewriteCond %{REQUEST_URI} ^/storage/.*$
+    RewriteRule ^ - [L]
+
 </IfModule>
+
+# Allow direct access to image and document files in the storage folder
+<FilesMatch "\.(jpg|jpeg|png|gif|svg|webp|pdf|doc|docx|xls|xlsx|csv|mp4|mp3|zip)$">
+    Require all granted
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
