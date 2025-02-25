@@ -14,7 +14,7 @@
 <div class="container-fluid">
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary px-5">Upload PO</a>
+        <!-- <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary px-5">Upload PO</a> -->
     </div>
 
 

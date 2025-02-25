@@ -7,7 +7,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background: url('{{ asset('img/background.jpg') }}') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,7 +19,7 @@
 
         .container {
             text-align: center;
-            background-color: white;
+            background-color: rgba(255, 255, 255, 0.8); /* Add transparency */
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -53,11 +54,11 @@
             Log in
         </a>
 
-        @if (Route::has('register'))
+        <!-- @if (Route::has('register'))
             <a href="{{ route('register') }}">
                 Register
             </a>
-        @endif
+        @endif -->
     </div>
 </body>
 </html>

@@ -7,106 +7,121 @@
 @stop
 
 @section('content')
-    <div class="container">
-        <div class="card">
-            <div class="card-body">
-            <form action="{{ route('admin.purchase.update', $purchase->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <form id="editForm" action="{{ route('admin.purchase.update', $purchase->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
 
-                    <div class="form-row align-items-center mb-3">
-                        <!-- Status Dropdown -->
-                        <div class="col-md-4">
-                            <label for="status">Status</label>
-                            <select name="status" class="form-control" required>
-                                <!-- <option value="Pending" {{ $purchase->status === 'Pending' ? 'selected' : '' }}>Pending</option> -->
-                                <option value="Approved" {{ $purchase->status === 'Approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="Denied" {{ $purchase->status === 'Denied' ? 'selected' : '' }}>Denied</option>
-                                <option value="Send to Supplier" {{ $purchase->status === 'Send to Supplier' ? 'selected' : '' }}>Send to Supplier</option>
-                            </select>
-
-
-
-                        </div>
-
-
-
-                        <!-- PO Number -->
-                        <div class="col-md-4">
-                            <label for="po_number">PO Number</label>
-                            <input type="number" name="po_number" class="form-control" value="{{ $purchase->po_number }}"
-                                min="1" readonly required>
-                        </div>
+                <div class="form-row align-items-center mb-3">
+                    <div class="col-md-4">
+                        <label for="status">Status</label>
+                        <select name="status" class="form-control" required>
+                            <option value="Pending" {{ $purchase->status == 'Pending' ? 'selected' : ''}}>Pending</option> 
+                            <option value="Approved" {{ $purchase->status === 'Approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="Denied" {{ $purchase->status === 'Denied' ? 'selected' : '' }}>Denied</option>
+                            <option value="Send to Supplier" {{ $purchase->status === 'Send to Supplier' ? 'selected' : '' }}>Send to Supplier</option>
+                        </select>
                     </div>
 
-                    <!-- Name of User -->
+                    <div class="col-md-4">
+                        <label for="po_number">PO Number</label>
+                        <input type="number" name="po_number" class="form-control" value="{{ $purchase->po_number }}" min="1" readonly required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userName">Name of User</label>
+                    <input type="text" name="name" id="userName" class="form-control" value="{{ $purchase->name }}" readonly required>
+                </div>
+
+                <div class="form-group">
+                    <label for="remarks">Remarks</label>
+                    <textarea name="description" id="remarks" class="form-control" readonly rows="3">{{ $purchase->description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="fileUpload">Upload PO Document (PDF)</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="image_url" id="fileUpload" accept=".pdf">
+                            <label class="custom-file-label" for="fileUpload">Choose file</label>
+                        </div>
+                    </div>
+                    <small id="fileName" class="text-muted mt-2">No file selected</small>
+                </div>
+
+                @if($purchase->image_url)
                     <div class="form-group">
-                        <label for="userName">Name of User</label>
-                        <input type="text" name="name" id="userName" class="form-control" value="{{ $purchase->name }}" readonly
-                            required>
+                        <p>Current Document:</p>
+                        <a href="{{ asset('storage/' . $purchase->image_url) }}" target="_blank" class="btn btn-primary">
+                            View PDF
+                        </a>
                     </div>
+                @endif
 
-                    <!-- Remarks -->
-                    <div class="form-group">
-                        <label for="remarks">Remarks</label>
-                        <textarea name="description" id="remarks" class="form-control" readonly
-                            rows="3">{{ $purchase->description }}</textarea>
-                    </div>
+                <button type="button" class="btn btn-success mt-4" id="confirmEdit">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
 
-                    <!-- Image Upload -->
-                    <div class="form-group">
-                        <label for="imageUpload">Image</label>
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="image_url" id="imageUpload"
-                                    accept="image/*">
-                                <label class="custom-file-label" for="imageUpload">Choose file</label>
-                            </div>
-                        </div>
-                        <small id="fileName" class="text-muted mt-2">No file selected</small>
-                    </div>
-
-                    <!-- Existing Image Preview -->
-                    @if($purchase->image_url)
-                        <div class="form-group">
-                            <p>Current Image:</p>
-                            <img src="{{ asset('storage/' . $purchase->image_url) }}" id="imagePreview" alt="PO Image"
-                                style="max-width: 200px;">
-                        </div>
-                    @endif
-
-                    <button type="submit" class="btn btn-success mt-4">Update</button>
-                </form>
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirm Update</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update this Purchase Order?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitEditForm">Yes, Update</button>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @section('js')
-    <script>
-        document.getElementById('imageUpload').addEventListener('change', function (event) {
-            const inputFile = event.target;
-            const fileName = inputFile.files[0]?.name || 'Choose file';
-            const fileLabel = inputFile.nextElementSibling; // Label element
-            const fileNameDisplay = document.getElementById('fileName');
-            const imagePreview = document.getElementById('imagePreview');
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            fileLabel.innerHTML = fileName;
-            fileNameDisplay.textContent = `Selected file: ${fileName}`;
+<script>
+    document.getElementById('fileUpload').addEventListener('change', function (event) {
+        const inputFile = event.target;
+        const fileName = inputFile.files[0]?.name || 'Choose file';
+        const fileLabel = inputFile.nextElementSibling;
+        const fileNameDisplay = document.getElementById('fileName');
 
-            const file = inputFile.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
+        fileLabel.innerHTML = fileName;
+        fileNameDisplay.textContent = `Selected file: ${fileName}`;
+    });
 
-                reader.onload = function (e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                };
+    // Show confirmation modal before submitting
+    document.getElementById('confirmEdit').addEventListener('click', function () {
+        $('#confirmModal').modal('show');
+    });
 
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = 'none';
-            }
+    // Submit form when user confirms
+    document.getElementById('submitEditForm').addEventListener('click', function () {
+        $('#confirmModal').modal('hide');
+        document.getElementById('editForm').submit();
+    });
+
+    // Show success alert if redirected with success message
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Updated Successfully',
+            text: '{{ session("success") }}',
+            confirmButtonColor: '#28a745'
         });
-    </script>
+    @endif
+</script>
 @endsection

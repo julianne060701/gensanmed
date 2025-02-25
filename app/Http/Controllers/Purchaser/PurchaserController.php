@@ -21,9 +21,9 @@ class PurchaserController extends Controller
     {
         $purchases = PurchaserPO::all();
         $data = [];
-
+    
         foreach ($purchases as $purchase) {
-            $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier') ? 'disabled' : '';
+            $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status == 'Pending') ? 'disabled' : '';
         
             $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" 
                         class="btn btn-xs btn-default text-primary mx-1 shadow ' . $isDisabled . '" 
@@ -37,26 +37,36 @@ class PurchaserController extends Controller
                           <i class="fa fa-lg fa-fw fa-trash"></i>
                           </button>';
         
-            $imageDisplay = $purchase->image_url 
-                ? '<img src="' . asset('storage/' . $purchase->image_url) . '" alt="PO Image" width="50" height="50" style="object-fit: cover; border-radius: 5px;">' 
-                : 'No Image';
+            // Display a PDF link 
+            $pdfDisplay = $purchase->image_url 
+                ? '<a href="' . asset('storage/' . $purchase->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
+                    View PO (PDF)
+                   </a>' 
+                : 'No PDF';
+
+                $statusColors = [
+                    'Approved' => 'badge-success', // Green
+                    'Denied' => 'badge-danger', // Red
+                    'Send to Supplier' => 'badge-warning', // Yellow
+                ];
         
             $rowData = [
                 $purchase->id,
                 $purchase->po_number,
                 $purchase->name,
                 $purchase->description ?? 'N/A',
-                '<span class="badge badge-info">' . $purchase->status . '</span>',
-                $imageDisplay,
+                '<span class="badge ' . ($statusColors[$purchase->status] ?? 'badge-secondary') . '">' . $purchase->status . '</span>',
+                $pdfDisplay, 
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
             ];
         
             $data[] = $rowData;
         }
-
+    
         return view('purchaser.purchase.index', compact('data'));
     }
+    
     
     /**
      * Show the form for creating a new resource.
@@ -72,47 +82,29 @@ class PurchaserController extends Controller
     public function store(Request $request)
     {
         
-         // Validate the incoming data
-         $validated = $request->validate([
-            'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'image_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
-        ]);
-    
-        // Debug validation results
-        if (!$validated) {
-            return back()->withErrors($validated)->withInput();
-        }
-    
-        // Store the image if provided
-        $imagePath = null;
-        if ($request->hasFile('image_url')) {
-            $imagePath = $request->file('image_url')->store('po_images', 'public');
-        }
-    
-        // Debug incoming data
-        \Log::info('Storing Purchase Order:', [
-            'po_number' => $validated['po_number'],
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'image_url' => $imagePath,
-        ]);
-    
-        // Save PO data to the database
-        $purchaseOrder = PurchaserPO::create([
-            'po_number' => $validated['po_number'],
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'image_url' => $imagePath,
-        ]);
-    
-        // Debug database storage
-        if (!$purchaseOrder) {
-            return back()->with('error', 'Failed to store the PO.')->withInput();
-        }
-    
-        return redirect()->route('purchaser.purchase.index')->with('success', 'PO uploaded successfully!');
+       // Validate the incoming data
+    $validated = $request->validate([
+        'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string|max:1000',
+        'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+    ]);
+
+    // Store the PDF file if provided
+    $pdfPath = null;
+    if ($request->hasFile('image_url')) {
+        $pdfPath = $request->file('image_url')->store('po_pdfs', 'public');
+    }
+
+    // Save PO data to the database
+    PurchaserPO::create([
+        'po_number' => $validated['po_number'],
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'image_url' => $pdfPath, // Store PDF file path
+    ]);
+
+    return redirect()->route('purchaser.purchase.index')->with('success', 'PO uploaded successfully!');
     }
     
 
@@ -143,31 +135,31 @@ class PurchaserController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'status' => 'required|in:Pending,Approved,Denied,Send to Supplier',
-            'image_url' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
         ]);
-
+    
         $purchase = PurchaserPO::findOrFail($id);
-
-        // Handle image upload
+    
+        // Handle PDF upload
         if ($request->hasFile('image_url')) {
-            // Delete the old image if it exists
+            // Delete the old PDF if it exists
             if ($purchase->image_url) {
                 Storage::delete('public/' . $purchase->image_url);
             }
-
-            // Store the new image
-            $imagePath = $request->file('image_url')->store('po_images', 'public');
+    
+            // Store the new PDF
+            $pdfPath = $request->file('image_url')->store('po_pdfs', 'public');
         } else {
-            $imagePath = $purchase->image_url;
+            $pdfPath = $purchase->image_url;
         }
-
+    
         // Update the purchase order
         $purchase->update([
             'po_number' => $validated['po_number'],
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'status' => $validated['status'],
-            'image_url' => $imagePath,
+            'image_url' => $pdfPath, // Store PDF file path
         ]);
 
         return redirect()->route('purchaser.purchase.index')->with('success', 'PO updated successfully!');
