@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
+    <title>GensanMed Landing Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: url('{{ asset('img/background.jpg') }}') no-repeat center center fixed;
+            /* background: url('{{ asset('img/background.jpg') }}') no-repeat center center fixed; */
             background-size: cover;
             margin: 0;
             padding: 0;
