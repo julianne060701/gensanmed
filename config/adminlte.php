@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'GENSANMED',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -350,11 +350,25 @@ return [
                 'can'   => 'view-admin-menu',
             ],
             [
-                'text'  => 'Manage Purchase',
-                'icon'  => 'fas fa-cart-plus',
-                'url'   => 'admin/purchase',
-                'can'   => 'view-admin-menu',
+                'text'    => 'Manage Purchase',
+                'icon'    => 'fas fa-cart-plus',
+                'can'     => 'view-admin-menu',
+                'submenu' => [
+                    [
+                        'text' => 'Purchase Order',
+                        'icon' => 'fas fa-file-invoice',
+                        'url'  => 'admin/purchase',
+                        'can'  => 'view-admin-menu',
+                    ],
+                    [
+                        'text' => 'Purchase Request',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'admin/purchase-request',
+                        'can'  => 'view-admin-menu',
+                    ],
+                ],
             ],
+            
             [
                 'text'  => 'Manage Ticket',
                 'icon'  => 'fas fa-fw fa-ticket-alt',

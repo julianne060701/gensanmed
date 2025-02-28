@@ -18,17 +18,9 @@
                     @csrf
 
                     <div class="form-group">
-                        <label for="name">First Name</label>
+                        <label for="name">Name</label>
                         <input type="text" name="name" id="name" class="form-control" required value="{{ old('name') }}">
                         @error('name')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="lname">Last Name</label>
-                        <input type="text" name="lname" id="lname" class="form-control" value="{{ old('lname') }}">
-                        @error('lname')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>

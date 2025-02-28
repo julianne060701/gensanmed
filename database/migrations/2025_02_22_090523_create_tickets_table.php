@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('serial_number');
             $table->text('remarks')->nullable();
             $table->string('image_url')->nullable();
-            $table->enum('status', ['Pending', 'Approved', 'Denied', 'Send to Supplier'])->default('Pending');
+            $table->enum('status', ['Pending', 'Approved', 'Denied', 'Completed', 'Defective'])->default('Pending');
             $table->timestamps();
             $table->softDeletes();
         });

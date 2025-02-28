@@ -15,15 +15,14 @@
 
                     {{-- Ticket Number & Serial Number --}}
                     <div class="form-row">
-                        <div class="col-md-6">
-                            <label for="ticket_number">Ticket Number</label>
-                            <input type="text" name="ticket_number" class="form-control" placeholder="Enter Ticket Number"
-                                required>
-                        </div>
+                    <div class="col-md-6">
+                        <label for="ticket_number">Ticket Number</label>
+                        <input type="text" name="ticket_number" class="form-control" value="{{ $ticketNumber }}" readonly>
+                    </div>
+
                         <div class="col-md-6">
                             <label for="serial_number">Serial No.</label>
-                            <input type="text" name="serial_number" class="form-control" placeholder="Enter Serial Number"
-                                required>
+                            <input type="text" name="serial_number" class="form-control" placeholder="Enter Serial Number" required>
                         </div>
                     </div>
 
@@ -31,8 +30,7 @@
                     <div class="form-row">
                         <div class="col-md-6">
                             <label for="department">Department</label>
-                            <input type="text" name="department" class="form-control" placeholder="Enter Department"
-                                required>
+                            <input type="text" name="department" class="form-control" placeholder="Enter Department" required>
                         </div>
                         <div class="col-md-6">
                             <label for="responsible_department">Responsible Department</label>
@@ -50,19 +48,19 @@
                             <label for="concern_type">Concern Type</label>
                             <select name="concern_type" class="form-control" required>
                                 <option value="">Select Concern Type</option>
-                                <option value="repair">Repair</option>
-                                <option value="maintenance">Maintenance</option>
+                                <option value="Repair">Repair</option>
+                                <option value="Maintenance">Maintenance</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="urgency">Urgency</label>
                             <select name="urgency" class="form-control" required>
-                            <option value="">Select Urgency</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
+                                <option value="">Select Urgency</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
                             </select>
                         </div>
                     </div>
@@ -70,8 +68,7 @@
                     {{-- Remarks --}}
                     <div class="form-group">
                         <label for="remarks">Remarks (Input anydesk number if the concern is medsys)</label>
-                        <textarea name="remarks" id="remarks" class="form-control" rows="3"
-                            placeholder="Enter remarks"></textarea>
+                        <textarea name="remarks" id="remarks" class="form-control" rows="3" placeholder="Enter remarks"></textarea>
                     </div>
 
                     {{-- Supporting Document Upload --}}
@@ -79,8 +76,7 @@
                         <label for="imageUpload">Image</label>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input type="file" class="custom-file-input" name="image_url" id="imageUpload"
-                                    accept="image/*">
+                                <input type="file" class="custom-file-input" name="image_url" id="imageUpload" accept="image/*">
                                 <label class="custom-file-label" for="imageUpload">Choose file</label>
                             </div>
                         </div>
