@@ -24,6 +24,7 @@ class PurchaserController extends Controller
     
         foreach ($purchases as $purchase) {
             $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
+          
             $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" 
             class="btn btn-xs btn-default text-primary mx-1 shadow ' . $isDisabled . '" 
             title="Edit">

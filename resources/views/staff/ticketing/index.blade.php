@@ -5,7 +5,7 @@
 @section('plugins.DatatablesPlugin', true)
 
 @section('content_header')
-<h1 class="ml-1">Ticket</h1>
+    <h1 class="ml-1">Ticket</h1>
 @stop
 
 @section('content')
@@ -23,7 +23,6 @@
 
                     @php
                         $heads = [
-                            'ID',
                             'Ticket #',
                             'Department',  
                             'Responsible Department',                        
@@ -35,14 +34,22 @@
                         ];
 
                         $config = [
-                            'data' => $data,
-                            'order' => [[0, 'desc']],
-                            'columns' => [null, null, null, ['orderable' => false]],
+                            'order' => [[6, 'desc']], // Sort by Date Request (column index 6)
+                            'columns' => [
+                                null, // Ticket #
+                                null, // Department
+                                null, // Responsible Department
+                                null, // Concern Type
+                                ['orderable' => false], // Image (disable sorting)
+                                null, // Status
+                                null, // Date Request (Ensure this is sortable)
+                                ['orderable' => false], // Actions (disable sorting)
+                            ],
                         ];
                     @endphp
 
-                    <x-adminlte-datatable id="table1" :heads="$heads" hoverable>
-                        @foreach ($config['data'] as $row)
+                    <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" hoverable class="table-custom">
+                        @foreach ($data as $row)
                             <tr>
                                 @foreach ($row as $cell)
                                     <td>{!! $cell !!}</td>
@@ -88,5 +95,12 @@
             const deleteValue = $(this).data('delete');
             $('#deleteId').val(deleteValue);
         });
+
+        // Ensure sorting works properly
+        // $(document).ready(function() {
+        //     $('#table1').DataTable({
+        //         "order": [[6, "desc"]], // Sort by Date Request
+        //     });
+        // });
     </script>
 @endsection

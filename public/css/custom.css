@@ -1,0 +1,16 @@
+.table-custom {
+    background: linear-gradient(to right, #f3f3f3, #e0e0e0) !important; /* Gradient Background */
+}
+
+.table-custom th {
+    background: #343a40 !important; /* Dark Background for Header */
+    color: white !important; /* White Text */
+}
+
+.table-custom td {
+    background: rgba(255, 255, 255, 0.9) !important; /* Light Background for Rows */
+    color: #333 !important; /* Dark Text */
+}
+/* .content-wrapper {
+    background: linear-gradient(179deg, rgba(255,255,255,1) 0%, rgba(23,222,61,1) 99%) !important; 
+} */

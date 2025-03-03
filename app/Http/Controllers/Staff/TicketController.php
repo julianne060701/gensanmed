@@ -14,18 +14,20 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::orderBy('id', 'desc')->get(); 
+        $tickets = Ticket::orderBy('created_at', 'desc')->get();
+
         $data = [];
     
         foreach ($tickets as $ticket) {
-            $btnShow = '<a href=" " class="btn btn-xs btn-default text-info mx-1 shadow" title="View">
-                            <i class="fa fa-lg fa-fw fa-eye"></i>
-                        </a>';
-    
-            $btnEdit = '<a href="#" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
-                            <i class="fa fa-lg fa-fw fa-pen"></i>
-                        </a>';
-    
+            $isDisabled = ($ticket->status === 'Approved') ? 'disabled' : '';
+
+    $btnEdit = ($ticket->status === 'Approved')
+        ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Edit Disabled" disabled>
+                <i class="fa fa-lg fa-fw fa-pen"></i>
+           </button>'
+        : '<a href="' . route('staff.ticketing.edit', $ticket->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
+                <i class="fa fa-lg fa-fw fa-pen"></i>
+           </a>';
             $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
                             title="Delete" data-delete="' . $ticket->id . '" 
                             data-toggle="modal" data-target="#deleteModal">
@@ -48,7 +50,6 @@ class TicketController extends Controller
 
   
             $rowData = [
-                $ticket->id,
                 $ticket->ticket_number,
                 $ticket->department,
                 $ticket->responsible_department,
@@ -56,7 +57,7 @@ class TicketController extends Controller
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 $ticket->created_at->format('m/d/Y'),
-                '<nobr>' . $btnShow . $btnEdit . $btnDelete . '</nobr>',
+               '<nobr>'  . $btnEdit . $btnDelete . '</nobr>',
             ];
             $data[] = $rowData;
         }
@@ -64,7 +65,25 @@ class TicketController extends Controller
         return view('staff.ticketing.index', compact('data'));
     }
     
-    
+    public function accept($id)
+{
+    $ticket = Ticket::findOrFail($id);
+    $ticket->status = 'approved';
+    $ticket->save();
+
+    return response()->json(['message' => 'Ticket approved successfully!']);
+}
+
+public function getTicketDetails($id)
+{
+    $ticket = Ticket::find($id);
+
+    if (!$ticket) {
+        return response()->json(['error' => 'Ticket not found'], 404);
+    }
+
+    return response()->json($ticket);
+}
     /**
      * Show the form for creating a new resource.
      */
@@ -131,33 +150,34 @@ class TicketController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $ticket = Ticket::findOrFail($id);
+{
+    $ticket = Ticket::findOrFail($id);
 
-        $validated = $request->validate([
-            'ticket_number' => 'required|unique:tickets,ticket_number,' . $id,
-            'department' => 'required',
-            'responsible_department' => 'required',
-            'concern_type' => 'required',
-            'urgency' => 'required|integer|min:1|max:5',
-            'serial_number' => 'required',
-            'remarks' => 'nullable|string',
-            'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'status' => 'required|in:Pending,Approved,Denied,Completed,Defective',
-        ]);
+    $validated = $request->validate([
+        'ticket_number' => 'required|unique:tickets,ticket_number,' . $id,
+        'department' => 'required',
+        'responsible_department' => 'required',
+        'concern_type' => 'required',
+        'urgency' => 'required|integer|min:1|max:5',
+        'serial_number' => 'required',
+        'remarks' => 'nullable|string',
+        'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        'status' => 'required|in:Pending,Approved,Denied,Completed,Defective',
+    ]);
 
-        // Handle Image Upload
-        if ($request->hasFile('image_url')) {
-            $image = $request->file('image_url');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $imagePath = $image->storeAs('ticket_images', $imageName, 'public');
-            $validated['image_url'] = 'storage/' . $imagePath;
-        }
-
-        $ticket->update($validated);
-
-        return redirect()->route('staff.ticketing.index')->with('success', 'Ticket updated successfully.');
+    // Handle Image Upload
+    if ($request->hasFile('image_url')) {
+        $image = $request->file('image_url');
+        $imageName = time() . '_' . $image->getClientOriginalName();
+        $imagePath = $image->storeAs('ticket_images', $imageName, 'public');
+        $validated['image_url'] = 'storage/' . $imagePath;
     }
+
+    $ticket->update($validated);
+
+    return redirect()->route('staff.ticketing.index')->with('success', 'Ticket updated successfully.');
+}
+
 
     /**
      * Remove the specified resource from storage.

@@ -5,7 +5,39 @@
 @section('plugins.DatatablesPlugin', true)
 
 @section('content_header')
-<h1>Purchaser Dashboard</h1>
+@section('css')
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+#calendar {
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.custom-event {
+    background-color: rgba(40, 167, 69, 0.2) !important;
+    /* Light Green Background */
+    border-left: 4px solid #28a745 !important;
+    /* Green Border */
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    color: black !important;
+    /* Dark text */
+    font-weight: normal;
+}
+
+.custom-event strong {
+    color: #155724;
+    /* Darker Green for Time */
+    font-weight: bold;
+}
+.content-wrapper {
+    background: white !important;
+}
+</style>
+@stop
+<h1>Purchaer Dashboard</h1>
 @stop
 
 @section('content')
@@ -102,42 +134,26 @@
 </div>
 @stop
 
-@section('css')
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-#calendar {
-    max-width: 1200px;
-    margin: 20px auto;
-}
-
-.custom-event {
-    background-color: rgba(40, 167, 69, 0.2) !important;
-    /* Light Green Background */
-    border-left: 4px solid #28a745 !important;
-    /* Green Border */
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 14px;
-    color: black !important;
-    /* Dark text */
-    font-weight: normal;
-}
-
-.custom-event strong {
-    color: #155724;
-    /* Darker Green for Time */
-    font-weight: bold;
-}
-</style>
-@stop
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+  function showSuccessMessage(title, message) {
+        Swal.fire({
+            icon: 'success',
+            title: title,
+            text: message,
+            showConfirmButton: false,
+            timer: 2000
+        }).then(() => {
+            window.location.href = "{{ route('admin.home') }}"; // Redirect after success
+        });
+    }
+
+
 document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -198,102 +214,135 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle saving new event
     document.getElementById('saveEvent').addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent form submission
+            e.preventDefault();
 
-        var title = document.getElementById('eventTitle').value;
-        var description = document.getElementById('eventDescription').value;
-        var fromDate = document.getElementById('fromDate').value;
-        var toDate = document.getElementById('toDate').value;
+            var title = document.getElementById('eventTitle').value;
+            var description = document.getElementById('eventDescription').value;
+            var fromDate = document.getElementById('fromDate').value;
+            var toDate = document.getElementById('toDate').value;
 
-        // Validate form inputs
-        if (title && description && fromDate && toDate) {
-            $.ajax({
-                url: "{{ route('events.store') }}",
-                method: "POST",
-                data: {
-                    eventTitle: title,
-                    eventDescription: description,
-                    fromDate: fromDate,
-                    toDate: toDate,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    alert(response.message);
-                    $('#eventModal').modal('hide');
-                    document.getElementById('eventForm').reset();
-                    calendar.refetchEvents();
-                },
-                error: function(xhr) {
-                    alert('Error: ' + xhr.responseJSON.message);
-                }
-            });
-        } else {
-            alert('Please fill out all fields.');
-        }
-    });
+            if (title && description && fromDate && toDate) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Do you want to save this event?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#28a745",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, save it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('events.store') }}",
+                            method: "POST",
+                            data: {
+                                eventTitle: title,
+                                eventDescription: description,
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                showSuccessMessage("Success!", response.message);
+                                $('#eventModal').modal('hide');
+                                document.getElementById('eventForm').reset();
+                                calendar.refetchEvents();
+                            },
+                            error: function(xhr) {
+                                Swal.fire("Error", "Failed to save event: " + xhr.responseJSON.message, "error");
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire("Warning", "Please fill out all fields.", "warning");
+            }
+        });
 
     // Handle updating event
     document.getElementById('updateEvent').addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent form submission
+            e.preventDefault();
 
-        var eventId = document.getElementById('eventId').value;
-        var title = document.getElementById('eventDetailsTitle').value;
-        var description = document.getElementById('eventDetailsDescription').value;
-        var fromDate = document.getElementById('eventDetailsStart').value;
-        var toDate = document.getElementById('eventDetailsEnd').value;
+            var eventId = document.getElementById('eventId').value;
+            var title = document.getElementById('eventDetailsTitle').value;
+            var description = document.getElementById('eventDetailsDescription').value;
+            var fromDate = document.getElementById('eventDetailsStart').value;
+            var toDate = document.getElementById('eventDetailsEnd').value;
 
-        // Validate form inputs
-        if (title && description && fromDate && toDate) {
-            $.ajax({
-                url: "/events/" + eventId, // Route for updating event
-                method: "PUT",
-                data: {
-                    eventTitle: title,
-                    eventDescription: description,
-                    fromDate: fromDate,
-                    toDate: toDate,
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    alert(response.message);
-                    $('#eventDetailsModal').modal('hide');
-                    calendar.refetchEvents();
-                },
-                error: function(xhr) {
-                    alert('Error: ' + xhr.responseJSON.message);
+            if (title && description && fromDate && toDate) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "Do you want to update this event?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, update it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/events/" + eventId,
+                            method: "PUT",
+                            data: {
+                                eventTitle: title,
+                                eventDescription: description,
+                                fromDate: fromDate,
+                                toDate: toDate,
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                showSuccessMessage("Updated!", response.message);
+                                $('#eventDetailsModal').modal('hide');
+                                calendar.refetchEvents();
+                            },
+                            error: function(xhr) {
+                                Swal.fire("Error", "Failed to update event: " + xhr.responseJSON.message, "error");
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire("Warning", "Please fill out all fields.", "warning");
+            }
+        });
+
+        // Handle deleting event with confirmation
+        document.getElementById('deleteEvent').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            var eventId = document.getElementById('eventId').value;
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/events/" + eventId,
+                        method: "DELETE",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            showSuccessMessage("Deleted!", response.message);
+                            $('#eventDetailsModal').modal('hide');
+                            calendar.refetchEvents();
+                        },
+                        error: function(xhr) {
+                            Swal.fire("Error", "Failed to delete event: " + xhr.responseJSON.message, "error");
+                        }
+                    });
                 }
             });
-        } else {
-            alert('Please fill out all fields.');
-        }
+        });
+
     });
+    
 
-    // Handle deleting event
-    document.getElementById('deleteEvent').addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent form submission
-
-        var eventId = document.getElementById('eventId').value;
-
-        // Confirm delete action
-        if (confirm("Are you sure you want to delete this event?")) {
-            $.ajax({
-                url: "/events/" +
-                eventId, // Route for updating event (for inactivating/deleting)
-                method: "DELETE",
-                data: {
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    alert(response.message);
-                    $('#eventDetailsModal').modal('hide');
-                    calendar.refetchEvents(); // Refresh calendar events
-                },
-                error: function(xhr) {
-                    alert('Error: ' + xhr.responseJSON.message);
-                }
-            });
-        }
-    });
-});
 </script>
 @stop

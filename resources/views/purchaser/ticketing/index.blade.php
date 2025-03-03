@@ -36,7 +36,7 @@
                         ];
                     @endphp
 
-                    <x-adminlte-datatable id="table1" :heads="$heads" hoverable>
+                    <x-adminlte-datatable id="table1" :heads="$heads" hoverable class="table-custom">
                         @foreach ($data as $row)
                             <tr>
                                 @foreach ($row as $cell)
