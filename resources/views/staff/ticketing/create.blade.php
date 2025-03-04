@@ -1,24 +1,100 @@
 @extends('adminlte::page')
 
 @section('title', 'Ticket Request')
+@section('css')
+<style>
+    .print-btn, .status-btn {
+        background-color: #008CBA;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        flex: 1;
+    }
+    p{
+        font-size: 16px;
+    }
+    .print-btn:hover, .status-btn:hover {
+        background-color: #005f73;
+    }
 
+    #printArea {
+        display: none;
+        text-align: left;
+        padding: 20px;
+        border: 1px solid #000;
+        margin: 30px auto;
+        max-width: 1000px; /* Increased max-width */
+        background-color: white;
+    }
+
+    #printArea img {
+        display: block;
+        margin: 0 auto 20px;
+        width: 120px;
+    }
+
+    .signature {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px; /* Increased margin-top */
+    }
+
+    .signature-line {
+        border-top: 1px solid black;
+        width: 45%;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    @media print {
+        .container, .logout, .print-btn {
+            display: none;
+        }
+
+        #printArea {
+            display: block;
+            width: 100%;
+            font-size: 16px;
+            padding: 15px;
+            margin: 0 auto; /* Center the print area */
+        }
+
+        body {
+            padding: 10px;
+        }
+
+        .signature-line {
+            width: 45%;
+        }
+
+        .signature {
+            margin-top: 30px; /* Increased margin-top */
+        }
+    }
+
+
+</style>
+@endsection
 @section('content_header')
 <h1 class="ml-1">Ticket Request</h1>
 @stop
 
 @section('content')
-    <div class="container">
+    <div class="container centered-container">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('staff.ticketing.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="ticketForm" action="{{ route('staff.ticketing.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     {{-- Ticket Number & Serial Number --}}
                     <div class="form-row">
-                    <div class="col-md-6">
-                        <label for="ticket_number">Ticket Number</label>
-                        <input type="text" name="ticket_number" class="form-control" value="{{ $ticketNumber }}" readonly>
-                    </div>
+                        <div class="col-md-6">
+                            <label for="ticket_number">Ticket Number</label>
+                            <input type="text" name="ticket_number" class="form-control" value="{{ $ticketNumber }}" readonly>
+                        </div>
 
                         <div class="col-md-6">
                             <label for="serial_number">Serial No.</label>
@@ -88,15 +164,66 @@
                         <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 200px; display: none;" />
                     </div>
 
+                    <!-- Print & Submit Buttons -->
+                    <button type="button" class="btn btn-primary mt-4" onclick="printConcern()">Print</button>
                     <button type="submit" class="btn btn-success mt-4">Submit Request</button>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- Print Area -->
+    <div id="printArea">
+        <img src="{{ asset('img/logo.png') }}" alt="Company Logo" style="width: 200px;">
+        <h1 style="text-align: center;">Concern Ticket</h1>
+        <hr style="border-top: 3px solid #bbb;">
+
+        <p style="font-size: 20px;"><strong>Ticket Number:</strong> <span id="printTicketNumber"></span></p>
+        <p style="font-size: 20px;"><strong>Serial No.:</strong> <span id="printSerialNumber"></span></p>
+        <p style="font-size: 20px;"><strong>Department:</strong> <span id="printDepartment"></span></p>
+        <p style="font-size: 20px;"><strong>Responsible Department:</strong> <span id="printResponsibleDepartment"></span></p>
+        <p style="font-size: 20px;"><strong>Concern Type:</strong> <span id="printConcernType"></span></p>
+        <p style="font-size: 20px;"><strong>Urgency:</strong> <span id="printUrgency"></span></p>
+        <hr style="border-top: 3px solid #bbb;">
+        <h2 style="font-size: 24px;">Concern Details:</h2>
+        <p id="printRemarks" style="font-size: 20px;"></p>
+        <hr style="border-top: 3px solid #bbb;">
+        <h2 style="font-size: 24px;">Supporting Document:</h2>
+        <img id="printImage" src="#" alt="Uploaded Image" style="width: 100%; max-width: 300px; height: auto; display: none;" />
+
+<br><br><br><br><br><br>
+        <div class="signature">
+            <div class="signature-line">Approved By</div>
+            <div class="signature-line">Received By</div>
         </div>
     </div>
 @endsection
 
 @section('js')
     <script>
+        function printConcern() {
+            document.getElementById("printTicketNumber").innerText = document.querySelector('input[name="ticket_number"]').value;
+            document.getElementById("printSerialNumber").innerText = document.querySelector('input[name="serial_number"]').value;
+            document.getElementById("printDepartment").innerText = document.querySelector('input[name="department"]').value;
+            document.getElementById("printResponsibleDepartment").innerText = document.querySelector('select[name="responsible_department"]').value;
+            document.getElementById("printConcernType").innerText = document.querySelector('select[name="concern_type"]').value;
+            document.getElementById("printUrgency").innerText = document.querySelector('select[name="urgency"]').value;
+            document.getElementById("printRemarks").innerText = document.querySelector('textarea[name="remarks"]').value;
+
+            const imagePreview = document.getElementById('imagePreview');
+            const printImage = document.getElementById('printImage');
+            if (imagePreview.src) {
+                printImage.src = imagePreview.src;
+                printImage.style.display = 'block';
+            } else {
+                printImage.style.display = 'none';
+            }
+
+            document.getElementById("printArea").style.display = "block";
+            window.print();
+            document.getElementById("printArea").style.display = "none";
+        }
+
         document.getElementById('imageUpload').addEventListener('change', function (event) {
             const inputFile = event.target;
             const file = inputFile.files[0];
