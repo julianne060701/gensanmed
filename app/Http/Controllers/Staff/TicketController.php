@@ -14,7 +14,9 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::orderBy('created_at', 'desc')->get();
+        $tickets = Ticket::where('created_by', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
 
         $data = [];
     
@@ -117,6 +119,7 @@ public function getTicketDetails($id)
     // Set default values
     $validated['ticket_number'] = $ticketNumber;
     $validated['status'] = 'Pending'; // Default status
+    $validated['created_by'] = auth()->id(); // Assign logged-in user's ID
 
     // Handle Image Upload (store in public folder)
     if ($request->hasFile('image_url')) {

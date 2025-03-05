@@ -19,5 +19,14 @@ class Ticket extends Model
         'remarks',
         'image_url',
         'status',
+        'created_by', // Add this line
     ];
+
+    /**
+     * Relationship: A ticket belongs to a user (creator).
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 }

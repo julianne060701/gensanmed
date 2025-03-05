@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('remarks')->nullable();
             $table->string('image_url')->nullable();
             $table->enum('status', ['Pending', 'Approved', 'Denied', 'Completed', 'Defective'])->default('Pending');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
