@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', 'Ticket Request')
-
+<link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('content_header')
 <h1 class="ml-1">Ticket Request</h1>
 @stop

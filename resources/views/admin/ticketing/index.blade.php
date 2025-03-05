@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', 'Dashboard')
+<link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('css')
 <style>
 /* Modal Styling */

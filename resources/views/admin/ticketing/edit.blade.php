@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('content')
 <div class="container">
     <h2 class="mb-4">Edit Ticket</h2>

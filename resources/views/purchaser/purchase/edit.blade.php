@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', 'Edit PO')
-
+<link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('content_header')
 <h1 class="ml-1">Edit PO</h1>
 @stop

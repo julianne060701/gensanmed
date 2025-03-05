@@ -1,7 +1,7 @@
 @extends('adminlte::page')
 
 @section('title', 'Create User')
-
+<link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('content_header')
     <h1 class="ml-1">Create User</h1>
 @stop
