@@ -3,6 +3,132 @@
 @section('adminlte_css_pre')
     <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
+    @section('css')
+    <style>
+        /* Body styles with animated linear gradient background */
+        body {
+            background: linear-gradient(135deg, 
+                rgb(192, 196, 116), 
+                rgb(73, 152, 190), 
+                rgb(23,222,61,1), 
+                rgb(151, 158, 83),
+                rgb(43, 107, 140), 
+                rgb(26, 103, 52),
+                rgb(12, 61, 78), 
+                rgb(120, 165, 73), 
+                rgb(4, 84, 164)
+            );
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Gradient animation to create a flowing effect */
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Main login container */
+        .login-box {
+            width: 400px;
+            margin-top: 50px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background for the form */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Form title */
+        .login-box .card-header {
+            background-color: #0056b3;  /* Darker blue */
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Form fields */
+        .form-control {
+            border-radius: 5px;
+            box-shadow: none;
+            border: 1px solid #ced4da;
+            margin-bottom: 15px;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Input group */
+        .input-group-text {
+            background-color: #f4f6f9;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
+        /* Button styles */
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .btn-block {
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+        }
+
+        /* Remember me checkbox */
+        .icheck-primary input[type="checkbox"]:checked ~ .icheck-label {
+            color: #007bff;
+        }
+
+        /* Forgot password link */
+        .forgot-password-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .forgot-password-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .forgot-password-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive design */
+        @media (max-width: 767px) {
+            .login-box {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+    </style>
+
 
 @stop
 
