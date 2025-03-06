@@ -55,7 +55,7 @@
                 @if($purchase->image_url)
                     <div class="form-group">
                         <p>Current Document:</p>
-                        <a href="{{ asset('storage/' . $purchase->image_url) }}" target="_blank" class="btn btn-primary">
+                        <a href="{{ asset($purchase->image_url) }}" target="_blank" class="btn btn-primary">
                             View PDF
                         </a>
                     </div>
@@ -68,31 +68,45 @@
 </div>
 
 <!-- Confirmation Modal -->
-<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">Confirm Update</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to update this Purchase Order?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="submitEditForm">Yes, Update</button>
-            </div>
+<form id="deleteBed" method="POST">
+    @csrf
+    @method('DELETE') <!-- Ensure DELETE method is used -->
+    <div class="modal-content">
+        <div class="modal-header bg-danger">
+            <h4 class="modal-title">Delete</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <h3>Are you sure you want to delete <span id="userNameDisplay"></span>?</h3>
+            <input type="hidden" name="deleteId" id="deleteId">
+        </div>
+        <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-danger">Delete</button>
         </div>
     </div>
-</div>
+</form>
+
 @endsection
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    $(document).on('click', '.Delete', function () {
+    let purchaseId = $(this).data('delete');
+    let purchaseName = $(this).data('name');
+    
+    $('#deleteId').val(purchaseId);
+    $('#userNameDisplay').text(purchaseName);
+    
+    // Update form action dynamically
+    let deleteUrl = "{{ route('purchaser.purchase.destroy', ':id') }}".replace(':id', purchaseId);
+    $('#deleteBed').attr('action', deleteUrl);
+});
+
     document.getElementById('fileUpload').addEventListener('change', function (event) {
         const inputFile = event.target;
         const fileName = inputFile.files[0]?.name || 'Choose file';

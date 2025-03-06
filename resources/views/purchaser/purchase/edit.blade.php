@@ -10,7 +10,7 @@
 <div class="container">
     <div class="card">
         <div class="card-body">
-            <form id="editForm" action="{{ route('admin.purchase.update', $purchase->id) }}" method="POST" enctype="multipart/form-data">
+            <form id="editForm" action="{{ route('purchaser.purchase.update', $purchase->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -55,7 +55,7 @@
                 @if($purchase->image_url)
                     <div class="form-group">
                         <p>Current Document:</p>
-                        <a href="{{ asset('storage/' . $purchase->image_url) }}" target="_blank" class="btn btn-primary">
+                        <a href="{{ asset($purchase->image_url) }}" target="_blank" class="btn btn-primary">
                             View PDF
                         </a>
                     </div>

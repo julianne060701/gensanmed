@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-
+use App\Http\Controllers\PurchaserController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -51,8 +51,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchaser/purchase', [App\Http\Controllers\Purchaser\PurchaserController::class, 'index'])->name('purchaser.purchase.index');
     Route::get('purchase/create', [App\Http\Controllers\Purchaser\PurchaserController::class, 'create'])->name('purchaser.purchase.create');
     Route::post('purchaser/purchase/store', [App\Http\Controllers\Purchaser\PurchaserController::class, 'store'])->name('purchaser.purchase.store');
-    Route::get('purchaser/purchase/{id}/edit', [App\Http\Controllers\Purchaser\PurchaserController::class, 'edit'])->name('purchaser.purchase.edit');
-    Route::put('purchaser/purchase/{id}/update', [App\Http\Controllers\Purchaser\PurchaserController::class, 'update'])->name('purchaser.purchase.update');
+    Route::get('purchaser/{id}/edit', [App\Http\Controllers\Purchaser\PurchaserController::class, 'edit'])->name('purchaser.purchase.edit');
+    // Route::delete('/purchaser/purchase/{id}', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
+    // Route::post('/purchaser/purchase', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
+    Route::delete('/purchaser/purchase/{id}', [App\Http\Controllers\Purchaser\PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
+
+
 
 
 

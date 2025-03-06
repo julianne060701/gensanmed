@@ -16,7 +16,7 @@ class PurchaserController extends Controller
      */
     public function index()
     {
-        $purchases = PurchaserPO::all();
+        $purchases = PurchaserPO::orderBy('created_at', 'desc')->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
@@ -26,10 +26,10 @@ class PurchaserController extends Controller
                         </a>';
     
             $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-                          title="Delete" data-delete="' . $purchase->id . '" 
-                          data-toggle="modal" data-target="#deleteModal">
-                          <i class="fa fa-lg fa-fw fa-trash"></i>
-                          </button>';
+                        title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
+                        data-delete="'. $purchase->id .'" data-name="'. $purchase->name .'">
+                        <i class="fa fa-lg fa-fw fa-trash"></i>
+                        </button>';
     
             // Display a PDF link
             $pdfDisplay = $purchase->image_url 
@@ -170,8 +170,23 @@ class PurchaserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        $purchase = PurchaserPO::find($id);
+    
+        if (!$purchase) {
+            return redirect()->route('purchaser.purchase.index')->with('error', 'Purchase Order not found!');
+        }
+    
+        // Delete the associated file if it exists
+        if ($purchase->image_url && file_exists(public_path($purchase->image_url))) {
+            unlink(public_path($purchase->image_url));
+        }
+    
+        // Delete the record from the database
+        $purchase->delete();
+    
+        return redirect()->route('purchaser.purchase.index')->with('success', 'PO deleted successfully!');
+        
     }
 }

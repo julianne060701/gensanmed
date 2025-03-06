@@ -14,7 +14,7 @@
 <div class="container-fluid">
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary px-5">Upload PO</a>
+        <!-- <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary px-5">Upload PO</a> -->
     </div>
 
 
@@ -22,12 +22,11 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-
                     @php
                         $heads = [
                             'ID',
                             'PO #',
-                            'Name',                          
+                            'Name',
                             'Remarks',
                             'Status',
                             'Image',
@@ -37,13 +36,12 @@
 
                         $config = [
                             'data' => $data,
-                            'order' => [[1, 'desc']],
-                            'columns' => [null, null, null, ['orderable' => false]],
+                            'order' => [[6, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
+                            'columns' => [null, null, null, null, null, null, null, ['orderable' => false]],
                         ];
                     @endphp
 
-                    <x-adminlte-datatable id="table1" :heads="$heads" hoverable class="table-custom">
-
+                    <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" hoverable class="table-custom">
                         @foreach ($config['data'] as $row)
                             <tr>
                                 @foreach ($row as $cell)
@@ -59,23 +57,23 @@
     </div>
 </div>
 
-
+<!-- Confirmation Modal -->
 {{-- modal delete --}}
-<div class="modal fade" id="deleteModalBed" tabindex="-1" role="dialog" aria-labelledby="deleteModalBed" aria-hidden="true">
+<div class="modal danger" id="deleteModal" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="deleteBed" action="" method="post">
+        <form id="deleteForm" method="POST">
             @csrf
+            @method('DELETE')
             <div class="modal-content">
                 <div class="modal-header bg-danger">
                     <h4 class="modal-title">Delete</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
-                        
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h3>Are you sure you want to delete <span id="userNameDisplay"></span>?</h3>
-                    <input type="hidden" name="deleteId" id="deleteId">
+                    <h3>Are you sure you want to delete this PO?</h3>
+                    <input type="hidden" name="id" id="deleteId">
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -88,14 +86,20 @@
 @stop
 
 @section('js')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var purchaseId = button.data('delete');
+        var purchaseName = button.data('name');
 
-    <script>
-        $(document).on('click', '.Delete', function () {
-            const deleteValue = $(this).data('delete');
-
-            $('#deleteId').val(deleteValue);
-        });
-        
-    </script>
+        var form = document.getElementById('deleteForm');
+        form.action = "/purchaser/purchase/" + purchaseId;  // Adjust the route if needed
+        document.getElementById('deleteId').value = purchaseId;
+        document.querySelector('.modal-body h3').textContent = 'Are you sure you want to delete ' + purchaseName + '?';
+    });
+});
+</script>
 @endsection
+
 
