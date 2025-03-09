@@ -364,7 +364,7 @@ return [
                     [
                         'text' => 'Purchase Request',
                         'icon' => 'fas fa-file-alt',
-                        'url'  => 'admin/purchase-request',
+                        'url'  => 'admin/purchase_request',
                         'can'  => 'view-admin-menu',
                     ],
                 ],

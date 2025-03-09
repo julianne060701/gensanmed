@@ -69,7 +69,7 @@ class UserController extends Controller
             'lname' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:Administrator,IT,Purchaser,Engineer,Staff,Employee',
+            'role' => 'required|string|in:Administrator,IT,Purchaser,Engineer,Staff,Employee,Head', // Added Head role
         ]);
     
         // Create the user

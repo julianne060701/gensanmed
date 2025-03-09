@@ -58,6 +58,7 @@
                             <option value="Engineer" {{ old('role') == 'Engineer' ? 'selected' : '' }}>Engineer</option>
                             <option value="Staff" {{ old('role') == 'Staff' ? 'selected' : '' }}>Staff</option>
                             <option value="Employee" {{ old('role') == 'Employee' ? 'selected' : '' }}>Employee</option>
+                            <option value="Head" {{ old('role') == 'Head' ? 'selected' : '' }}>Head</option> <!-- Added new role -->
                         </select>
                         @error('role')
                             <div class="alert alert-danger">{{ $message }}</div>
