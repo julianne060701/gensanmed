@@ -43,12 +43,14 @@ class LoginController extends Controller
             return redirect()->route('engineer.home');
         } elseif ($user->hasRole('IT')) {
             return redirect()->route('IT.index');
-        }elseif ($user->hasRole('Purchaser')) {
+        } elseif ($user->hasRole('Purchaser')) {
             return redirect()->route('purchaser.home');
         } elseif ($user->hasRole('Staff')) {
             return redirect('/staff/home');
         } elseif ($user->hasRole('Employee')) {
             return redirect('/employee/home');
+        } elseif ($user->hasRole('Head')) {
+            return redirect()->route('head.home'); // Added new role
         }
         
     

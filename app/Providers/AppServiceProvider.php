@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -26,8 +27,13 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-engineer-menu', function ($user) {
             return $user->hasRole('engineer');
         });
+
         Gate::define('view-purchaser-menu', function ($user) {
             return $user->hasRole('purchaser');
+        });
+
+        Gate::define('view-head-menu', function ($user) {
+            return $user->hasRole('head'); // Added new gate for Head role
         });
     }
 }

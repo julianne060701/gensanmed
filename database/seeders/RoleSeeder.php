@@ -20,7 +20,8 @@ class RoleSeeder extends Seeder
             'IT',
             'Engineer',
             'Staff',
-            'Employee'
+            'Employee',
+            'Head' // Added new role
         ];
 
         foreach ($roles as $roleName) {
@@ -35,14 +36,14 @@ class RoleSeeder extends Seeder
             'Engineer' => ['view-engineer-menu'],
             'Staff' => ['view-staff-menu'],
             'Employee' => ['view-employee-menu'],
+            'Head' => ['view-head-menu'] // Added new permission
         ];
 
         foreach ($permissions as $roleName => $rolePermissions) {
             $role = Role::where('name', $roleName)->first();
-
-            foreach ($rolePermissions as $permission) {
-                $perm = Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
-                $role->givePermissionTo($perm);
+            foreach ($rolePermissions as $permissionName) {
+                $permission = Permission::firstOrCreate(['name' => $permissionName, 'guard_name' => 'web']);
+                $role->givePermissionTo($permission);
             }
         }
     }

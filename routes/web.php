@@ -14,6 +14,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/engineer/home', [App\Http\Controllers\Engineer\EngineerController::class, 'index'])->name('engineer.home');
     Route::get('/purchaser/home', [App\Http\Controllers\Purchaser\PurchaserController::class, 'home'])->name('purchaser.home');
     Route::get('/staff/home', [App\Http\Controllers\Staff\StaffController::class, 'index'])->name('staff.home');
+    Route::get('/head/home', [App\Http\Controllers\Head\HeadController::class, 'index'])->name('head.home'); // Added new route for Head role
 });
 
 //Admin route
@@ -37,7 +38,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('admin/purchase/{id}/update', [App\Http\Controllers\PurchaserController::class, 'update'])->name('admin.purchase.update');
     
 
-// ticketing routes
+    // PR Routes
+    Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchaser_request.index');
+
+    // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
     Route::get('admin/ticket/create', [App\Http\Controllers\TicketController::class, 'create'])->name('admin.ticketing.create');
     Route::post('admin/ticket/store', [App\Http\Controllers\TicketController::class, 'store'])->name('admin.ticketing.store');
