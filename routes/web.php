@@ -14,7 +14,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/engineer/home', [App\Http\Controllers\Engineer\EngineerController::class, 'index'])->name('engineer.home');
     Route::get('/purchaser/home', [App\Http\Controllers\Purchaser\PurchaserController::class, 'home'])->name('purchaser.home');
     Route::get('/staff/home', [App\Http\Controllers\Staff\StaffController::class, 'index'])->name('staff.home');
-    Route::get('/head/home', [App\Http\Controllers\Head\HeadController::class, 'index'])->name('head.home'); // Added new route for Head role
+    Route::get('/head/home', [App\Http\Controllers\Head\HeadController::class, 'home'])->name('head.home'); // Added new route for Head role
 });
 
 //Admin route
@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
     
 
     // PR Routes
-    Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchaser_request.index');
+    Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
 
     // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
@@ -52,7 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'update'])->name('admin.ticketing.update');
     
 
-// Purchaser Routes
+// Purchaser ACCESS Routes
     Route::get('purchaser/purchase', [App\Http\Controllers\Purchaser\PurchaserController::class, 'index'])->name('purchaser.purchase.index');
     Route::get('purchase/create', [App\Http\Controllers\Purchaser\PurchaserController::class, 'create'])->name('purchaser.purchase.create');
     Route::post('purchaser/purchase/store', [App\Http\Controllers\Purchaser\PurchaserController::class, 'store'])->name('purchaser.purchase.store');
@@ -62,7 +62,9 @@ Route::middleware(['auth'])->group(function () {
     // Route::delete('/purchaser/purchase/{id}', [App\Http\Controllers\Purchaser\PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
 
 
+// PR access route
 
+    Route::get('purchaser/purchase_request', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'index'])->name('purchaser.purchase_request.index');
 
 
 // Engineer Routes
@@ -76,3 +78,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('staff/ticketing/{id}/edit', [App\Http\Controllers\Staff\TicketController::class, 'edit'])->name('staff.ticketing.edit');
     Route::put('/staff/ticketing/{id}', [App\Http\Controllers\Staff\TicketController::class, 'update'])->name('staff.ticketing.update');
 
+// Head Route
+
+// calendar Route
+    Route::get('head/calendar', [App\Http\Controllers\Head\CalendarController::class, 'index'])->name('head.calendar.index');
+    Route::post('head/calendar/store', [App\Http\Controllers\Head\CalendarController::class, 'store'])->name('head.calendar.store');
+    Route::get('head/calendar/fetch', [App\Http\Controllers\Head\CalendarController::class, 'fetchEvents'])->name('head.calendar.fetch');
+    Route::put('head/calendar/{event}', [App\Http\Controllers\Head\CalendarController::class, 'update'])->name('head.calendar.update');
+    Route::delete('head/calendar/{event}', [App\Http\Controllers\Head\CalendarController::class, 'destroy'])->name('head.calendar.destroy');
+
+    // Purchase Request Route
+    Route::get('head/purchase_request', [App\Http\Controllers\Head\PurchaseRequestController::class, 'index'])->name('head.purchase_request.index');
+    Route::get('head/purchase_request/create', [App\Http\Controllers\Head\PurchaseRequestController::class, 'create'])->name('head.purchase_request.create');
+    Route::post('head/purchase_request', [App\Http\Controllers\Head\PurchaseRequestController::class, 'store'])->name('head.purchase_request.store');
+
+    // ticketing routes
+    Route::get('head/ticketing', [App\Http\Controllers\Head\TicketController::class, 'index'])->name('head.ticketing.index');

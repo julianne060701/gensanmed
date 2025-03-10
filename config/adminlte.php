@@ -432,18 +432,63 @@ return [
                 'can'         => 'view-purchaser-menu',
             ],
             [
-                'text'  => 'Manage Purchase',
-                'icon'  => 'fas fa-cart-plus',
-                'url'   => 'purchaser/purchase',
-                'can'   => 'view-purchaser-menu',
+                'text'    => 'Manage Purchase',
+                'icon'    => 'fas fa-cart-plus',
+                'can'     => 'view-purchaser-menu',
+                'submenu' => [
+                    [
+                        'text' => 'Manage PO',
+                        'icon' => 'fas fa-file-invoice',
+                        'url'  => 'purchaser/purchase',
+                        'can'  => 'view-purchaser-menu',
+                    ],
+                    [
+                        'text' => 'Purchase Request',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'purchaser/purchase_request',
+                        'can'  => 'view-purchaser-menu',
+                    ],
+                ],
             ],
-            // [
-            //     'text'  => 'Manage Ticket',
-            //     'icon'  => 'fas fa-fw fa-ticket-alt',
-            //     'url'   => 'purchaser/ticketing',
-            //     'can'   => 'view-purchaser-menu',
-            // ],
+
+              // -----------------------------------------------------
+            // Purchaser Sidebar Items (Only for Purchaser Request)
+            // -----------------------------------------------------
+            [
+                'header' => 'PURCHASER REQUEST PANEL',
+                'can'    => 'view-head-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'head/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-head-menu',
+            ],
+            [
+                'text'    => 'Manage Purchase',
+                'icon'    => 'fas fa-cart-plus',
+                'can'     => 'view-head-menu',
+                'submenu' => [
+        
+                    [
+                        'text' => 'Purchase Request',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'head/purchase_request',
+                        'can'  => 'view-head-menu',
+                    ],
+                ],
+            ],
+                 
+            [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'head/ticketing',
+                'can'   => 'view-head-menu',
+            ],
+       
         ],
+
 
     /*
     |--------------------------------------------------------------------------

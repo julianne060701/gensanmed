@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Head;
 
-use Illuminate\Http\Request;
-use App\Models\PurchaserPO;
-use Illuminate\Support\Facades\Storage;
-use App\Models\User;
 use App\Http\Controllers\Controller;
-class PurchaseRequestController extends Controller
+use Illuminate\Http\Request;
+
+class HeadController extends Controller
 {
+
+    public function home()
+    {
+        return view('head.home');
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-     
-        return view('admin.purchase_request.index');
+        //
     }
 
     /**

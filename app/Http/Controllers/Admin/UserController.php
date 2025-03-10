@@ -82,7 +82,7 @@ class UserController extends Controller
         // Assign the role to the user
         $user->assignRole($validated['role']);
     
-        return redirect()->route('admin.user.create')->with('success', 'User created successfully!');
+        return redirect()->route('admin.user.index')->with('success', 'User created successfully!');
     
     }
 

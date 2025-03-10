@@ -38,14 +38,14 @@
 }
 </style>
 @stop
-<h1>Purchaer Dashboard</h1>
+<h1>Dashboard</h1>
 @stop
 
 @section('content')
 <!-- Button to trigger modal (for adding new event) -->
-<!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#eventModal">
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#eventModal">
     <i class="fas fa-plus"></i> Add Event
-</button> -->
+</button>
 
 <!-- FullCalendar -->
 <div id="calendar"></div>
@@ -150,7 +150,7 @@
             showConfirmButton: false,
             timer: 2000
         }).then(() => {
-            window.location.href = "{{ route('admin.home') }}"; // Redirect after success
+            window.location.href = "{{ route('head.home') }}"; // Redirect after success
         });
     }
 
