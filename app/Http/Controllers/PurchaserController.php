@@ -25,11 +25,11 @@ class PurchaserController extends Controller
                         <i class="fa fa-lg fa-fw fa-pen"></i>
                         </a>';
     
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-                        title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
-                        data-delete="'. $purchase->id .'" data-name="'. $purchase->name .'">
-                        <i class="fa fa-lg fa-fw fa-trash"></i>
-                        </button>';
+            // $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+            //             title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
+            //             data-delete="'. $purchase->id .'" data-name="'. $purchase->name .'">
+            //             <i class="fa fa-lg fa-fw fa-trash"></i>
+            //             </button>';
     
             // Display a PDF link
             $pdfDisplay = $purchase->image_url 
@@ -58,7 +58,7 @@ class PurchaserController extends Controller
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
+                '<nobr>' . $btnEdit . '</nobr>',
             ];
     
             $data[] = $rowData;

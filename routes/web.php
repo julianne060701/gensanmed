@@ -35,6 +35,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/purchase/create', [App\Http\Controllers\PurchaserController::class, 'create'])->name('admin.purchase.create');
     Route::get('admin/purchase/{id}/edit', [App\Http\Controllers\PurchaserController::class, 'edit'])->name('admin.purchase.edit');
     Route::put('admin/purchase/{id}/update', [App\Http\Controllers\PurchaserController::class, 'update'])->name('admin.purchase.update');
+    
 
 // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
@@ -54,7 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchaser/{id}/edit', [App\Http\Controllers\Purchaser\PurchaserController::class, 'edit'])->name('purchaser.purchase.edit');
     // Route::delete('/purchaser/purchase/{id}', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
     // Route::post('/purchaser/purchase', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
-    Route::delete('/purchaser/purchase/{id}', [App\Http\Controllers\Purchaser\PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
+    // Route::delete('/purchaser/purchase/{id}', [App\Http\Controllers\Purchaser\PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
 
 
 

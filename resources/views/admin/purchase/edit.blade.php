@@ -21,7 +21,7 @@
                             <option value="Pending" {{ $purchase->status == 'Pending' ? 'selected' : ''}}>Pending</option> 
                             <option value="Approved" {{ $purchase->status === 'Approved' ? 'selected' : '' }}>Approved</option>
                             <option value="Denied" {{ $purchase->status === 'Denied' ? 'selected' : '' }}>Denied</option>
-                            <option value="Send to Supplier" {{ $purchase->status === 'Send to Supplier' ? 'selected' : '' }}>Send to Supplier</option>
+                            <option value="Hold" {{ $purchase->status === 'Hold' ? 'selected' : '' }}>Hold</option>
                         </select>
                     </div>
 
@@ -68,26 +68,7 @@
 </div>
 
 <!-- Confirmation Modal -->
-<form id="deleteBed" method="POST">
-    @csrf
-    @method('DELETE') <!-- Ensure DELETE method is used -->
-    <div class="modal-content">
-        <div class="modal-header bg-danger">
-            <h4 class="modal-title">Delete</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <h3>Are you sure you want to delete <span id="userNameDisplay"></span>?</h3>
-            <input type="hidden" name="deleteId" id="deleteId">
-        </div>
-        <div class="modal-footer justify-content-between">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-danger">Delete</button>
-        </div>
-    </div>
-</form>
+
 
 @endsection
 
@@ -95,17 +76,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    $(document).on('click', '.Delete', function () {
-    let purchaseId = $(this).data('delete');
-    let purchaseName = $(this).data('name');
-    
-    $('#deleteId').val(purchaseId);
-    $('#userNameDisplay').text(purchaseName);
-    
-    // Update form action dynamically
-    let deleteUrl = "{{ route('purchaser.purchase.destroy', ':id') }}".replace(':id', purchaseId);
-    $('#deleteBed').attr('action', deleteUrl);
-});
+
 
     document.getElementById('fileUpload').addEventListener('change', function (event) {
         const inputFile = event.target;
