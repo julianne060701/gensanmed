@@ -13,17 +13,18 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        $purchases = PR::orderBy('created_at', 'desc')->get();
+        $purchases = PR::where('status', 'Approved')->orderBy('created_at', 'desc')->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
             $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
           
-            $btnEdit = '<a href=" " 
-            class="btn btn-xs btn-default text-primary mx-1 shadow ' . $isDisabled . '" 
-            title="Edit">
-            <i class="fa fa-lg fa-fw fa-pen"></i>
-            </a>';
+            $btnEdit = '<a href="' . route('purchaser.purchase_request.edit', $purchase->id) . '" 
+class="btn btn-xs btn-default text-primary mx-1 shadow" 
+title="Edit">
+<i class="fa fa-lg fa-fw fa-pen"></i>
+</a>';
+
     
             $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
             title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
@@ -97,16 +98,35 @@ class PurchaseRequestController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $purchase = PR::findOrFail($id);
+        return view('purchaser.purchase_request.edit', compact('purchase'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $purchase = PR::findOrFail($id); // Ensure you use the correct model
+    
+        $purchase->request_number = $request->request_number;
+        $purchase->po_number = $request->po_number;
+        $purchase->requester_name = $request->requester_name;
+        $purchase->remarks = $request->remarks;
+    
+        // Handle file upload
+        if ($request->hasFile('attachment_url')) {
+            $file = $request->file('attachment_url');
+            $path = $file->store('attachments', 'public');
+            $purchase->attachment_url = $path;
+        }
+    
+        $purchase->save();
+    
+        return redirect()->route('purchaser.purchase_request.index')
+            ->with('success', 'Purchase request updated successfully!');
     }
+    
 
     /**
      * Remove the specified resource from storage.

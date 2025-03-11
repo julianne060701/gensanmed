@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function () {
     // PR Routes
     Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
 
+
     // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
     Route::get('admin/ticket/create', [App\Http\Controllers\TicketController::class, 'create'])->name('admin.ticketing.create');
@@ -57,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchase/create', [App\Http\Controllers\Purchaser\PurchaserController::class, 'create'])->name('purchaser.purchase.create');
     Route::post('purchaser/purchase/store', [App\Http\Controllers\Purchaser\PurchaserController::class, 'store'])->name('purchaser.purchase.store');
     Route::get('purchaser/{id}/edit', [App\Http\Controllers\Purchaser\PurchaserController::class, 'edit'])->name('purchaser.purchase.edit');
+    
+
     // Route::delete('/purchaser/purchase/{id}', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
     // Route::post('/purchaser/purchase', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
     // Route::delete('/purchaser/purchase/{id}', [App\Http\Controllers\Purchaser\PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
@@ -65,6 +68,10 @@ Route::middleware(['auth'])->group(function () {
 // PR access route
 
     Route::get('purchaser/purchase_request', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'index'])->name('purchaser.purchase_request.index');
+    Route::get('purchaser/purchase_request/{id}/edit', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'edit'])->name('purchaser.purchase_request.edit');
+    Route::put('purchaser/purchase_request/{id}', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'update'])->name('purchaser.purchase_request.update');
+
+    Route::post('/purchase/accept', [App\Http\Controllers\PurchaseRequestController::class, 'accept'])->name('purchase.accept');
 
 
 // Engineer Routes
@@ -92,5 +99,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('head/purchase_request/create', [App\Http\Controllers\Head\PurchaseRequestController::class, 'create'])->name('head.purchase_request.create');
     Route::post('head/purchase_request', [App\Http\Controllers\Head\PurchaseRequestController::class, 'store'])->name('head.purchase_request.store');
 
+    
     // ticketing routes
     Route::get('head/ticketing', [App\Http\Controllers\Head\TicketController::class, 'index'])->name('head.ticketing.index');

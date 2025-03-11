@@ -18,6 +18,7 @@ class TicketController extends Controller
         $data = [];
     
         foreach ($tickets as $ticket) {
+            
             $btnAccept = '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
             title="Accept" data-id="' . $ticket->id . '">
            <i class="fas fa-lg fa-fw fa-check-circle"></i>
