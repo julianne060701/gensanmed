@@ -24,7 +24,7 @@
                             'PR #',
                             'PO #', // Add PO # column header
                             'Name',
-                            'Remarks',
+                            'Description',
                             'Status',
                             'Image',
                             'Date Created',
@@ -52,11 +52,54 @@
         </div>
     </div>
 </div>
-
+<!-- Purchase Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purchaseModalLabel">Purchase Request Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Purchase request details will be loaded here dynamically -->
+                <p><strong>Request Number:</strong> <span id="modalRequestNumber"></span></p>
+                <p><strong>Requester Name:</strong> <span id="modalRequesterName"></span></p>
+                <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+                <p><strong>Remarks From Admin:</strong> <span id="modalRemarks"></span></p>
+                <p><strong>Approved Date:</strong> <span id="modalApprovedDate"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @stop
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    console.log("DataTable Loaded");
+
+$(document).on('click', '.view-purchase', function() {
+        var purchaseId = $(this).data('id');
+        
+        // Make an AJAX request to fetch the purchase request details
+        $.get('/purchase_requests/' + purchaseId, function(data) {
+            // Populate the modal with the fetched data
+            $('#modalRequestNumber').text(data.request_number);
+            $('#modalRequesterName').text(data.requester_name);
+            $('#modalDescription').text(data.description);
+            $('#modalRemarks').text(data.remarks);
+
+            // Format the date
+            var updatedAt = new Date(data.updated_at);
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+            var formattedDate = updatedAt.toLocaleDateString('en-US', options);
+            $('#modalApprovedDate').text(formattedDate);
+        });
+    });
+ 
 </script>
 @endsection

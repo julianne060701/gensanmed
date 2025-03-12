@@ -24,10 +24,10 @@
                             'PR #',
                             'PO #', // Add PO # column header
                             'Name',
-                            'Remarks',
+                            'Description',
                             'Status',
                             'Image',
-                            'Date Created',
+                            'Date Requested',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 

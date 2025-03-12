@@ -32,10 +32,10 @@
                     <input type="text" name="requester_name" class="form-control" placeholder="Enter Requester Name" value="{{ old('requester_name', $purchase->requester_name ?? '') }}" required readonly>
                 </div>
                 
-                <!-- Remarks -->
+                <!-- Description -->
                 <div class="form-group">
-                    <label for="remarks">Remarks</label>
-                    <textarea name="remarks" class="form-control" placeholder="Enter Remarks (Optional)" readonly>{{ old('remarks', $purchase->remarks ?? '') }}</textarea>
+                    <label for="description">Description</label>
+                    <textarea name="description" class="form-control" placeholder="Enter description (Optional)" >{{ old('description', $purchase->description ?? '') }}</textarea>
                 </div>
                 
                 <!-- Attachment -->

@@ -13,17 +13,17 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        $purchases = PR::where('status', 'Approved')->orderBy('created_at', 'desc')->get();
+        $purchases = PR::whereIn('status', ['Pending for PO', 'Approved'])->orderBy('created_at', 'desc')->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
             $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
           
             $btnEdit = '<a href="' . route('purchaser.purchase_request.edit', $purchase->id) . '" 
-class="btn btn-xs btn-default text-primary mx-1 shadow" 
-title="Edit">
-<i class="fa fa-lg fa-fw fa-pen"></i>
-</a>';
+            class="btn btn-xs btn-default text-primary mx-1 shadow" 
+            title="Edit">
+            <i class="fa fa-lg fa-fw fa-pen"></i>
+            </a>';
 
     
             $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
@@ -56,7 +56,7 @@ title="Edit">
                 $purchase->request_number,
                 $purchase->po_number, 
                 $purchase->requester_name,
-                $purchase->remarks,
+                $purchase->description,
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
@@ -108,11 +108,16 @@ title="Edit">
     public function update(Request $request, $id)
     {
         $purchase = PR::findOrFail($id); // Ensure you use the correct model
-    
+
         $purchase->request_number = $request->request_number;
         $purchase->po_number = $request->po_number;
         $purchase->requester_name = $request->requester_name;
-        $purchase->remarks = $request->remarks;
+        $purchase->description = $request->description;
+    
+        // If a PO number is provided, update the status to "Approved"
+        if (!empty($request->po_number)) {
+            $purchase->status = 'Approved';
+        }
     
         // Handle file upload
         if ($request->hasFile('attachment_url')) {

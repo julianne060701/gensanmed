@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('pr', function (Blueprint $table) {
             $table->id();
             $table->integer('request_number')->unique();
+            $table->string('po_number')->nullable(); // Added po_number column
             $table->string('requester_name');
-            $table->text('remarks')->nullable();
-            $table->enum('status', ['Pending For PO', 'Approved', 'Denied', 'Pending Delivery', 'Hold'])->default('Pending For PO');
+            $table->text('description')->nullable(); // Added description column
+            $table->enum('status', ['Pending For Admin', 'Pending For PO', 'Approved', 'Denied', 'Pending Delivery', 'Hold'])->default('Pending For Admin');
             $table->string('attachment_url')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->text('remarks')->nullable(); // Moved remarks column
             $table->timestamps();
             $table->softDeletes();
         });

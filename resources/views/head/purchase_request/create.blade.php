@@ -28,30 +28,31 @@
                         <input type="text" name="requester_name" id="requester_name" class="form-control" placeholder="Enter requester name" required>
                     </div>
                     
-                    {{-- Remarks --}}
+
+                    {{-- Description --}}
                     <div class="form-group">
-                        <label for="remarks">Remarks</label>
-                        <textarea name="remarks" id="remarks" class="form-control" rows="3" placeholder="Enter remarks"></textarea>
+                        <label for="description">Description</label>
+                        <textarea name="description" id="description" class="form-control" rows="3" placeholder="Enter description"></textarea>
                     </div>
 
                     {{-- PDF Upload --}}
-<div class="form-group">
-    <label for="pdfUpload">Upload PR (PDF)</label>
-    <div class="input-group">
-        <div class="custom-file">
-            <input type="file" class="custom-file-input" name="attachment_url" id="pdfUpload" accept="application/pdf">
-            <label class="custom-file-label" for="pdfUpload">Choose PDF</label>
-        </div>
-        <div class="input-group-append">
-            <span class="input-group-text">Upload</span>
-        </div>
-    </div>
-</div>
+                    <div class="form-group">
+                        <label for="pdfUpload">Upload PR (PDF)</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" name="attachment_url" id="pdfUpload" accept="application/pdf">
+                                <label class="custom-file-label" for="pdfUpload">Choose PDF</label>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text">Upload</span>
+                            </div>
+                        </div>
+                    </div>
 
-<!-- Display selected file name -->
-<div class="form-group">
-    <p id="fileName" class="mt-2"></p>
-</div>
+                    <!-- Display selected file name -->
+                    <div class="form-group">
+                        <p id="fileName" class="mt-2"></p>
+                    </div>
 
                     <button type="submit" class="btn btn-success mt-4">Submit PR</button>
                 </form>

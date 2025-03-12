@@ -15,7 +15,9 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        $purchases = PR::orderBy('created_at', 'desc')->get();
+        $purchases = PR::where('created_by', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
@@ -32,6 +34,11 @@ class PurchaseRequestController extends Controller
             data-delete=" ">
             <i class="fa fa-lg fa-fw fa-trash"></i>
             </button>';
+
+            $btnShow = '<button class="btn btn-xs btn-default text-info mx-1 shadow view-purchase" 
+            title="View" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#purchaseModal">
+            <i class="fas fa-lg fa-fw fa-eye"></i>
+        </button>';
         
             // Display a PDF link
             $pdfDisplay = $purchase->attachment_url 
@@ -45,7 +52,8 @@ class PurchaseRequestController extends Controller
                 'Approved' => 'badge-success', // Green
                 'Denied' => 'badge-danger', // Red
                 'Send to Supplier' => 'badge-warning', // Yellow
-                'Pending' => 'badge-secondary' // Default (Gray)
+                'Pending' => 'badge-secondary', // Default (Gray)
+                'Hold' => 'badge-secondary', // Gray
             ];
     
             // Ensure status key exists
@@ -57,11 +65,11 @@ class PurchaseRequestController extends Controller
                 $purchase->request_number,
                 $purchase->po_number, 
                 $purchase->requester_name,
-                $purchase->remarks,
+                $purchase->description,
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
+                '<nobr>' . $btnShow . $btnEdit . $btnDelete . '</nobr>',
             ];
     
             $data[] = $rowData;
@@ -87,7 +95,7 @@ class PurchaseRequestController extends Controller
           $validated = $request->validate([
             'request_number' => 'required|integer|min:1|unique:pr,request_number',
             'requester_name' => 'required|string|max:255',
-            'remarks' => 'nullable|string|max:1000',
+            'description' => 'nullable|string|max:1000',
             'attachment_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
         ]);
     
@@ -103,9 +111,10 @@ class PurchaseRequestController extends Controller
         PR::create([
             'request_number' => $validated['request_number'],
             'requester_name' => $validated['requester_name'],
-            'remarks' => $validated['remarks'] ?? null,
+            'description' => $validated['description'] ?? null,
             'attachment_url' => $pdfPath, // Store file path
             'created_by' => auth()->id(), // Store the ID of the authenticated user
+            'status' => 'Pending For Admin',
         ]);
         return redirect()->route('head.purchase_request.index')->with('success', 'PR uploaded successfully!');
     }
@@ -115,7 +124,8 @@ class PurchaseRequestController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $purchase = PR::findOrFail($id);
+        return response()->json($purchase);
     }
 
     /**

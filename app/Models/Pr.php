@@ -15,9 +15,12 @@ class Pr extends Model
     protected $fillable = [
         'request_number',
         'requester_name',
+        'po_number',
+        'description', // Added description field
         'remarks',
         'attachment_url',
         'created_by',
+        'status',
     ];
 
     /**

@@ -21,24 +21,30 @@ class PurchaseRequestController extends Controller
     
         foreach ($purchases as $purchase) {
             $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
-          
+        
+
             $btnAccept = '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
-    title="Accept" data-id="' . $purchase->id . '">
-    <i class="fas fa-lg fa-fw fa-check-circle"></i>
-</button>';
+                title="Accept" data-id="' . $purchase->id . '">
+                <i class="fas fa-lg fa-fw fa-check-circle"></i>
+            </button>';
 
-
-            $btnEdit = '<a href=" " 
-            class="btn btn-xs btn-default text-primary mx-1 shadow ' . $isDisabled . '" 
-            title="Edit">
-            <i class="fa fa-lg fa-fw fa-pen"></i>
-            </a>';
     
             $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-            title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
-            data-delete=" ">
-            <i class="fa fa-lg fa-fw fa-trash"></i>
-            </button>';
+            title="Delete" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#deleteModal">
+            <i class="fas fa-lg fa-fw fa-times-circle"></i>
+        </button>';
+
+        $btnShow = '<button class="btn btn-xs btn-default text-info mx-1 shadow view-purchase" 
+            title="View" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#purchaseModal">
+            <i class="fas fa-lg fa-fw fa-eye"></i>
+        </button>';
+
+        $btnHold = '<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
+        title="Hold" data-id="' . $purchase->id . '">
+        <i class="fas fa-lg fa-fw fa-pause-circle"></i>
+    </button>';
+        
+
         
             // Display a PDF link
             $pdfDisplay = $purchase->attachment_url 
@@ -52,7 +58,8 @@ class PurchaseRequestController extends Controller
                 'Approved' => 'badge-success', // Green
                 'Denied' => 'badge-danger', // Red
                 'Send to Supplier' => 'badge-warning', // Yellow
-                'Pending' => 'badge-secondary' // Default (Gray)
+                'Pending' => 'badge-secondary', // Default (Gray)
+                'Hold' => 'badge-secondary', // Gray
             ];
     
             // Ensure status key exists
@@ -64,11 +71,11 @@ class PurchaseRequestController extends Controller
                 $purchase->request_number,
                 $purchase->po_number, 
                 $purchase->requester_name,
-                $purchase->remarks,
+                $purchase->description,
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>' . $btnAccept .$btnEdit . $btnDelete . '</nobr>',
+                '<nobr>' . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
             ];
     
             $data[] = $rowData;
@@ -82,7 +89,7 @@ class PurchaseRequestController extends Controller
     $purchase = PR::find($request->id);
     
     if ($purchase) {
-        $purchase->status = 'Approved'; // Set status to approved
+        $purchase->status = 'Pending For PO'; // Set status to approved
         $purchase->save();
 
         return response()->json(['success' => 'Purchase request accepted successfully.']);
@@ -113,7 +120,8 @@ class PurchaseRequestController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $purchase = PR::findOrFail($id);
+        return response()->json($purchase);
     }
 
     /**
@@ -139,4 +147,30 @@ class PurchaseRequestController extends Controller
     {
         //
     }
+
+
+    public function delete(Request $request)
+    {
+        $purchase = PR::find($request->id);
+
+        if ($purchase) {
+            $purchase->status = 'Denied'; // Set status to Denied
+            $purchase->remarks = $request->remarks; // Save the remarks
+            $purchase->save(); // Update record
+
+            return response()->json(['success' => 'Purchase request denied successfully.']);
+        }
+
+        return response()->json(['error' => 'Purchase request not found.'], 404);
+    }
+
+    public function hold($id)
+    {
+        $purchase = PR::findOrFail($id);
+        $purchase->status = 'Hold';
+        $purchase->save();
+
+        return response()->json(['success' => 'Purchase request status updated to Hold.']);
+    }
+
 }

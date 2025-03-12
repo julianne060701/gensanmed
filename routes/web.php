@@ -9,6 +9,11 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::get(
+    'notifications/get',
+    [App\Http\Controllers\NotificationsController::class, 'getNotificationsData']
+)->name('notifications.get');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
     Route::get('/engineer/home', [App\Http\Controllers\Engineer\EngineerController::class, 'index'])->name('engineer.home');
@@ -40,7 +45,11 @@ Route::middleware(['auth'])->group(function () {
 
     // PR Routes
     Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
-
+    Route::post('/purchase/accept', [App\Http\Controllers\PurchaseRequestController::class, 'accept'])->name('purchase.accept');
+    // Route::post('/purchase/deny', [App\Http\Controllers\PurchaseRequestController::class, 'deny'])->name('purchase.deny');
+    Route::post('/purchase/delete', [App\Http\Controllers\PurchaseRequestController::class, 'delete'])->name('purchase.delete');
+    Route::get('/purchase_requests/{id}', [App\Http\Controllers\PurchaseRequestController::class, 'show']);
+    Route::post('/purchase_requests/{id}/hold', [App\Http\Controllers\PurchaseRequestController::class, 'hold']);
 
     // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
@@ -58,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchase/create', [App\Http\Controllers\Purchaser\PurchaserController::class, 'create'])->name('purchaser.purchase.create');
     Route::post('purchaser/purchase/store', [App\Http\Controllers\Purchaser\PurchaserController::class, 'store'])->name('purchaser.purchase.store');
     Route::get('purchaser/{id}/edit', [App\Http\Controllers\Purchaser\PurchaserController::class, 'edit'])->name('purchaser.purchase.edit');
-    
+    Route::get('/purchase_requests/{id}', [App\Http\Controllers\PurchaseRequestController::class, 'show']);
 
     // Route::delete('/purchaser/purchase/{id}', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
     // Route::post('/purchaser/purchase', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
@@ -71,10 +80,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchaser/purchase_request/{id}/edit', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'edit'])->name('purchaser.purchase_request.edit');
     Route::put('purchaser/purchase_request/{id}', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'update'])->name('purchaser.purchase_request.update');
 
-    Route::post('/purchase/accept', [App\Http\Controllers\PurchaseRequestController::class, 'accept'])->name('purchase.accept');
+ 
 
 
-// Engineer Routes
+// Engineer Routes Access
     Route::get('engineer/ticketing', [App\Http\Controllers\Engineer\TicketController::class, 'index'])->name('engineer.ticketing.index');
   
 //Staff Routes
@@ -85,7 +94,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('staff/ticketing/{id}/edit', [App\Http\Controllers\Staff\TicketController::class, 'edit'])->name('staff.ticketing.edit');
     Route::put('/staff/ticketing/{id}', [App\Http\Controllers\Staff\TicketController::class, 'update'])->name('staff.ticketing.update');
 
-// Head Route
+// Head Route Access
 
 // calendar Route
     Route::get('head/calendar', [App\Http\Controllers\Head\CalendarController::class, 'index'])->name('head.calendar.index');
@@ -98,7 +107,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('head/purchase_request', [App\Http\Controllers\Head\PurchaseRequestController::class, 'index'])->name('head.purchase_request.index');
     Route::get('head/purchase_request/create', [App\Http\Controllers\Head\PurchaseRequestController::class, 'create'])->name('head.purchase_request.create');
     Route::post('head/purchase_request', [App\Http\Controllers\Head\PurchaseRequestController::class, 'store'])->name('head.purchase_request.store');
-
+    Route::get('head/purchase_requests/{id}', [App\Http\Controllers\Head\PurchaseRequestController::class, 'show']);
     
     // ticketing routes
     Route::get('head/ticketing', [App\Http\Controllers\Head\TicketController::class, 'index'])->name('head.ticketing.index');
