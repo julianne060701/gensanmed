@@ -19,7 +19,13 @@ class Ticket extends Model
         'remarks',
         'image_url',
         'status',
-        'created_by', // Add this line
+        'created_by',
+        'approval_date',
+        'days_from_request',
+        'completed_date',
+        'days_to_complete',
+        'total_duration',
+        'completed_by',
     ];
 
     /**

@@ -188,6 +188,7 @@
                 <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
                <p><strong>Urgency:</strong> <span id="ticketUrgency"></span></p>
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
+               <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
             </div>
         </div>
     </div>
@@ -215,6 +216,7 @@ $(document).on("click", ".view-ticket", function() {
             $("#ticketStatus").text(response.status);
             $("#ticketUrgency").text(response.urgency);
             $("#ticketRemarks").text(response.remarks);
+            $("#ticketApproved").text(response.approval_date);
 
             // Add spin effect before showing modal
             $("#ticketModal .modal-content").css("animation", "spinIn 0.5s ease-out");

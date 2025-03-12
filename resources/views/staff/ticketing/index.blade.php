@@ -13,7 +13,7 @@
 <div class="container-fluid">
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('staff.ticketing.create') }}" class="btn btn-primary px-5">Create Ticket</a>
+        <a href="{{ route('staff.ticketing.create') }}" class="btn btn-primary px-5">Make Request</a>
     </div>
 
     <div class="row">
@@ -87,6 +87,30 @@
         </form>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ticketModalLabel">Ticket Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <p><strong>Ticket Number:</strong> <span id= "modalTicketNumber"></span></p>
+    <p><strong>Department:</strong> <span id= "modalDepartment"></span></p>
+    <p><strong>Responsible Department:</strong> <span id= "modalResponsibleDepartment"></span></p>
+    <p><strong>Concern Type:</strong> <span id= "modalConcernType"></span></p>
+    <p><strong>Approved Date by Hopss:</strong> <span id= "modalApprovedDate"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 @stop
 
 @section('js')
@@ -95,12 +119,34 @@
             const deleteValue = $(this).data('delete');
             $('#deleteId').val(deleteValue);
         });
+        $(document).on('click', '.view-ticket', function() {
+    var ticketId = $(this).data('id');
 
-        // Ensure sorting works properly
-        // $(document).ready(function() {
-        //     $('#table1').DataTable({
-        //         "order": [[6, "desc"]], // Sort by Date Request
-        //     });
-        // });
+    $.get('/tickets/' + ticketId, function(data) {
+        if (data) {
+            $('#modalTicketNumber').text(data.ticket_number);
+            $('#modalDepartment').text(data.department);
+            $('#modalResponsibleDepartment').text(data.responsible_department);
+            $('#modalConcernType').text(data.concern_type);
+
+            // Format the approved date
+            if (data.updated_at) {
+                var updatedAt = new Date(data.updated_at);
+                var options = { year: 'numeric', month: 'long', day: 'numeric' };
+                $('#modalApprovedDate').text(updatedAt.toLocaleDateString('en-US', options));
+            } else {
+                $('#modalApprovedDate').text('N/A');
+            }
+
+            // Show the modal
+            $('#ticketModal').modal('show');
+        } else {
+            alert('Ticket details not found!');
+        }
+    }).fail(function() {
+        alert('Error fetching ticket details.');
+    });
+});
+
     </script>
 @endsection

@@ -109,12 +109,12 @@
                             <input type="text" name="department" class="form-control" placeholder="Enter Department" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="responsible_department">Responsible Department</label>
-                            <select name="responsible_department" class="form-control" required>
-                                <option value="">Select Responsible Department</option>
-                                <option value="HIMS">HIMS</option>
-                                <option value="Engineer">Engineer</option>
-                            </select>
+                        <label for="responsible_department">Responsible Department</label>
+                        <select name="responsible_department" id="responsible_department" class="form-control" required>
+                            <option value="">Select Responsible Department</option>
+                            <option value="HIMS">HIMS</option>
+                            <option value="Engineer">Engineer</option>
+                        </select>
                         </div>
                     </div>
 
@@ -122,11 +122,9 @@
                     <div class="form-row">
                         <div class="col-md-6">
                             <label for="concern_type">Concern Type</label>
-                            <select name="concern_type" class="form-control" required>
-                                <option value="">Select Concern Type</option>
-                                <option value="Repair">Repair</option>
-                                <option value="Maintenance">Maintenance</option>
-                            </select>
+                            <select name="concern_type" id="concern_type" class="form-control" required>
+                            <option value="">Select Concern Type</option>
+                        </select>
                         </div>
                         <div class="col-md-6">
                             <label for="urgency">Urgency</label>
@@ -149,7 +147,7 @@
 
                     {{-- Supporting Document Upload --}}
                     <div class="form-group">
-                        <label for="imageUpload">Image</label>
+                        <label for="imageUpload">Attach Image</label>
                         <div class="input-group">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" name="image_url" id="imageUpload" accept="image/*">
@@ -251,5 +249,30 @@
                 imagePreview.style.display = 'none';
             }
         });
+        document.addEventListener('DOMContentLoaded', function () {
+        const responsibleDept = document.getElementById('responsible_department');
+        const concernType = document.getElementById('concern_type');
+
+        const concernOptions = {
+            "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
+            "Engineer": ["Fabrication", "Installation", "Repair"]
+        };
+
+        function updateConcernTypes() {
+            const selectedDept = responsibleDept.value;
+            concernType.innerHTML = '<option value="">Select Concern Type</option>';
+
+            if (selectedDept in concernOptions) {
+                concernOptions[selectedDept].forEach(type => {
+                    let option = document.createElement("option");
+                    option.value = type;
+                    option.textContent = type;
+                    concernType.appendChild(option);
+                });
+            }
+        }
+
+        responsibleDept.addEventListener('change', updateConcernTypes);
+    });
     </script>
 @endsection

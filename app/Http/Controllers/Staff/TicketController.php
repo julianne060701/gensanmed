@@ -27,6 +27,7 @@ class TicketController extends Controller
         ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Edit Disabled" disabled>
                 <i class="fa fa-lg fa-fw fa-pen"></i>
            </button>'
+
         : '<a href="' . route('staff.ticketing.edit', $ticket->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
                 <i class="fa fa-lg fa-fw fa-pen"></i>
            </a>';
@@ -35,6 +36,12 @@ class TicketController extends Controller
                             data-toggle="modal" data-target="#deleteModal">
                             <i class="fa fa-lg fa-fw fa-trash"></i>
                         </button>';
+
+                        $btnShow = '<button class="btn btn-xs btn-default text-info mx-1 shadow view-ticket" 
+                        title="View" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#ticketModal">
+                        <i class="fa fa-lg fa-fw fa-eye"></i>
+                        </button>';
+                
     
             $pdfDisplay = $ticket->image_url 
                 ? '<a href="' . asset($ticket->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
@@ -43,7 +50,7 @@ class TicketController extends Controller
                 : 'No PDF';
     
             $statusColors = [
-                'Approved' => 'badge-success',
+                'Approved By Admin' => 'badge-success',
                 'Denied' => 'badge-danger',
                 'Completed' => 'badge-warning',
                 'Defective' => 'badge-danger',
@@ -59,7 +66,7 @@ class TicketController extends Controller
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 $ticket->created_at->format('m/d/Y'),
-               '<nobr>'  . $btnEdit . $btnDelete . '</nobr>',
+               '<nobr>' . $btnShow . $btnEdit . $btnDelete . '</nobr>',
             ];
             $data[] = $rowData;
         }
@@ -180,7 +187,11 @@ public function getTicketDetails($id)
 
     return redirect()->route('staff.ticketing.index')->with('success', 'Ticket updated successfully.');
 }
-
+public function show(string $id)
+{
+    $ticket = Ticket::find($id);
+    return response()->json($ticket);
+}
 
     /**
      * Remove the specified resource from storage.

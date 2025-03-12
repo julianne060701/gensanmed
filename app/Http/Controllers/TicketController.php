@@ -69,7 +69,8 @@ class TicketController extends Controller
 public function accept($id)
 {
     $ticket = Ticket::findOrFail($id);
-    $ticket->status = 'approved';
+    $ticket->status = 'Approved By Admin';
+    $ticket->approval_date = now(); // Store the approval date
     $ticket->save();
 
     return response()->json(['message' => 'Ticket approved successfully!']);
