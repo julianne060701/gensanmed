@@ -148,27 +148,6 @@
     </div>
 </div>
 
-{{-- Delete (Deny) Modal --}}
-<div class="modal fade" id="deleteModalTicket" tabindex="-1" role="dialog" aria-labelledby="deleteModalTicket" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h4 class="modal-title">Deny Ticket</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <h3>Are you sure you want to deny <span id="ticketNameDisplay"></span>?</h3>
-                <input type="hidden" id="deleteId">
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="confirmDeny">Deny</button>
-            </div>
-        </div>
-    </div>
-</div>
 {{-- Ticket Details Modal --}}
 <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -189,10 +168,43 @@
                <p><strong>Urgency:</strong> <span id="ticketUrgency"></span></p>
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
                <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
+               <p><strong>Completed By:</strong> <span id="ticketCompletedBy"></span></p>
+
             </div>
         </div>
     </div>
 </div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Denied Purchase Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="deleteForm">
+                    @csrf
+                    <input type="hidden" id="delete_id">
+                    
+                    <div class="form-group">
+                        <label for="remarks">Enter Remarks:</label>
+                        <textarea class="form-control" id="remarks" rows="3" required></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Denied</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @stop
 
@@ -216,7 +228,21 @@ $(document).on("click", ".view-ticket", function() {
             $("#ticketStatus").text(response.status);
             $("#ticketUrgency").text(response.urgency);
             $("#ticketRemarks").text(response.remarks);
-            $("#ticketApproved").text(response.approval_date);
+
+            // Format the approval date using JavaScript
+            if (response.approval_date) {
+                var approvalDate = new Date(response.approval_date);
+                var formattedDate = approvalDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                $("#ticketApproved").text(formattedDate);
+            } else {
+                $("#ticketApproved").text('N/A');
+            }
+
+            $("#ticketCompletedBy").text(response.completed_by);
 
             // Add spin effect before showing modal
             $("#ticketModal .modal-content").css("animation", "spinIn 0.5s ease-out");
@@ -226,37 +252,6 @@ $(document).on("click", ".view-ticket", function() {
     });
 });
 
-    $('#confirmDeny').on('click', function () {
-        let ticketId = $('#deleteId').val();
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This ticket will be marked as Denied!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, deny it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: `/admin/tickets/${ticketId}/deny`,
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        _method: 'POST'
-                    },
-                    success: function (response) {
-                        Swal.fire('Denied!', 'The ticket has been denied.', 'success')
-                        .then(() => { location.reload(); });
-                    },
-                    error: function (xhr) {
-                        Swal.fire('Error!', 'Something went wrong: ' + xhr.responseText, 'error');
-                    }
-                });
-            }
-        });
-    });
 
     $(document).on('click', '.Accept', function () {
         let ticketId = $(this).data('id');
@@ -289,5 +284,63 @@ $(document).on("click", ".view-ticket", function() {
             }
         });
     });
+    
+    $(document).on('click', '.Delete', function () {
+        var id = $(this).data('id');
+        $('#delete_id').val(id); // Set the ID in the modal
+        $('#deleteModal').modal('show'); // Show the modal
+    });
+
+    $('#deleteForm').submit(function (e) {
+        e.preventDefault();
+
+        var id = $('#delete_id').val();
+        var remarks = $('#remarks').val();
+
+        if (remarks.trim() === "") {
+            Swal.fire("Error", "Remarks cannot be empty!", "error");
+            return;
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to Deny this purchase request.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Deny',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('ticketing.delete') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id,
+                        remarks_by: remarks
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Deny!',
+                            text: 'The purchase request has been Denied.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload(); // Reload page after deletion
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    }
+                });
+            }
+        });
+    });
+
+
+
 </script>
 @endsection

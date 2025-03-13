@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PurchaserController;
+
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -51,16 +53,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/purchase_requests/{id}', [App\Http\Controllers\PurchaseRequestController::class, 'show']);
     Route::post('/purchase_requests/{id}/hold', [App\Http\Controllers\PurchaseRequestController::class, 'hold']);
 
+
     // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
     Route::get('admin/ticket/create', [App\Http\Controllers\TicketController::class, 'create'])->name('admin.ticketing.create');
     Route::post('admin/ticket/store', [App\Http\Controllers\TicketController::class, 'store'])->name('admin.ticketing.store');
     Route::get('/admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'getTicketDetails'])->name('ticketing.details');
-    Route::post('/admin/tickets/{id}/deny', [App\Http\Controllers\TicketController::class, 'deny'])->name('ticketing.deny');
     Route::post('/tickets/{id}/accept', [App\Http\Controllers\TicketController::class, 'accept'])->name('tickets.accept');
     Route::get('admmin/ticketing/{id}/edit', [App\Http\Controllers\TicketController::class, 'edit'])->name('admin.ticketing.edit');
     Route::put('admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'update'])->name('admin.ticketing.update');
-    
+    Route::post('/tickets/delete', [App\Http\Controllers\TicketController::class, 'delete'])->name('ticketing.delete');
+    // Route::delete('/admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'destroy'])->name('admin.ticketing.destroy');
+
 
 // Purchaser ACCESS Routes
     Route::get('purchaser/purchase', [App\Http\Controllers\Purchaser\PurchaserController::class, 'index'])->name('purchaser.purchase.index');
@@ -85,6 +89,10 @@ Route::middleware(['auth'])->group(function () {
 
 // Engineer Routes Access
     Route::get('engineer/ticketing', [App\Http\Controllers\Engineer\TicketController::class, 'index'])->name('engineer.ticketing.index');
+    // Route::post('/engineer/accept', [App\Http\Controllers\Engineer\PurchaseRequestController::class, 'accept'])->name('engineer.accept');
+    Route::post('/engineer/tickets/{id}/accept', [App\Http\Controllers\Engineer\TicketController::class, 'accept'])->name('engineer.tickets.accept');
+    Route::post('/engineer/tickets/{id}/complete', [App\Http\Controllers\Engineer\TicketController::class, 'complete']);
+    Route::post('/engineer/tickets/delete', [App\Http\Controllers\Engineer\TicketController::class, 'delete'])->name('engineer.tickets.delete');
   
 //Staff Routes
     Route::get('staff/ticketing', [App\Http\Controllers\Staff\TicketController::class, 'index'])->name('staff.ticketing.index');

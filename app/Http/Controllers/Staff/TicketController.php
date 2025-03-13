@@ -21,9 +21,9 @@ class TicketController extends Controller
         $data = [];
     
         foreach ($tickets as $ticket) {
-            $isDisabled = ($ticket->status === 'Approved') ? 'disabled' : '';
+            $isDisabled = ($ticket->status === 'Approved By Admin') ? 'disabled' : '';
 
-    $btnEdit = ($ticket->status === 'Approved')
+    $btnEdit = ($ticket->status === 'Approved By Admin'|| 'Completed')
         ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Edit Disabled" disabled>
                 <i class="fa fa-lg fa-fw fa-pen"></i>
            </button>'
@@ -31,7 +31,11 @@ class TicketController extends Controller
         : '<a href="' . route('staff.ticketing.edit', $ticket->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
                 <i class="fa fa-lg fa-fw fa-pen"></i>
            </a>';
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+            $btnDelete = ($ticket->status === 'Approved By Admin' || 'Completed' || 'Pending')
+                ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Delete Disabled" disabled>
+                        <i class="fa fa-lg fa-fw fa-trash"></i>
+                   </button>'
+                : '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
                             title="Delete" data-delete="' . $ticket->id . '" 
                             data-toggle="modal" data-target="#deleteModal">
                             <i class="fa fa-lg fa-fw fa-trash"></i>

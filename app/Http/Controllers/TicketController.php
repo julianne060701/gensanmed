@@ -31,11 +31,11 @@ class TicketController extends Controller
     </button>';
 
 
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-                            title="Decline" data-delete="' . $ticket->id . '" 
-                            data-toggle="modal" data-target="#deleteModal">
-                            <i class="fa fa-lg fa-fw fa-times-circle"></i>
-                        </button>';
+    $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete"
+    title="Delete" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#deleteModal">
+    <i class="fas fa-lg fa-fw fa-times-circle"></i>
+</button>';
+
     
             $pdfDisplay = $ticket->image_url 
                 ? '<a href="' . asset($ticket->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
@@ -66,26 +66,26 @@ class TicketController extends Controller
         }
         return view('admin.ticketing.index', compact('data'));
     }
-public function accept($id)
-{
-    $ticket = Ticket::findOrFail($id);
-    $ticket->status = 'Approved By Admin';
-    $ticket->approval_date = now(); // Store the approval date
-    $ticket->save();
+    public function accept($id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->status = 'Approved By Admin';
+        $ticket->approval_date = now(); // Store the approval date
+        $ticket->save();
 
-    return response()->json(['message' => 'Ticket approved successfully!']);
-}
-
-public function getTicketDetails($id)
-{
-    $ticket = Ticket::find($id);
-
-    if (!$ticket) {
-        return response()->json(['error' => 'Ticket not found'], 404);
+        return response()->json(['message' => 'Ticket approved successfully!']);
     }
 
-    return response()->json($ticket);
-}
+    public function getTicketDetails($id)
+    {
+        $ticket = Ticket::find($id);
+
+        if (!$ticket) {
+            return response()->json(['error' => 'Ticket not found'], 404);
+        }
+
+        return response()->json($ticket);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -181,11 +181,19 @@ public function getTicketDetails($id)
         return redirect()->route('staff.ticketing.index')->with('success', 'Ticket updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function delete(Request $request)
     {
-        //
+        $ticket = Ticket::find($request->id); // Corrected model reference
+
+        if ($ticket) {
+            $ticket->status = 'Denied'; // Set status to Denied
+            $ticket->remarks_by = $request->remarks_by; // Save the remarks
+            $ticket->save(); // Update record
+    
+            return response()->json(['success' => 'Ticket request denied successfully.']);
+        }
+    
+        return response()->json(['error' => 'Ticket request not found.'], 404);
     }
+    
 }

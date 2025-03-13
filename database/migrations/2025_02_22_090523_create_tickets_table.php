@@ -21,16 +21,18 @@ return new class extends Migration
             $table->string('serial_number');
             $table->text('remarks')->nullable();
             $table->string('image_url')->nullable();
-            $table->enum('status', ['Pending', 'Approved By Admin', 'Denied', 'Completed', 'Defective'])->default('Pending');
+            $table->enum('status', ['Pending', 'Approved By Admin', 'Accepted', 'In Progress', 'Denied', 'Completed', 'Defective'])->default('Pending');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
-            $table->date('approval_date')->nullable();
+            $table->timestamp('approval_date')->nullable();
             $table->integer('days_from_request')->nullable();
             $table->date('completed_date')->nullable();
             $table->integer('days_to_complete')->nullable();
             $table->integer('total_duration')->nullable();
-            $table->foreignId('completed_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('remarks_by')->nullable();
+            $table->string('completed_by')->nullable();
+            $table->string('responsible_remarks')->nullable();
         });
     }
 

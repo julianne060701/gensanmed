@@ -26,6 +26,8 @@ class Ticket extends Model
         'days_to_complete',
         'total_duration',
         'completed_by',
+        'remarks_by',
+        'responsible_remarks',
     ];
 
     /**
