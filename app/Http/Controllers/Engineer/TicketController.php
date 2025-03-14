@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+
 
 class TicketController extends Controller
 {
@@ -60,12 +62,13 @@ class TicketController extends Controller
                 : 'No PDF';
     
             $statusColors = [
+               'Accepted' => 'badge-success',
                 'Approved By Admin' => 'badge-success',
                 'Denied' => 'badge-danger',
                 'Completed' => 'badge-warning',
                 'Defective' => 'badge-danger',
                 'Pending' => 'badge-secondary',
-                'In Progress' => 'badge-info',
+                'In Progress' => 'badge-info'
             ];
 
   
@@ -76,7 +79,9 @@ class TicketController extends Controller
                 $ticket->concern_type,
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
-                $ticket->created_at->format('m/d/Y'),
+                $ticket->created_at->format('m/d/Y'), 
+                $ticket->total_duration > 0 ? $ticket->total_duration . ' ' . Str::plural('day', $ticket->total_duration) : null,
+               
               '<nobr>' . $btnAccept . $btnCompleted .  $btnDelete . $btnShow  .  '</nobr>',
             ];
             $data[] = $rowData;
@@ -88,7 +93,7 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($id);
         $ticket->status = 'In Progress'; // Change status to "In Progress"
-        $ticket->approval_date = now(); // Store the approval date
+        $ticket->accepted_date = now(); // Store the approval date
         $ticket->save();
     
         return response()->json(['message' => 'Ticket is now In Progress!']);
@@ -99,9 +104,17 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($id);
         $ticket->status = 'Completed';
         $ticket->completed_by = $request->completed_by; 
-        $ticket->completed_date = now(); 
+        $ticket->completed_date = now();
+
+        // Calculate the difference in days from created_at to completed_date
+        $completed_date = \Carbon\Carbon::now();
+        $created_at = \Carbon\Carbon::parse($ticket->created_at);
+        
+        $total_duration = $created_at->diffInDays($completed_date);
+
+        $ticket->total_duration = $total_duration;
         $ticket->save();
-    
+        
         return response()->json(['message' => 'Ticket marked as Completed!']);
     }
 

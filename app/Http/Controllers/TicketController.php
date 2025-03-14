@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -19,7 +20,11 @@ class TicketController extends Controller
     
         foreach ($tickets as $ticket) {
             
-            $btnAccept = '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
+            $btnAccept = ($ticket->status !== 'Pending')
+            ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Accept Disabled" disabled>
+               <i class="fas fa-lg fa-fw fa-check-circle"></i>
+            </button>'
+            :'<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
             title="Accept" data-id="' . $ticket->id . '">
            <i class="fas fa-lg fa-fw fa-check-circle"></i>
         </button>';
@@ -31,10 +36,15 @@ class TicketController extends Controller
     </button>';
 
 
-    $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete"
+    $btnDelete = ($ticket->status !== 'Pending')
+    ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="delete Disabled" disabled>
+       <i class="fas fa-lg fa-fw fa-times-circle"></i>
+    </button>'
+    :'<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete"
     title="Delete" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#deleteModal">
     <i class="fas fa-lg fa-fw fa-times-circle"></i>
 </button>';
+    
 
     
             $pdfDisplay = $ticket->image_url 
@@ -44,11 +54,13 @@ class TicketController extends Controller
                 : 'No PDF';
     
             $statusColors = [
-                'Approved' => 'badge-success',
+               'Accepted' => 'badge-success',
+                'Approved By Admin' => 'badge-success',
                 'Denied' => 'badge-danger',
                 'Completed' => 'badge-warning',
                 'Defective' => 'badge-danger',
-                'Pending' => 'badge-secondary'
+                'Pending' => 'badge-secondary',
+                'In Progress' => 'badge-info'
             ];
 
   
@@ -60,6 +72,7 @@ class TicketController extends Controller
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 $ticket->created_at->format('m/d/Y'),
+                $ticket->total_duration > 0 ? $ticket->total_duration . ' ' . Str::plural('day', $ticket->total_duration) : null ,
               '<nobr>' . $btnAccept .  $btnDelete . $btnShow  .  '</nobr>',
             ];
             $data[] = $rowData;

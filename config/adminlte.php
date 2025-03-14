@@ -365,6 +365,31 @@ return [
                 'url'   => 'admin/ticketing',
                 'can'   => 'view-admin-menu',
             ],
+
+            
+            [
+                'text'    => 'Manage Reports',
+                'icon'    => 'fas fa-fw fa-file-alt',
+                'can'     => 'view-admin-menu',
+                'submenu' => [
+                    
+                        [
+                            'text'  => 'Ticketing Report',
+                            'icon'  => 'fas fa-fw fa-file-alt',
+                            'url'   => 'admin/reports',
+                            'can'   => 'view-admin-menu',
+                        ],
+                    
+                    [
+                        'text' => 'Purchase Request Report',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'admin/purchase_request',
+                        'can'  => 'view-admin-menu',
+                    ],
+                ],
+            ],
+            
+
                   // -----------------------------------------------------
             // Staff Sidebar Items (Only for Staff)
             // -----------------------------------------------------

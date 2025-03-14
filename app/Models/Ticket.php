@@ -21,6 +21,7 @@ class Ticket extends Model
         'status',
         'created_by',
         'approval_date',
+        'accepted_date',
         'days_from_request',
         'completed_date',
         'days_to_complete',

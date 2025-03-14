@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class TicketController extends Controller
 {
@@ -54,11 +55,13 @@ class TicketController extends Controller
                 : 'No PDF';
     
             $statusColors = [
+               'Accepted' => 'badge-success',
                 'Approved By Admin' => 'badge-success',
                 'Denied' => 'badge-danger',
                 'Completed' => 'badge-warning',
                 'Defective' => 'badge-danger',
-                'Pending' => 'badge-secondary'
+                'Pending' => 'badge-secondary',
+                'In Progress' => 'badge-info'
             ];
 
   
@@ -70,6 +73,7 @@ class TicketController extends Controller
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 $ticket->created_at->format('m/d/Y'),
+                $ticket->total_duration > 0 ? $ticket->total_duration . ' ' . Str::plural('day', $ticket->total_duration) : null,
                '<nobr>' . $btnShow . $btnEdit . $btnDelete . '</nobr>',
             ];
             $data[] = $rowData;

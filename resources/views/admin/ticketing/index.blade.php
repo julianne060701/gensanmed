@@ -115,11 +115,12 @@
                             'Image',
                             'Status',
                             'Date Request',
+                            'Total Duration',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 
                         $config = [
-                            'order' => [[6, 'desc']], // Sort by Date Request (column index 6)
+                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
                                 null, // Ticket #
                                 null, // Department
@@ -128,6 +129,7 @@
                                 ['orderable' => false], // Image (disable sorting)
                                 null, // Status
                                 null, // Date Request (Ensure this is sortable)
+                                null,
                                 ['orderable' => false], // Actions (disable sorting)
                             ],
                         ];

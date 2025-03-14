@@ -26,8 +26,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->timestamp('approval_date')->nullable();
+            $table->timestamp('accepted_date')->nullable();
             $table->integer('days_from_request')->nullable();
-            $table->date('completed_date')->nullable();
+            $table->timestamp('completed_date')->nullable();
             $table->integer('days_to_complete')->nullable();
             $table->integer('total_duration')->nullable();
             $table->string('remarks_by')->nullable();
