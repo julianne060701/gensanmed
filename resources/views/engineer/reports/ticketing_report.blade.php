@@ -51,7 +51,7 @@
                 </div>
                 <div class="card-body" id="report-content">
                     @php
-                        $heads = [
+                    $heads = [
                             'Ticket #',
                             'Department',  
                             'Responsible Department',                        

@@ -44,6 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/purchase/{id}/edit', [App\Http\Controllers\PurchaserController::class, 'edit'])->name('admin.purchase.edit');
     Route::put('admin/purchase/{id}/update', [App\Http\Controllers\PurchaserController::class, 'update'])->name('admin.purchase.update');
     
+    // Report Routes
+    Route::get('admin/reports/ticketing_report', [App\Http\Controllers\Admin\TicketReportController::class, 'index'])->name('admin.reports.ticketing_report.index');
 
     // PR Routes
     Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
@@ -94,6 +96,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/engineer/tickets/{id}/complete', [App\Http\Controllers\Engineer\TicketController::class, 'complete']);
     Route::post('/engineer/tickets/delete', [App\Http\Controllers\Engineer\TicketController::class, 'delete'])->name('engineer.tickets.delete');
   
+    // Engineer Report 
+    Route::get('engineer/reports/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');
+
+
 //Staff Routes
     Route::get('staff/ticketing', [App\Http\Controllers\Staff\TicketController::class, 'index'])->name('staff.ticketing.index');
     Route::get('staff/ticketing/create', [App\Http\Controllers\Staff\TicketController::class, 'create'])->name('staff.ticketing.create');

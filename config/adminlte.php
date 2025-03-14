@@ -376,7 +376,7 @@ return [
                         [
                             'text'  => 'Ticketing Report',
                             'icon'  => 'fas fa-fw fa-file-alt',
-                            'url'   => 'admin/reports',
+                            'url'   => 'admin/reports/ticketing_report',
                             'can'   => 'view-admin-menu',
                         ],
                     
@@ -430,6 +430,21 @@ return [
                 'icon'  => 'fas fa-fw fa-ticket-alt',
                 'url'   => 'engineer/ticketing',
                 'can'   => 'view-engineer-menu',
+            ],
+            [
+                'text'    => 'Manage Reports',
+                'icon'    => 'fas fa-fw fa-file-alt',
+                'can'     => 'view-engineer-menu',
+                'submenu' => [
+                    
+                        [
+                            'text'  => 'Ticketing Report',
+                            'icon'  => 'fas fa-fw fa-file-alt',
+                            'url'   => 'admin/reports/ticketing_report',
+                            'can'   => 'view-engineer-menu',
+                        ],
+                    
+                ],
             ],
                     // -----------------------------------------------------
             // Purchaser Sidebar Items (Only for Purchaser)
