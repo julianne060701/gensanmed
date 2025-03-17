@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Engineer;
+namespace App\Http\Controllers\IT;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-
 
 class TicketController extends Controller
 {
@@ -17,7 +16,7 @@ class TicketController extends Controller
     public function index()
     {
         $tickets = Ticket::where('status', '!=', 'Pending')
-        ->where('responsible_department', 'Engineer')
+        ->where('responsible_department', 'HIMS')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -90,10 +89,10 @@ class TicketController extends Controller
             ];
             $data[] = $rowData;
         }
-        return view('engineer.ticketing.index', compact('data'));
+        return view('IT.ticketing.index', compact('data'));
     }
 
-    public function accept($id)
+    public function acceptTicket($id)
     {
         $ticket = Ticket::findOrFail($id);
         $ticket->status = 'In Progress'; // Change status to "In Progress"
@@ -102,6 +101,7 @@ class TicketController extends Controller
     
         return response()->json(['message' => 'Ticket is now In Progress!']);
     }
+
 
     public function complete(Request $request, $id)
     {
@@ -121,7 +121,6 @@ class TicketController extends Controller
         
         return response()->json(['message' => 'Ticket marked as Completed!']);
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -166,7 +165,7 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(Request $request)
+      public function delete(Request $request)
     {
         $ticket = Ticket::find($request->id);
 

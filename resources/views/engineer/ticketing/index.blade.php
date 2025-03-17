@@ -91,6 +91,32 @@
     </div>
 </div>
 
+{{-- Ticket Details Modal --}}
+<div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ticketModalLabel">Ticket Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Ticket Number:</strong> <span id="ticketNumber"></span></p>
+                <p><strong>Serial Number:</strong> <span id="ticketSerial"></span></p>
+                <p><strong>Department:</strong> <span id="ticketDepartment"></span></p>
+                <p><strong>Responsible Department:</strong> <span id="ticketResponsibleDept"></span></p>
+                <p><strong>Concern Type:</strong> <span id="ticketConcern"></span></p>
+                <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
+               <p><strong>Urgency:</strong> <span id="ticketUrgency"></span></p>
+               <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
+               <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
+               <p><strong>Completed By:</strong> <span id="ticketCompletedBy"></span></p>
+
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Delete/Defective  Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -208,20 +234,37 @@ $(document).on("click", ".view-ticket", function() {
         url: "/admin/ticketing/" + ticketId,
         type: "GET",
         success: function(response) {
-            $("#ticketNumber").text(response.ticket_number);
-            $("#ticketSerial").text(response.serial_number);
-            $("#ticketDepartment").text(response.department);
-            $("#ticketResponsibleDept").text(response.responsible_department);
-            $("#ticketConcern").text(response.concern_type);
-            $("#ticketStatus").text(response.status);
-            $("#ticketUrgency").text(response.urgency);
-            $("#ticketRemarks").text(response.remarks);
-            $("#ticketApproved").text(response.approval_date);
+            if (response) {
+                $("#ticketNumber").text(response.ticket_number || "N/A");
+                $("#ticketSerial").text(response.serial_number || "N/A");
+                $("#ticketDepartment").text(response.department || "N/A");
+                $("#ticketResponsibleDept").text(response.responsible_department || "N/A");
+                $("#ticketConcern").text(response.concern_type || "N/A");
+                $("#ticketStatus").text(response.status || "N/A");
+                $("#ticketUrgency").text(response.urgency || "N/A");
+                $("#ticketRemarks").text(response.remarks || "N/A");
 
-            // Add spin effect before showing modal
-            $("#ticketModal .modal-content").css("animation", "spinIn 0.5s ease-out");
+                // Format approval date
+                var approvalDate = "N/A";
+                if (response.approval_date) {
+                    var date = new Date(response.approval_date);
+                    var options = { year: "numeric", month: "long", day: "numeric" };
+                    approvalDate = date.toLocaleDateString("en-US", options);
+                }
+                
+                $("#ticketApproved").text(approvalDate);
+                $("#ticketCompletedBy").text(response.completed_by || "N/A");
 
-            $("#ticketModal").modal("show");
+                // Show modal
+                $("#ticketModal").modal("show");
+            } else {
+                alert("No data found for this ticket.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log("Error: " + error);
+            alert("Failed to fetch ticket details.");
+        
         }
     });
 });

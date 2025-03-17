@@ -19,7 +19,7 @@ class Ticket extends Model
         'remarks',
         'image_url',
         'status',
-        'created_by' => 'datetime',
+        'created_by',
         'approval_date' => 'datetime',
         'accepted_date' => 'datetime',
         'days_from_request',

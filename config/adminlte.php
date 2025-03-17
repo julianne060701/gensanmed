@@ -388,6 +388,69 @@ return [
                     ],
                 ],
             ],
+
+              // -----------------------------------------------------
+            // IT Sidebar Items (Only for IT)
+            // -----------------------------------------------------
+            [
+                'header' => 'IT PANEL',
+                'can'    => 'view-it-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'IT/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-it-menu',
+            ],
+            [
+                'text'  => 'Manage User',
+                'icon'  => 'fas fa-user',
+                'url'   => 'IT/user',
+                'can'   => 'view-it-menu',
+            ],
+            // [
+            //     'text'    => 'Manage Purchase',
+            //     'icon'    => 'fas fa-cart-plus',
+            //     'can'     => 'view-it-menu',
+            //     'submenu' => [
+            //         [
+            //             'text' => 'Purchase Order',
+            //             'icon' => 'fas fa-file-invoice',
+            //             'url'  => 'IT/purchase_order',
+            //             'can'  => 'view-it-menu',
+            //         ],
+            //         [
+            //             'text' => 'Purchase Request',
+            //             'icon' => 'fas fa-file-alt',
+            //             'url'  => 'IT/purchase_request',
+            //             'can'  => 'view-it-menu',
+            //         ],
+            //     ],
+            // ],
+            
+            [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'IT/ticketing',
+                'can'   => 'view-it-menu',
+            ],
+
+            
+            [
+                'text'    => 'Manage Reports',
+                'icon'    => 'fas fa-fw fa-file-alt',
+                'can'     => 'view-it-menu',
+                'submenu' => [
+                    
+                        [
+                            'text'  => 'Ticketing Report',
+                            'icon'  => 'fas fa-fw fa-file-alt',
+                            'url'   => 'IT/reports/ticketing_report',
+                            'can'   => 'view-it-menu',
+                        ],
+                ],
+            ],
             
 
                   // -----------------------------------------------------
@@ -440,7 +503,7 @@ return [
                         [
                             'text'  => 'Ticketing Report',
                             'icon'  => 'fas fa-fw fa-file-alt',
-                            'url'   => 'admin/reports/ticketing_report',
+                            'url'   => 'engineer/ticketing_report',
                             'can'   => 'view-engineer-menu',
                         ],
                     
@@ -481,7 +544,7 @@ return [
             ],
 
               // -----------------------------------------------------
-            // Purchaser Sidebar Items (Only for Purchaser Request)
+            // Head Sidebar Items (Only for Head Request)
             // -----------------------------------------------------
             [
                 'header' => 'PURCHASER REQUEST PANEL',

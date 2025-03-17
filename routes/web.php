@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PurchaserController;
+use App\Http\Controllers\IT\TicketController;
 
 
 Route::get('/', function () {
@@ -11,10 +12,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get(
-    'notifications/get',
-    [App\Http\Controllers\NotificationsController::class, 'getNotificationsData']
-)->name('notifications.get');
+// Route::get(
+//     'notifications/get',
+//     [App\Http\Controllers\NotificationsController::class, 'getNotificationsData']
+// )->name('notifications.get');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
@@ -22,9 +23,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/purchaser/home', [App\Http\Controllers\Purchaser\PurchaserController::class, 'home'])->name('purchaser.home');
     Route::get('/staff/home', [App\Http\Controllers\Staff\StaffController::class, 'index'])->name('staff.home');
     Route::get('/head/home', [App\Http\Controllers\Head\HeadController::class, 'home'])->name('head.home'); // Added new route for Head role
+    Route::get('/IT/home', [App\Http\Controllers\IT\ITController::class, 'index'])->name('IT.home');
 });
 
-//Admin route
+        // -----------------------------------------------------
+            // Administrator Sidebar Items (Only for Administrators)
+            // -----------------------------------------------------
 
 // calendar routes
     Route::post('/events', [App\Http\Controllers\HomeController::class, 'store'])->name('events.store');
@@ -68,6 +72,43 @@ Route::middleware(['auth'])->group(function () {
     // Route::delete('/admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'destroy'])->name('admin.ticketing.destroy');
 
 
+        // -----------------------------------------------------
+            // IT Sidebar Items (Only for IT)
+            // -----------------------------------------------------
+
+            
+
+    // User  Routes IT
+    Route::get('IT/user', [App\Http\Controllers\IT\UserController::class, 'index'])->name('IT.user.index');
+    Route::get('IT/user/create', [App\Http\Controllers\IT\UserController::class, 'create'])->name('IT.user.create');
+    Route::post('IT/user/create', [App\Http\Controllers\IT\UserController::class, 'store'])->name('IT.user.store');
+    Route::get('IT/user/{id}/edit', [App\Http\Controllers\IT\UserController::class, 'edit'])->name('IT.user.edit');
+    Route::put('IT/user/{id}/update', [App\Http\Controllers\IT\UserController::class, 'update'])->name('IT.user.update');
+    Route::delete('IT/user/{id}/delete', [App\Http\Controllers\IT\UserController::class, 'destroy'])->name('IT.user.destroy');
+    Route::get('IT/user/{id}', [App\Http\Controllers\IT\UserController::class, 'show'])->name('IT.user.show');
+
+    // PO Routes IT
+    Route::get('IT/purchase_order', [App\Http\Controllers\IT\POController::class, 'index'])->name('IT.purchase_order.index');
+
+    // Report Routes
+    Route::get('IT/reports/ticketing_report', [App\Http\Controllers\IT\TicketReportController::class, 'index'])->name('IT.reports.ticketing_report.index');
+
+
+    // Ticketing Routes IT
+    Route::get('IT/ticketing', [App\Http\Controllers\IT\TicketController::class, 'index'])->name('IT.ticketing.index');
+    Route::post('/tickets/delete', [App\Http\Controllers\IT\TicketController::class, 'delete'])->name('ticketing.delete');
+    // Route::post('/IT/tickets/{id}/acceptTicket', [App\Http\Controllers\IT\TicketController::class, 'acceptTicket'])->name('IT.tickets.accept');
+    Route::post('/tickets/{id}/acceptTicket', [TicketController::class, 'acceptTicket'])->name('tickets.accept');
+    Route::post('/IT/tickets/{id}/complete', [TicketController::class, 'complete']);
+    Route::get('/IT/ticketing/{id}', [TicketController::class, 'TicketController@show']);
+
+
+  
+
+      // -----------------------------------------------------
+            // Purchaser Sidebar Items (Only for Purchaser)
+            // -----------------------------------------------------
+
 // Purchaser ACCESS Routes
     Route::get('purchaser/purchase', [App\Http\Controllers\Purchaser\PurchaserController::class, 'index'])->name('purchaser.purchase.index');
     Route::get('purchase/create', [App\Http\Controllers\Purchaser\PurchaserController::class, 'create'])->name('purchaser.purchase.create');
@@ -87,7 +128,9 @@ Route::middleware(['auth'])->group(function () {
     Route::put('purchaser/purchase_request/{id}', [App\Http\Controllers\Purchaser\PurchaseRequestController::class, 'update'])->name('purchaser.purchase_request.update');
 
  
-
+     // -----------------------------------------------------
+            // Engineer Sidebar Items (Only for Engineers)
+            // -----------------------------------------------------
 
 // Engineer Routes Access
     Route::get('engineer/ticketing', [App\Http\Controllers\Engineer\TicketController::class, 'index'])->name('engineer.ticketing.index');
@@ -97,8 +140,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/engineer/tickets/delete', [App\Http\Controllers\Engineer\TicketController::class, 'delete'])->name('engineer.tickets.delete');
   
     // Engineer Report 
-    Route::get('engineer/reports/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');
+    Route::get('engineer/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');
 
+
+       // -----------------------------------------------------
+            // Staff Sidebar Items (Only for Staff)
+            // -----------------------------------------------------
 
 //Staff Routes
     Route::get('staff/ticketing', [App\Http\Controllers\Staff\TicketController::class, 'index'])->name('staff.ticketing.index');
@@ -110,7 +157,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tickets/{id}', [App\Http\Controllers\Staff\TicketController::class, 'show']);
 
     
-// Head Route Access
+  // -----------------------------------------------------
+            // Head Sidebar Items (Only for Head Request)
+            // -----------------------------------------------------
 
 // calendar Route
     Route::get('head/calendar', [App\Http\Controllers\Head\CalendarController::class, 'index'])->name('head.calendar.index');

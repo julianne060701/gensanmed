@@ -4,44 +4,52 @@
 @section('plugins.Datatables', true)
 @section('plugins.DatatablesPlugin', true)
 <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
-
 @section('content_header')
-<h1 class="ml-1">Purchaser</h1>
+<h1 class="ml-1">Users</h1>
 @stop
 
 @section('content')
 
 <div class="container-fluid">
 
+    <!-- Button to Create New User -->
     <div class="d-flex justify-content-end mb-3">
-        <!-- <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary px-5">Upload PO</a> -->
+        <a href="{{ route('admin.user.create') }}" class="btn btn-primary px-5">Create User</a>
     </div>
-
 
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+
                     @php
+                        // Columns for the DataTable
                         $heads = [
                             'ID',
-                            'PO #',
-                            'Name',
-                            'Remarks',
-                            'Status',
-                            'Image',
+                            'User Name',
+                            'Email',    
+                            'Role',                       
                             'Date Created',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 
+                        // Configuration for the DataTable
                         $config = [
-                            'data' => $data,
-                            'order' => [[6, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
-                            'columns' => [null, null, null, null, null, null, null, ['orderable' => false]],
+                            'data' => $data,  // $data should contain user data
+                            'order' => [[1, 'desc']],
+                            'columns' => [
+                                null, // ID column
+                                null, // User Name column
+                                null, // Email column
+                                null, // Role column
+                                null, // Date Created column
+                                ['orderable' => false] // Actions column (not orderable)
+                            ],
                         ];
                     @endphp
 
-                    <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" hoverable class="table-custom">
+                    <!-- Display DataTable with User Data -->
+                    <x-adminlte-datatable id="table1" :heads="$heads" hoverable class="table-custom">
                         @foreach ($config['data'] as $row)
                             <tr>
                                 @foreach ($row as $cell)
@@ -52,16 +60,14 @@
                     </x-adminlte-datatable>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- Confirmation Modal -->
-{{-- modal delete --}}
-<div class="modal danger" id="deleteModal" style="display: none;" aria-hidden="true">
+{{-- Modal for Deleting User --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="deleteForm" method="POST">
+        <form id="deleteUserForm" action="" method="post">
             @csrf
             @method('DELETE')
             <div class="modal-content">
@@ -72,8 +78,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h3>Are you sure you want to delete this PO?</h3>
-                    <input type="hidden" name="id" id="deleteId">
+                    <h3>Are you sure you want to delete <span id="userNameDisplay"></span>?</h3>
+                    <input type="hidden" name="deleteId" id="deleteId">
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -83,23 +89,19 @@
         </form>
     </div>
 </div>
+
 @stop
 
 @section('js')
+
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var purchaseId = button.data('delete');
-        var purchaseName = button.data('name');
-
-        var form = document.getElementById('deleteForm');
-        form.action = "/purchaser/purchase/" + purchaseId;  // Adjust the route if needed
-        document.getElementById('deleteId').value = purchaseId;
-        document.querySelector('.modal-body h3').textContent = 'Are you sure you want to delete ' + purchaseName + '?';
+    // Handle delete button click to pass the user ID and name to the modal form
+    $(document).on('click', '.Delete', function () {
+        const userId = $(this).data('delete');
+        const userName = $(this).data('name');
+        $('#deleteId').val(userId);
+        $('#userNameDisplay').text(userName);
     });
-});
 </script>
+
 @endsection
-
-

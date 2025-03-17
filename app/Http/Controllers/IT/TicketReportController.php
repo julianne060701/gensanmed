@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Engineer;
+namespace App\Http\Controllers\IT;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,8 +16,8 @@ class TicketReportController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::where('responsible_department', 'Engineer')
-        -> orderBy('created_at', 'desc')->get();
+        $tickets = Ticket::where('responsible_department', 'HIMS')
+       -> orderBy('created_at', 'desc')->get();
 
         $data = [];
     
@@ -61,8 +61,9 @@ class TicketReportController extends Controller
             ];
             $data[] = $rowData;
         }
-        return view ('engineer.reports.ticketing_report', compact('data'));
+        return view ('IT.reports.ticketing_report', compact('data'));
     }
+    
 
     /**
      * Show the form for creating a new resource.
