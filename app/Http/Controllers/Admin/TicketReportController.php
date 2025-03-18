@@ -16,15 +16,15 @@ class TicketReportController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::orderBy('created_at', 'desc')->get();
+        // $tickets = Ticket::orderBy('created_at', 'desc')->get();
+        $tickets = Ticket::whereIn('status', ['Completed', 'Defective', 'Denied'])
+    ->orderBy('created_at', 'desc')
+    ->get();
 
         $data = [];
     
         foreach ($tickets as $ticket) {
-            
-    
 
-    
             $pdfDisplay = $ticket->image_url 
                 ? '<a href="' . asset($ticket->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
                         View Ticket 

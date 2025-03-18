@@ -340,6 +340,12 @@ return [
                 'can'   => 'view-admin-menu',
             ],
             [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'admin/ticketing',
+                'can'   => 'view-admin-menu',
+            ],
+            [
                 'text'    => 'Manage Purchase',
                 'icon'    => 'fas fa-cart-plus',
                 'can'     => 'view-admin-menu',
@@ -358,15 +364,7 @@ return [
                     ],
                 ],
             ],
-            
-            [
-                'text'  => 'Manage Ticket',
-                'icon'  => 'fas fa-fw fa-ticket-alt',
-                'url'   => 'admin/ticketing',
-                'can'   => 'view-admin-menu',
-            ],
-
-            
+                       
             [
                 'text'    => 'Manage Reports',
                 'icon'    => 'fas fa-fw fa-file-alt',
@@ -383,7 +381,7 @@ return [
                     [
                         'text' => 'Purchase Request Report',
                         'icon' => 'fas fa-file-alt',
-                        'url'  => 'admin/purchase_request',
+                        // 'url'  => 'admin/purchase_request',
                         'can'  => 'view-admin-menu',
                     ],
                 ],
