@@ -95,9 +95,10 @@
                             'Ticket #',
                             'Department',  
                             'Responsible Department',                        
-                            'Concern Type',   
+                            'Concern Type', 
                             'Serial No.',  
-                            'Remarks',                                             
+                            'Remarks',  
+                            'Urgency',                               
                             'Status',
                             'Date Request',
                             'Date Approval',
@@ -109,7 +110,7 @@
                         ];
                         
                         $config = [
-                            'order' => [[7, 'desc']], // Default sort by Date Request
+                            'order' => [[8, 'desc']], // Default sort by Date Request
                             'columns' => array_fill(0, count($heads), null),
                         ];
                     @endphp

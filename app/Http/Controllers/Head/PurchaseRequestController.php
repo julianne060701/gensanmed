@@ -116,6 +116,15 @@ class PurchaseRequestController extends Controller
             'created_by' => auth()->id(), // Store the ID of the authenticated user
             'status' => 'Pending For Admin',
         ]);
+
+         // Find all admins and notify them
+    $admins = User::whereHas('roles', function ($query) {
+        $query->where('name', 'admin');
+    })->get();
+
+    foreach ($admins as $admin) {
+        $admin->notify(new NewPurchaseRequestNotification($pr));
+    }
         return redirect()->route('head.purchase_request.index')->with('success', 'PR uploaded successfully!');
     }
 

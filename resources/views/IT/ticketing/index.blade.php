@@ -24,7 +24,8 @@
                             'Ticket #',
                             'Department',  
                             'Responsible Department',                        
-                            'Concern Type',                                                  
+                            'Concern Type',   
+                            'Urgency',                                               
                             'Image',
                             'Status',
                             'Date Request',
@@ -33,12 +34,13 @@
                         ];
 
                         $config = [
-                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
+                            'order' => [[8, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
                                 null, // Ticket #
                                 null, // Department
                                 null, // Responsible Department
                                 null, // Concern Type
+                                null, // Urgency
                                 ['orderable' => false], // Image (disable sorting)
                                 null, // Status
                                 null, // Date Request (Ensure this is sortable)

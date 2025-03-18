@@ -49,6 +49,7 @@ class TicketReportController extends Controller
                 $ticket->concern_type,
                 $ticket->serial_number,
                 $ticket->remarks,
+                $ticket->urgency,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 Carbon::parse($ticket->created_at)->format('m/d/Y'),
                 Carbon::parse($ticket->approval_date)->format('m/d/Y'),

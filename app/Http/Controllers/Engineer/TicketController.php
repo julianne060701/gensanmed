@@ -81,6 +81,7 @@ class TicketController extends Controller
                 $ticket->department,
                 $ticket->responsible_department,
                 $ticket->concern_type,
+                $ticket->urgency,
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 $ticket->created_at->format('m/d/Y'), 

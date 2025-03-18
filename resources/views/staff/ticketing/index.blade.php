@@ -25,8 +25,9 @@
                         $heads = [
                             'Ticket #',
                             'Department',  
-                            'Responsible Department',                        
-                            'Concern Type',                                                  
+                            'Responsible Department',                      
+                            'Concern Type',  
+                            'Urgency',                                      
                             'Image',
                             'Status',
                             'Date Request',
@@ -35,12 +36,13 @@
                         ];
 
                         $config = [
-                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
+                            'order' => [[8, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
                                 null, // Ticket #
                                 null, // Department
                                 null, // Responsible Department
                                 null, // Concern Type
+                                null, // Urgency
                                 ['orderable' => false], // Image (disable sorting)
                                 null, // Status
                                 null, // Date Request (Ensure this is sortable)
@@ -105,6 +107,7 @@
     <p><strong>Department:</strong> <span id= "modalDepartment"></span></p>
     <p><strong>Responsible Department:</strong> <span id= "modalResponsibleDepartment"></span></p>
     <p><strong>Concern Type:</strong> <span id= "modalConcernType"></span></p>
+    <p><strong>Urgency:</strong> <span id= "modalUrgency"></span></p>
     <p><strong>Approved Date by Hopss:</strong> <span id= "modalApprovedDate"></span></p>
       </div>
       <div class="modal-footer">
@@ -130,6 +133,7 @@
             $('#modalDepartment').text(data.department);
             $('#modalResponsibleDepartment').text(data.responsible_department);
             $('#modalConcernType').text(data.concern_type);
+            $('#modalUrgency').text(data.urgency);
 
             // Format the approved date
             if (data.updated_at) {

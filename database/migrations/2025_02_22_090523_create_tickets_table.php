@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('department');
             $table->string('responsible_department');
             $table->string('concern_type');
-            $table->integer('urgency');
+            $table->enum('urgency', ['Not Urgent', 'Neutral', 'Urgent']);
             $table->string('serial_number');
             $table->text('remarks')->nullable();
             $table->string('image_url')->nullable();

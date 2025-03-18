@@ -57,6 +57,13 @@ class UserSeeder extends Seeder
                 //'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
             ],
+            [
+                'name' => 'head',
+                'email' => 'head@gensanmed',
+                'role' => 'Head',
+                //'profile_image_url' => 'images/default-image.jpg',
+                'password' => 'password',
+            ],
         ];
         
         foreach ($users as $userData) {

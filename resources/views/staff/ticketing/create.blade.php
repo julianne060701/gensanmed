@@ -130,11 +130,11 @@
                             <label for="urgency">Urgency</label>
                             <select name="urgency" class="form-control" required>
                                 <option value="">Select Urgency</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
+                                <option value="Not Urgent">1 - Not Urgent</option>
+                                <option value="Neutral">2 - Neutral</option>
+                                <option value="Urgent">3 - Urgent</option>
+                                <!-- <option value="4">4 - Urgent</option>
+                                <option value="5">5 - Very Urgent</option> -->
                             </select>
                         </div>
                     </div>
@@ -186,8 +186,7 @@
         <h2 style="font-size: 24px;">Concern Details:</h2>
         <p id="printRemarks" style="font-size: 20px;"></p>
         <hr style="border-top: 3px solid #bbb;">
-        <h2 style="font-size: 24px;">Supporting Document:</h2>
-        <img id="printImage" src="#" alt="Uploaded Image" style="width: 100%; max-width: 300px; height: auto; display: none;" />
+       
 
 <br><br><br><br><br><br>
         <div class="signature">
@@ -208,14 +207,6 @@
             document.getElementById("printUrgency").innerText = document.querySelector('select[name="urgency"]').value;
             document.getElementById("printRemarks").innerText = document.querySelector('textarea[name="remarks"]').value;
 
-            const imagePreview = document.getElementById('imagePreview');
-            const printImage = document.getElementById('printImage');
-            if (imagePreview.src) {
-                printImage.src = imagePreview.src;
-                printImage.style.display = 'block';
-            } else {
-                printImage.style.display = 'none';
-            }
 
             document.getElementById("printArea").style.display = "block";
             window.print();
