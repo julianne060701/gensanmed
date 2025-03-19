@@ -17,5 +17,8 @@ class PurchaserPO extends Model
         'description',
         'status',
         'image_url',
+        'remarks',
+        'approval_date',
+        'accepted_date',
     ];
 }

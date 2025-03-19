@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->text('remarks')->nullable(); // Moved remarks column
             $table->timestamps();
+            $table->timestamp('approval_date')->nullable();
+            $table->timestamp('accepted_date')->nullable();
             $table->softDeletes();
         });
     }

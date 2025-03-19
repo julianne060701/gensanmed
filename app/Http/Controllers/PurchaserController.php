@@ -30,6 +30,27 @@ class PurchaserController extends Controller
             //             data-delete="'. $purchase->id .'" data-name="'. $purchase->name .'">
             //             <i class="fa fa-lg fa-fw fa-trash"></i>
             //             </button>';
+
+            $btnAccept = '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
+                title="Accept" data-id="' . $purchase->id . '">
+                <i class="fas fa-lg fa-fw fa-check-circle"></i>
+            </button>';
+
+    
+            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+            title="Decline" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#deleteModal">
+            <i class="fas fa-lg fa-fw fa-times-circle"></i>
+        </button>';
+
+        $btnShow = '<button class="btn btn-xs btn-default text-info mx-1 shadow view-purchase" 
+            title="View" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#purchaseModal">
+            <i class="fas fa-lg fa-fw fa-eye"></i>
+        </button>';
+
+        $btnHold = '<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
+        title="Hold" data-id="' . $purchase->id . '">
+        <i class="fas fa-lg fa-fw fa-pause-circle"></i>
+    </button>';
     
             // Display a PDF link
             $pdfDisplay = $purchase->image_url 
@@ -43,7 +64,8 @@ class PurchaserController extends Controller
                 'Approved' => 'badge-success', // Green
                 'Denied' => 'badge-danger', // Red
                 'Send to Supplier' => 'badge-warning', // Yellow
-                'Pending' => 'badge-secondary' // Default (Gray)
+                'Pending' => 'badge-secondary', // Default (Gray)
+                'Hold' => 'badge-warning' 
             ];
     
             // Ensure status key exists
@@ -58,13 +80,28 @@ class PurchaserController extends Controller
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>' . $btnEdit . '</nobr>',
+                '<nobr>'.$btnEdit . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
             ];
     
             $data[] = $rowData;
         }
         
         return view('admin.purchase.index', compact('data'));
+    }
+
+    public function accept(Request $request)
+    {
+        $purchase = PurchaserPO::find($request->id);
+        
+        if ($purchase) {
+            $purchase->status = 'Approved'; 
+            $purchase->approval_date = now(); 
+            $purchase->save();
+    
+            return response()->json(['success' => 'Purchase order accepted successfully.']);
+        }
+    
+        return response()->json(['error' => 'Purchase order not found.'], 404);
     }
 
     /**
@@ -188,5 +225,34 @@ class PurchaserController extends Controller
     
         return redirect()->route('purchaser.purchase.index')->with('success', 'PO deleted successfully!');
         
+    }
+
+    public function delete(Request $request)
+    {
+        $purchase = PurchaserPO::find($request->id);
+
+        if ($purchase) {
+            $purchase->status = 'Denied'; // Set status to Denied
+            $purchase->remarks = $request->remarks; // Save the remarks
+            $purchase->save(); // Update record
+
+            return response()->json(['success' => 'Purchase Order denied successfully.']);
+        }
+
+        return response()->json(['error' => 'Purchase Order not found.'], 404);
+    }
+
+    public function hold(Request $request)
+    {
+        $purchase = PurchaserPO::find($request->id); // Corrected Model Reference
+    
+        if ($purchase) {
+            $purchase->status = 'Hold';
+            $purchase->save();
+    
+            return response()->json(['success' => 'Purchase Order status updated to Hold.']);
+        }
+    
+        return response()->json(['error' => 'Purchase Order not found.'], 404);
     }
 }

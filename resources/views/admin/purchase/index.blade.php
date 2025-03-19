@@ -57,48 +57,209 @@
     </div>
 </div>
 
-<!-- Confirmation Modal -->
-{{-- modal delete --}}
-<div class="modal danger" id="deleteModal" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="deleteForm" method="POST">
-            @csrf
-            @method('DELETE')
-            <div class="modal-content">
-                <div class="modal-header bg-danger">
-                    <h4 class="modal-title">Delete</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h3>Are you sure you want to delete this PO?</h3>
-                    <input type="hidden" name="id" id="deleteId">
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </div>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Denied Purchase Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-        </form>
+            <div class="modal-body">
+                <form id="deleteForm">
+                    @csrf
+                    <input type="hidden" id="delete_id">
+                    
+                    <div class="form-group">
+                        <label for="remarks">Enter Remarks:</label>
+                        <textarea class="form-control" id="remarks" rows="3" required></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Denied</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
+<!-- Purchase Modal -->
+<div class="modal fade" id="purchaseModal" tabindex="-1" role="dialog" aria-labelledby="purchaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="purchaseModalLabel">Purchase Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Purchase request details will be loaded here dynamically -->
+                <p><strong>Request Number:</strong> <span id="modalRequestNumber"></span></p>
+                <p><strong>Requester Name:</strong> <span id="modalRequesterName"></span></p>
+                <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+                <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
+                <p><strong>Approved Date:</strong> <span id="modalApprovedDate"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @stop
 
 @section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    $('#deleteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var purchaseId = button.data('delete');
-        var purchaseName = button.data('name');
+ $(document).on('click', '.Delete', function () {
+        var id = $(this).data('id');
+        $('#delete_id').val(id); // Set the ID in the modal
+        $('#deleteModal').modal('show'); // Show the modal
+    });
 
-        var form = document.getElementById('deleteForm');
-        form.action = "/purchaser/purchase/" + purchaseId;  // Adjust the route if needed
-        document.getElementById('deleteId').value = purchaseId;
-        document.querySelector('.modal-body h3').textContent = 'Are you sure you want to delete ' + purchaseName + '?';
+    $('#deleteForm').submit(function (e) {
+        e.preventDefault();
+
+        var id = $('#delete_id').val();
+        var remarks = $('#remarks').val();
+
+        if (remarks.trim() === "") {
+            Swal.fire("Error", "Remarks cannot be empty!", "error");
+            return;
+        }
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to Deny this purchase order.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Deny',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('admin.purchase.delete') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id,
+                        remarks: remarks
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Deny!',
+                            text: 'The purchase order has been Denied.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload(); // Reload page after deletion
+                        });
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    }
+                });
+            }
+        });
+    });
+$(document).on('click', '.Hold', function () {
+    var id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You want to put this order on hold?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, hold it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '{{ url("admin/purchase") }}/' + id + '/hold',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    Swal.fire('Held!', response.success, 'success').then(() => {
+                        location.reload();
+                    });
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText); // Debug in console
+                    Swal.fire('Error!', xhr.responseJSON?.message || 'Something went wrong!', 'error');
+                }
+            });
+        }
     });
 });
+
+$(document).on('click', '.view-purchase', function() {
+        var purchaseId = $(this).data('id');
+        
+        // Make an AJAX request to fetch the purchase request details
+        $.get('/purchase_requests/' + purchaseId, function(data) {
+            // Populate the modal with the fetched data
+            $('#modalRequestNumber').text(data.request_number);
+            $('#modalRequesterName').text(data.requester_name);
+            $('#modalDescription').text(data.description);
+            $('#modalRemarks').text(data.remarks);
+
+            // Format the date
+            var updatedAt = new Date(data.updated_at);
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+            var formattedDate = updatedAt.toLocaleDateString('en-US', options);
+            $('#modalApprovedDate').text(formattedDate);
+        });
+    });
+    $(document).on('click', '.Accept', function () {
+        var id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to accept this purchase order.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Accept',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('admin.purchase.accept') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        id: id
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Accepted!',
+                            text: 'The purchase order has been accepted.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload(); // Reload page after action
+                        });
+                    },
+                    error: function(response) {
+                        Swal.fire('Error', 'Something went wrong!', 'error');
+                    }
+                });
+            }
+        });
+    });
 </script>
 @endsection
 

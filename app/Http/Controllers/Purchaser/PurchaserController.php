@@ -51,7 +51,8 @@ class PurchaserController extends Controller
                 'Approved' => 'badge-success', // Green
                 'Denied' => 'badge-danger', // Red
                 'Send to Supplier' => 'badge-warning', // Yellow
-                'Pending' => 'badge-secondary' // Default (Gray)
+                'Pending' => 'badge-secondary', // Default (Gray)
+                'Hold' => 'badge-warning'
             ];
     
             // Ensure status key exists

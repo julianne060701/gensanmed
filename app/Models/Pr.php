@@ -21,6 +21,8 @@ class Pr extends Model
         'attachment_url',
         'created_by',
         'status',
+        'approval_date',
+        'accepted_date',
     ];
 
     /**

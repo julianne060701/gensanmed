@@ -23,14 +23,22 @@ class PurchaseRequestController extends Controller
             $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
         
 
-            $btnAccept = '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
+            $btnAccept = ($purchase->status !== 'Pending For Admin')
+            ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Accept Disabled" disabled>
+               <i class="fas fa-lg fa-fw fa-check-circle"></i>
+            </button>'
+            :'<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
                 title="Accept" data-id="' . $purchase->id . '">
                 <i class="fas fa-lg fa-fw fa-check-circle"></i>
             </button>';
 
     
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-            title="Delete" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#deleteModal">
+            $btnDelete = ($purchase->status !== 'Pending For Admin')
+            ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Decline Disabled" disabled>
+               <i class="fas fa-lg fa-fw fa-check-circle"></i>
+            </button>'
+            :'<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+            title="Decline" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#deleteModal">
             <i class="fas fa-lg fa-fw fa-times-circle"></i>
         </button>';
 
@@ -39,7 +47,11 @@ class PurchaseRequestController extends Controller
             <i class="fas fa-lg fa-fw fa-eye"></i>
         </button>';
 
-        $btnHold = '<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
+        $btnHold = ($purchase->status !== 'Pending For Admin')
+        ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Hold Disabled" disabled>
+           <i class="fas fa-lg fa-fw fa-pause-circle"></i>
+        </button>'
+        :'<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
         title="Hold" data-id="' . $purchase->id . '">
         <i class="fas fa-lg fa-fw fa-pause-circle"></i>
     </button>';
@@ -59,7 +71,8 @@ class PurchaseRequestController extends Controller
                 'Denied' => 'badge-danger', // Red
                 'Send to Supplier' => 'badge-warning', // Yellow
                 'Pending' => 'badge-secondary', // Default (Gray)
-                'Hold' => 'badge-secondary', // Gray
+                'Hold' => 'badge-warning', // Gray
+                'Pending For PO' => 'badge-warning', // Gray
             ];
     
             // Ensure status key exists
@@ -85,18 +98,20 @@ class PurchaseRequestController extends Controller
     }
 
     public function accept(Request $request)
-{
-    $purchase = PR::find($request->id);
+    {
+        $purchase = PR::find($request->id);
+        
+        if ($purchase) {
+            $purchase->status = 'Pending For PO'; 
+            $purchase->approval_date = now(); 
+            $purchase->save();
     
-    if ($purchase) {
-        $purchase->status = 'Pending For PO'; // Set status to approved
-        $purchase->save();
-
-        return response()->json(['success' => 'Purchase request accepted successfully.']);
+            return response()->json(['success' => 'Purchase request accepted successfully.']);
+        }
+    
+        return response()->json(['error' => 'Purchase request not found.'], 404);
     }
-
-    return response()->json(['error' => 'Purchase request not found.'], 404);
-}
+    
 
 
     /**

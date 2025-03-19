@@ -69,7 +69,7 @@ class PurchaseRequestController extends Controller
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>' . $btnShow . $btnEdit . $btnDelete . '</nobr>',
+                '<nobr>' . $btnShow . '</nobr>',
             ];
     
             $data[] = $rowData;
@@ -118,13 +118,13 @@ class PurchaseRequestController extends Controller
         ]);
 
          // Find all admins and notify them
-    $admins = User::whereHas('roles', function ($query) {
-        $query->where('name', 'admin');
-    })->get();
+    // $admins = User::whereHas('roles', function ($query) {
+    //     $query->where('name', 'admin');
+    // })->get();
 
-    foreach ($admins as $admin) {
-        $admin->notify(new NewPurchaseRequestNotification($pr));
-    }
+    // foreach ($admins as $admin) {
+    //     $admin->notify(new NewPurchaseRequestNotification($pr));
+    // }
         return redirect()->route('head.purchase_request.index')->with('success', 'PR uploaded successfully!');
     }
 

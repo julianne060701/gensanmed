@@ -51,7 +51,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/purchase/create', [App\Http\Controllers\PurchaserController::class, 'create'])->name('admin.purchase.create');
     Route::get('admin/purchase/{id}/edit', [App\Http\Controllers\PurchaserController::class, 'edit'])->name('admin.purchase.edit');
     Route::put('admin/purchase/{id}/update', [App\Http\Controllers\PurchaserController::class, 'update'])->name('admin.purchase.update');
+    Route::post('admin/purchase/accept', [App\Http\Controllers\PurchaserController::class, 'accept'])->name('admin.purchase.accept');
+    Route::post('admin/purchase/delete', [App\Http\Controllers\PurchaserController::class, 'delete'])->name('admin.purchase.delete');
+    Route::post('admin/purchase/{id}/hold', [App\Http\Controllers\PurchaserController::class, 'hold'])->name('admin.purchase.hold');
     
+
+
     // Report Routes
     Route::get('admin/reports/ticketing_report', [App\Http\Controllers\Admin\TicketReportController::class, 'index'])->name('admin.reports.ticketing_report.index');
 
@@ -118,6 +123,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchase/create', [App\Http\Controllers\Purchaser\PurchaserController::class, 'create'])->name('purchaser.purchase.create');
     Route::post('purchaser/purchase/store', [App\Http\Controllers\Purchaser\PurchaserController::class, 'store'])->name('purchaser.purchase.store');
     Route::get('purchaser/{id}/edit', [App\Http\Controllers\Purchaser\PurchaserController::class, 'edit'])->name('purchaser.purchase.edit');
+    Route::put('purchaser/{id}/update', [App\Http\Controllers\Purchaser\PurchaserController::class, 'update'])->name('purchaser.purchase.update');
     Route::get('/purchase_requests/{id}', [App\Http\Controllers\PurchaseRequestController::class, 'show']);
 
     // Route::delete('/purchaser/purchase/{id}', [PurchaserController::class, 'destroy'])->name('purchaser.purchase.destroy');
