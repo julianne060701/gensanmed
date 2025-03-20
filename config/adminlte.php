@@ -328,12 +328,32 @@ return [
                 'can'    => 'view-admin-menu',
             ],
             [
-                'text'        => 'Schedule',
-                'url'         => 'admin/home',
-                'icon'        => 'far fa-fw fa-calendar',
-                'label_color' => 'success',
-                'can'         => 'view-admin-menu',
+                'text'  => 'Dashboard',
+                'icon'  => 'fas fa-fw fa-tachometer-alt',
+                'url'   => 'admin/dashboard',
+                'can'   => 'view-admin-menu',
             ],
+            [
+                'text'    => 'Manage Schedule',
+                'icon'    => 'fas fa-calendar-alt',
+                'can'     => 'view-admin-menu',
+                'submenu' => [
+                    [
+                        'text'        => 'Calendar Schedule',
+                        'url'         => 'admin/schedule',
+                        'icon'        => 'far fa-fw fa-calendar',
+                        'label_color' => 'success',
+                        'can'         => 'view-admin-menu',
+                    ],
+                    [
+                        'text' => 'SMS Schedule',
+                        'icon' => 'fas fa-envelope',
+                        'url'  => 'admin/sms',
+                        'can'  => 'view-admin-menu',
+                    ],
+                ],
+            ],
+           
             [
                 'text'  => 'Manage User',
                 'icon'  => 'fas fa-user',

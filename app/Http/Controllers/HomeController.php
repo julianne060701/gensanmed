@@ -13,13 +13,18 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function index(Request $request)
+    public function home(Request $request)
     {
         if ($request->ajax()) {
             return $this->fetchEvents();
         }
 
-        return view('admin.home');
+        return view('admin.dashboard');
+    }
+
+    public function index()
+    {
+        return view('admin.schedule.calendar');
     }
 
     private function getEventColor()
@@ -64,7 +69,7 @@ class HomeController extends Controller
             'user_id'     => auth()->id(),
         ]);
 
-        return redirect()->route('admin.home')->with('success', 'Event saved successfully!');
+        return redirect()->route('admin.schedule.calendar')->with('success', 'Event saved successfully!');
     }
 
     public function update(Request $request, $event)

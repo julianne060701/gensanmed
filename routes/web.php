@@ -22,7 +22,7 @@ Route::get('/notifications/fetch', [App\Http\Controllers\NotificationController:
 Route::get('/notifications/read/{id}', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/home', [HomeController::class, 'index'])->name('admin.home');
+    Route::get('admin/dashboard', [HomeController::class, 'home'])->name('admin.dashboard');
     Route::get('/engineer/home', [App\Http\Controllers\Engineer\EngineerController::class, 'index'])->name('engineer.home');
     Route::get('/purchaser/home', [App\Http\Controllers\Purchaser\PurchaserController::class, 'home'])->name('purchaser.home');
     Route::get('/staff/home', [App\Http\Controllers\Staff\StaffController::class, 'index'])->name('staff.home');
@@ -33,8 +33,15 @@ Route::middleware(['auth'])->group(function () {
         // -----------------------------------------------------
             // Administrator Sidebar Items (Only for Administrators)
             // -----------------------------------------------------
+// SMS routes 
+    Route::get('admin/sms', [App\Http\Controllers\SMSController::class, 'index'])->name('admin.schedule.sms');
+    Route::get('admin/sms/create', [App\Http\Controllers\SMSController::class, 'create'])->name('admin.schedule.create_sms');
+    Route::post('admin/sms/store', [App\Http\Controllers\SMSController::class, 'store'])->name('admin.schedule.store_sms');
+    Route::post('admin/sms/send', [App\Http\Controllers\SMSController::class, 'sendSMS'])->name('admin.schedule.send_sms');
+    Route::post('/admin/schedule/send-sms', [App\Http\Controllers\SmsController::class, 'sendSms'])->name('admin.schedule.send_sms');
 
-// calendar routes
+    // calendar routes
+    Route::get('admin/schedule', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.schedule.calendar');
     Route::post('/events', [App\Http\Controllers\HomeController::class, 'store'])->name('events.store');
     Route::get('/events', [App\Http\Controllers\HomeController::class, 'fetchEvents'])->name('events.fetch');
     Route::put('/events/{event}', [App\Http\Controllers\HomeController::class, 'update'])->name('events.update');

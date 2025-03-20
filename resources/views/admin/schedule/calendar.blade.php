@@ -39,7 +39,7 @@
 }
 </style>
 @stop
-<h1>Admin Dashboard</h1>
+<h1>Admin Calendar</h1>
 @stop
 
 @section('content')
@@ -151,7 +151,7 @@
             showConfirmButton: false,
             timer: 2000
         }).then(() => {
-            window.location.href = "{{ route('admin.home') }}"; // Redirect after success
+            window.location.href = "{{ route('admin.schedule.calendar') }}"; // Redirect after success
         });
     }
 
