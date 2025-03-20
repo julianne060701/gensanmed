@@ -83,7 +83,7 @@ class TicketController extends Controller
                 $ticket->urgency,
                 $pdfDisplay,
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
-                $ticket->created_at->format('m/d/Y'), 
+                $ticket->approval_date ? \Carbon\Carbon::parse($ticket->approval_date)->format('m/d/Y') : null,
                 $ticket->total_duration > 0 ? $ticket->total_duration . ' ' . Str::plural('day', $ticket->total_duration) : null,
                
               '<nobr>' . $btnAccept . $btnCompleted .  $btnDelete . $btnShow  .  '</nobr>',

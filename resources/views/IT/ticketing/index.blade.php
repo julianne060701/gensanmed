@@ -28,7 +28,7 @@
                             'Urgency',                                               
                             'Image',
                             'Status',
-                            'Date Request',
+                            'Date Approved',
                             'Total Duration',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
@@ -111,7 +111,9 @@
                 <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
                <p><strong>Urgency:</strong> <span id="ticketUrgency"></span></p>
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
+               <p><strong>Request Date:</strong> <span id="ticketRequest"></span></p>
                <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
+               <p><strong>Completed Date:</strong> <span id="ticketCompleted"></span></p>
                <p><strong>Completed By:</strong> <span id="ticketCompletedBy"></span></p>
 
             </div>
@@ -245,6 +247,15 @@ $(document).on("click", ".view-ticket", function() {
                 $("#ticketStatus").text(response.status || "N/A");
                 $("#ticketUrgency").text(response.urgency || "N/A");
                 $("#ticketRemarks").text(response.remarks || "N/A");
+                   // Format request date
+                   var requestDate = "N/A";
+                if (response.created_at) {
+                    var date = new Date(response.created_at);
+                    var options = { year: "numeric", month: "long", day: "numeric" };
+                    requestDate = date.toLocaleDateString("en-US", options);
+                }
+                
+                $("#ticketRequest").text(requestDate);
 
                 // Format approval date
                 var approvalDate = "N/A";
@@ -256,6 +267,21 @@ $(document).on("click", ".view-ticket", function() {
                 
                 $("#ticketApproved").text(approvalDate);
                 $("#ticketCompletedBy").text(response.completed_by || "N/A");
+
+            // Format completed date
+            var completedDate = "N/A";
+            if (response.completed_date) {
+                var date = new Date(response.completed_date);
+                
+                // Check if date is valid
+                if (!isNaN(date.getTime())) {
+                    var options = { year: "numeric", month: "long", day: "numeric" };
+                    completedDate = date.toLocaleDateString("en-US", options);
+                }
+            }
+
+            $("#ticketCompleted").text(completedDate);
+
 
                 // Show modal
                 $("#ticketModal").modal("show");

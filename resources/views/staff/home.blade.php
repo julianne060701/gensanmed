@@ -150,7 +150,7 @@
             showConfirmButton: false,
             timer: 2000
         }).then(() => {
-            window.location.href = "{{ route('admin.home') }}"; // Redirect after success
+            window.location.href = "{{ route('admin.schedule.calendar') }}"; // Redirect after success
         });
     }
 
