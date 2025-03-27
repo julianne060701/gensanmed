@@ -82,24 +82,23 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
-$(document).on('click', '.view-purchase', function() {
-        var purchaseId = $(this).data('id');
-        
-        // Make an AJAX request to fetch the purchase request details
-        $.get('/purchase_requests/' + purchaseId, function(data) {
-            // Populate the modal with the fetched data
-            $('#modalRequestNumber').text(data.request_number);
-            $('#modalRequesterName').text(data.requester_name);
-            $('#modalDescription').text(data.description);
-            $('#modalRemarks').text(data.remarks);
+$(document).on('click', '.view-purchase', function() { 
+    var purchaseId = $(this).data('id');
 
-            // Format the date
-            var updatedAt = new Date(data.updated_at);
-            var options = { year: 'numeric', month: 'long', day: 'numeric' };
-            var formattedDate = updatedAt.toLocaleDateString('en-US', options);
-            $('#modalApprovedDate').text(formattedDate);
-        });
+    // Make an AJAX request to fetch the purchase request details
+    $.get('/purchase_requests/' + purchaseId, function(data) {
+        // Populate the modal with the fetched data
+        $('#modalRequestNumber').text(data.request_number);
+        $('#modalRequesterName').text(data.requester_name);
+        $('#modalDescription').text(data.description);
+        $('#modalRemarks').text(data.remarks);
+
+        // Check if approval date is null
+        var formattedDate = data.approval_date ? new Date(data.approval_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+
+        $('#modalApprovedDate').text(formattedDate);
     });
+});
  
 </script>
 @endsection

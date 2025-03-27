@@ -53,6 +53,28 @@
         </div>
     </div>
 </div>
+<!-- Hold Remarks Modal -->
+<div class="modal fade" id="holdModal" tabindex="-1" aria-labelledby="holdModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="holdModalLabel">Enter Remarks for Hold</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="hold_id">
+                <textarea class="form-control" id="hold_remarks" rows="3" placeholder="Type your remarks here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="saveHoldBtn">Hold Request</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Delete Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -75,7 +97,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Denied</button>
+                        <button type="submit" class="btn btn-danger">Deny</button>
                     </div>
                 </form>
             </div>
@@ -98,7 +120,7 @@
                 <p><strong>Request Number:</strong> <span id="modalRequestNumber"></span></p>
                 <p><strong>Requester Name:</strong> <span id="modalRequesterName"></span></p>
                 <p><strong>Description:</strong> <span id="modalDescription"></span></p>
-                <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
+                <p><strong>Admin Remarks:</strong> <span id="modalRemarks"></span></p>
                 <p><strong>Approved Date:</strong> <span id="modalApprovedDate"></span></p>
             </div>
             <div class="modal-footer">
@@ -114,56 +136,64 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    $(document).on('click', '.Hold', function () {
-        var id = $(this).data('id');
+  $(document).on('click', '.Hold', function () {
+    var id = $(this).data('id');
+    $('#hold_id').val(id); // Store ID in hidden input
+    $('#hold_remarks').val(''); // Clear previous input
+    $('#holdModal').modal('show'); // Show modal
+});
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You want to put this request on hold?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, hold it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/purchase_requests/' + id + '/hold',
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        Swal.fire(
-                            'Held!',
-                            'The purchase request has been put on hold.',
-                            'success'
-                        ).then(() => {
-                            location.reload();
-                        });
-                    }
-                });
-            }
-        });
-    });
-$(document).on('click', '.view-purchase', function() {
-        var purchaseId = $(this).data('id');
-        
-        // Make an AJAX request to fetch the purchase request details
-        $.get('/purchase_requests/' + purchaseId, function(data) {
-            // Populate the modal with the fetched data
-            $('#modalRequestNumber').text(data.request_number);
-            $('#modalRequesterName').text(data.requester_name);
-            $('#modalDescription').text(data.description);
-            $('#modalRemarks').text(data.remarks);
+// Handle Hold Request Submission
+$('#saveHoldBtn').click(function () {
+    var id = $('#hold_id').val();
+    var remarks = $('#hold_remarks').val().trim();
 
-            // Format the date
-            var updatedAt = new Date(data.updated_at);
-            var options = { year: 'numeric', month: 'long', day: 'numeric' };
-            var formattedDate = updatedAt.toLocaleDateString('en-US', options);
-            $('#modalApprovedDate').text(formattedDate);
-        });
+    if (remarks === '') {
+        Swal.fire('Error', 'Remarks cannot be empty!', 'error');
+        return;
+    }
+
+    $.ajax({
+        url: '/purchase_requests/' + id + '/hold',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            remarks: remarks
+        },
+        success: function (response) {
+            $('#holdModal').modal('hide'); // Hide modal
+            Swal.fire(
+                'Held!',
+                'The purchase request has been put on hold.',
+                'success'
+            ).then(() => {
+                location.reload();
+            });
+        },
+        error: function () {
+            Swal.fire('Error', 'Something went wrong!', 'error');
+        }
     });
+});
+
+$(document).on('click', '.view-purchase', function() { 
+    var purchaseId = $(this).data('id');
+
+    // Make an AJAX request to fetch the purchase request details
+    $.get('/purchase_requests/' + purchaseId, function(data) {
+        // Populate the modal with the fetched data
+        $('#modalRequestNumber').text(data.request_number);
+        $('#modalRequesterName').text(data.requester_name);
+        $('#modalDescription').text(data.description);
+        $('#modalRemarks').text(data.remarks);
+
+        // Check if approval date is null
+        var formattedDate = data.approval_date ? new Date(data.approval_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+
+        $('#modalApprovedDate').text(formattedDate);
+    });
+});
+
     $(document).on('click', '.Accept', function () {
         var id = $(this).data('id');
 

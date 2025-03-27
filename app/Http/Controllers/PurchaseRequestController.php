@@ -52,9 +52,10 @@ class PurchaseRequestController extends Controller
            <i class="fas fa-lg fa-fw fa-pause-circle"></i>
         </button>'
         :'<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
-        title="Hold" data-id="' . $purchase->id . '">
-        <i class="fas fa-lg fa-fw fa-pause-circle"></i>
-    </button>';
+            title="Hold" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#holdModal">
+            <i class="fas fa-lg fa-fw fa-pause-circle"></i>
+        </button>';
+    
         
 
         
@@ -179,10 +180,11 @@ class PurchaseRequestController extends Controller
         return response()->json(['error' => 'Purchase request not found.'], 404);
     }
 
-    public function hold($id)
+    public function hold(Request $request, $id)
     {
         $purchase = PR::findOrFail($id);
         $purchase->status = 'Hold';
+        $purchase->remarks = $request->remarks;
         $purchase->save();
 
         return response()->json(['success' => 'Purchase request status updated to Hold.']);

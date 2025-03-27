@@ -36,7 +36,7 @@
 
                         $config = [
                             'data' => $data,
-                            'order' => [[6, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
+                            'order' => [[0, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
                             'columns' => [null, null, null, null, null, null, null, ['orderable' => false]],
                         ];
                     @endphp
@@ -53,6 +53,27 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</div>
+<!-- Hold Remarks Modal -->
+<div class="modal fade" id="holdModal" tabindex="-1" aria-labelledby="holdModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="holdModalLabel">Enter Remarks for Hold</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="hold_id">
+                <textarea class="form-control" id="hold_remarks" rows="3" placeholder="Type your remarks here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" id="saveHoldBtn">Hold Request</button>
+            </div>
         </div>
     </div>
 </div>
@@ -97,11 +118,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Purchase request details will be loaded here dynamically -->
-                <p><strong>Request Number:</strong> <span id="modalRequestNumber"></span></p>
-                <p><strong>Requester Name:</strong> <span id="modalRequesterName"></span></p>
+                <!-- Purchase request details will be loaded here dynamically -->             
+                <p><strong>PO Number:</strong> <span id="modalPoNumber"></span></p>
+                <p><strong>Name:</strong> <span id="modalName"></span></p>
                 <p><strong>Description:</strong> <span id="modalDescription"></span></p>
-                <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
+                <p><strong>Admin Remarks:</strong> <span id="modalRemarks"></span></p>
                 <p><strong>Approved Date:</strong> <span id="modalApprovedDate"></span></p>
             </div>
             <div class="modal-footer">
@@ -170,57 +191,74 @@
             }
         });
     });
+
+// Handle Hold Request Submission
 $(document).on('click', '.Hold', function () {
     var id = $(this).data('id');
+    $('#hold_id').val(id); // Store ID in hidden input
+    $('#hold_remarks').val(''); // Clear previous input
+    $('#holdModal').modal('show'); // Show modal
+});
 
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You want to put this order on hold?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, hold it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '{{ url("admin/purchase") }}/' + id + '/hold',
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    Swal.fire('Held!', response.success, 'success').then(() => {
-                        location.reload();
-                    });
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText); // Debug in console
-                    Swal.fire('Error!', xhr.responseJSON?.message || 'Something went wrong!', 'error');
-                }
+// Handle Hold Request Submission
+$('#saveHoldBtn').click(function () {
+    var id = $('#hold_id').val();
+    var remarks = $('#hold_remarks').val().trim();
+
+    if (remarks === '') {
+        Swal.fire('Error', 'Remarks cannot be empty!', 'error');
+        return;
+    }
+
+    $.ajax({
+        url: '{{ url("admin/purchase") }}/' + id + '/hold',
+        type: 'POST',
+        data: {
+            _token: '{{ csrf_token() }}',
+            remarks: remarks
+        },
+        success: function (response) {
+            $('#holdModal').modal('hide'); // Hide modal
+            Swal.fire(
+                'Held!',
+                'The purchase request has been put on hold.',
+                'success'
+            ).then(() => {
+                location.reload();
             });
+        },
+        error: function () {
+            Swal.fire('Error', 'Something went wrong!', 'error');
         }
     });
 });
-
 $(document).on('click', '.view-purchase', function() {
-        var purchaseId = $(this).data('id');
-        
-        // Make an AJAX request to fetch the purchase request details
-        $.get('/purchase_requests/' + purchaseId, function(data) {
-            // Populate the modal with the fetched data
-            $('#modalRequestNumber').text(data.request_number);
-            $('#modalRequesterName').text(data.requester_name);
-            $('#modalDescription').text(data.description);
-            $('#modalRemarks').text(data.remarks);
+    var purchaseId = $(this).data('id');
 
-            // Format the date
-            var updatedAt = new Date(data.updated_at);
-            var options = { year: 'numeric', month: 'long', day: 'numeric' };
-            var formattedDate = updatedAt.toLocaleDateString('en-US', options);
-            $('#modalApprovedDate').text(formattedDate);
-        });
+    $.get('/admin/purchase/' + purchaseId, function(data) {
+        if (data.error) {
+            Swal.fire('Error', data.error, 'error');
+            return;
+        }
+
+        // Populate the modal with the fetched data
+        $('#modalPoNumber').text(data.po_number);
+        $('#modalName').text(data.name);
+        $('#modalDescription').text(data.description);
+        $('#modalRemarks').text(data.admin_remarks);
+        
+        // Format approval date if available
+        var formattedDate = data.approval_date ? new Date(data.approval_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+        $('#modalApprovedDate').text(formattedDate);
+
+        // Show the modal
+        $('#purchaseModal').modal('show');
+    }).fail(function() {
+        Swal.fire('Error', 'Failed to fetch purchase details.', 'error');
     });
+});
+
+          
     $(document).on('click', '.Accept', function () {
         var id = $(this).data('id');
 

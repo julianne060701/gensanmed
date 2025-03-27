@@ -21,9 +21,9 @@ class PurchaserController extends Controller
     
         foreach ($purchases as $purchase) {
             
-            $btnEdit = '<a href="' . route('admin.purchase.edit', $purchase->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
-                        <i class="fa fa-lg fa-fw fa-pen"></i>
-                        </a>';
+            // $btnEdit = '<a href="' . route('admin.purchase.edit', $purchase->id) . '" class="btn btn-xs btn-default text-primary mx-1 shadow" title="Edit">
+            //             <i class="fa fa-lg fa-fw fa-pen"></i>
+            //             </a>';
     
             // $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
             //             title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
@@ -31,13 +31,21 @@ class PurchaserController extends Controller
             //             <i class="fa fa-lg fa-fw fa-trash"></i>
             //             </button>';
 
-            $btnAccept = '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
+            $btnAccept = ($purchase->status !== 'Pending')
+            ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Accept Disabled" disabled>
+               <i class="fas fa-lg fa-fw fa-check-circle"></i>
+            </button>'
+            :'<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
                 title="Accept" data-id="' . $purchase->id . '">
                 <i class="fas fa-lg fa-fw fa-check-circle"></i>
             </button>';
 
     
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+            $btnDelete = ($purchase->status !== 'Pending')
+            ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Decline Disabled" disabled>
+               <i class="fas fa-lg fa-fw fa-times-circle"></i>
+            </button>'
+            :'<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
             title="Decline" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#deleteModal">
             <i class="fas fa-lg fa-fw fa-times-circle"></i>
         </button>';
@@ -47,8 +55,13 @@ class PurchaserController extends Controller
             <i class="fas fa-lg fa-fw fa-eye"></i>
         </button>';
 
-        $btnHold = '<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
-        title="Hold" data-id="' . $purchase->id . '">
+       
+    $btnHold = ($purchase->status !== 'Pending')
+    ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Hold Disabled" disabled>
+       <i class="fas fa-lg fa-fw fa-pause-circle"></i>
+    </button>'
+    :'<button class="btn btn-xs btn-default text-warning mx-1 shadow Hold" 
+        title="Hold" data-id="' . $purchase->id . '" data-toggle="modal" data-target="#holdModal">
         <i class="fas fa-lg fa-fw fa-pause-circle"></i>
     </button>';
     
@@ -80,13 +93,13 @@ class PurchaserController extends Controller
                 $statusBadge,
                 $pdfDisplay,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>'.$btnEdit . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
+                '<nobr>' . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
             ];
     
             $data[] = $rowData;
         }
         
-        return view('admin.purchase.index', compact('data'));
+        return view('admin.purchase.index', compact('purchases', 'data'));
     }
 
     public function accept(Request $request)
@@ -150,7 +163,8 @@ class PurchaserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $purchase = PurchaserPO::findOrFail($id);
+        return response()->json($purchase);
     }
 
     /**
@@ -248,6 +262,7 @@ class PurchaserController extends Controller
     
         if ($purchase) {
             $purchase->status = 'Hold';
+            $purchase->remarks = $request->remarks;
             $purchase->save();
     
             return response()->json(['success' => 'Purchase Order status updated to Hold.']);
@@ -255,4 +270,6 @@ class PurchaserController extends Controller
     
         return response()->json(['error' => 'Purchase Order not found.'], 404);
     }
+
+
 }

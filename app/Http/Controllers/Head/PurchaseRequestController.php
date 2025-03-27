@@ -53,7 +53,7 @@ class PurchaseRequestController extends Controller
                 'Denied' => 'badge-danger', // Red
                 'Send to Supplier' => 'badge-warning', // Yellow
                 'Pending' => 'badge-secondary', // Default (Gray)
-                'Hold' => 'badge-secondary', // Gray
+                'Hold' => 'badge-danger', // Gray
             ];
     
             // Ensure status key exists

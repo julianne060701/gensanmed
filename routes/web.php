@@ -61,6 +61,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('admin/purchase/accept', [App\Http\Controllers\PurchaserController::class, 'accept'])->name('admin.purchase.accept');
     Route::post('admin/purchase/delete', [App\Http\Controllers\PurchaserController::class, 'delete'])->name('admin.purchase.delete');
     Route::post('admin/purchase/{id}/hold', [App\Http\Controllers\PurchaserController::class, 'hold'])->name('admin.purchase.hold');
+    Route::get('admin/purchase/{id}', [App\Http\Controllers\PurchaserController::class, 'show'])->name('admin.purchase.show');
+
     
 
 
@@ -70,7 +72,6 @@ Route::middleware(['auth'])->group(function () {
     // PR Routes
     Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
     Route::post('/purchase/accept', [App\Http\Controllers\PurchaseRequestController::class, 'accept'])->name('purchase.accept');
-    // Route::post('/purchase/deny', [App\Http\Controllers\PurchaseRequestController::class, 'deny'])->name('purchase.deny');
     Route::post('/purchase/delete', [App\Http\Controllers\PurchaseRequestController::class, 'delete'])->name('purchase.delete');
     Route::get('/purchase_requests/{id}', [App\Http\Controllers\PurchaseRequestController::class, 'show']);
     Route::post('/purchase_requests/{id}/hold', [App\Http\Controllers\PurchaseRequestController::class, 'hold']);

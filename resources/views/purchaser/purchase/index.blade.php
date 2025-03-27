@@ -32,7 +32,7 @@
 
                         $config = [
                             'data' => $data,
-                            'order' => [[6, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
+                            'order' => [[0, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
                             'columns' => [null, null, null, null, null, null, null, ['orderable' => false]],
                         ];
                     @endphp
