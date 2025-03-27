@@ -89,13 +89,13 @@
                 <form id="ticketForm" action="{{ route('staff.ticketing.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
+                   
                     {{-- Ticket Number & Serial Number --}}
                     <div class="form-row">
                         <div class="col-md-6">
                             <label for="ticket_number">Ticket Number</label>
                             <input type="text" name="ticket_number" class="form-control" value="{{ $ticketNumber }}" readonly>
                         </div>
-
                         <div class="col-md-6">
                             <label for="serial_number">Serial No.</label>
                             <input type="text" name="serial_number" class="form-control" placeholder="Enter Serial Number" required>
@@ -109,12 +109,12 @@
                             <input type="text" name="department" class="form-control" placeholder="Enter Department" required>
                         </div>
                         <div class="col-md-6">
-                        <label for="responsible_department">Responsible Department</label>
-                        <select name="responsible_department" id="responsible_department" class="form-control" required>
-                            <option value="">Select Responsible Department</option>
-                            <option value="HIMS">HIMS</option>
-                            <option value="Engineer">Engineer</option>
-                        </select>
+                            <label for="responsible_department">Responsible Department</label>
+                            <select name="responsible_department" id="responsible_department" class="form-control" required>
+                                <option value="">Select Responsible Department</option>
+                                <option value="HIMS">HIMS</option>
+                                <option value="Engineer">Engineer</option>
+                            </select>
                         </div>
                     </div>
 
@@ -123,8 +123,8 @@
                         <div class="col-md-6">
                             <label for="concern_type">Concern Type</label>
                             <select name="concern_type" id="concern_type" class="form-control" required>
-                            <option value="">Select Concern Type</option>
-                        </select>
+                                <option value="">Select Concern Type</option>
+                            </select>
                         </div>
                         <div class="col-md-6">
                             <label for="urgency">Urgency</label>
@@ -135,6 +135,9 @@
                             </select>
                         </div>
                     </div>
+
+                    {{-- Dynamic Fields (IT Equipment) --}}
+                    <div class="form-row" id="form-row"></div>
 
                     {{-- Remarks --}}
                     <div class="form-group">
@@ -237,129 +240,73 @@
                 imagePreview.style.display = 'none';
             }
         });
-    //     document.addEventListener('DOMContentLoaded', function () {
-    //     const responsibleDept = document.getElementById('responsible_department');
-    //     const concernType = document.getElementById('concern_type');
 
-    //     const concernOptions = {
-    //         "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
-    //         "Engineer": ["Fabrication", "Installation", "Repair"]
-    //     };
+        document.addEventListener('DOMContentLoaded', function () {
+            const responsibleDept = document.getElementById('responsible_department');
+            const concernType = document.getElementById('concern_type');
+            const formRow = document.getElementById('form-row');
+            const form = document.getElementById("ticketForm");
 
-    //     function updateConcernTypes() {
-    //         const selectedDept = responsibleDept.value;
-    //         concernType.innerHTML = '<option value="">Select Concern Type</option>';
+            let itEquipmentDiv = document.createElement('div');
+            itEquipmentDiv.classList.add('col-md-6', 'mt-2');
+            itEquipmentDiv.innerHTML = `
+                <label for="equipment">IT Equipment</label>
+                <select name="equipment" id="equipment" class="form-control">
+                    <option value="">Select IT Equipment</option>
+                    <option value="Printer">Printer</option>
+                    <option value="Printer Sharing">Printer Sharing</option>
+                    <option value="Computer">Computer</option>
+                    <option value="Monitor">Monitor</option>
+                    <option value="Keyboard">Keyboard</option>
+                    <option value="Mouse">Mouse</option>
+                    <option value="Speaker">Speaker</option>  
+                    <option value="Scanner">Scanner</option>
+                    <option value="UPS">UPS</option>
+                    <option value="Telephone">Telephone</option>
+                    <option value="Network">Network</option>
+                </select>
+            `;
 
-    //         if (selectedDept in concernOptions) {
-    //             concernOptions[selectedDept].forEach(type => {
-    //                 let option = document.createElement("option");
-    //                 option.value = type;
-    //                 option.textContent = type;
-    //                 concernType.appendChild(option);
-    //             });
-    //         }
-    //     }
+            const concernOptions = {
+                "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
+                "Engineer": ["Fabrication", "Installation", "Repair", "Maintenance", "PMS"]
+            };
 
-    //     responsibleDept.addEventListener('change', updateConcernTypes);
-    // });
+            responsibleDept.addEventListener('change', function () {
+                concernType.innerHTML = '<option value="">Select Concern Type</option>';
 
-     document.addEventListener('DOMContentLoaded', function () {
-        const responsibleDept = document.getElementById('responsible_department');
-        const concernType = document.getElementById('concern_type');
+                if (concernOptions[this.value]) {
+                    concernOptions[this.value].forEach(type => {
+                        let option = document.createElement('option');
+                        option.value = type;
+                        option.textContent = type;
+                        concernType.appendChild(option);
+                    });
+                }
 
-        const concernOptions = {
-            "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
-            "Engineer": ["Fabrication", "Installation", "Repair"]
-        };
-
-        function updateConcernTypes() {
-            const selectedDept = responsibleDept.value;
-            concernType.innerHTML = '<option value="">Select Concern Type</option>';
-
-            if (selectedDept in concernOptions) {
-                concernOptions[selectedDept].forEach(type => {
-                    let option = document.createElement("option");
-                    option.value = type;
-                    option.textContent = type;
-                    concernType.appendChild(option);
-                });
-            }
-        }
-
-        responsibleDept.addEventListener('change', updateConcernTypes);
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-    const responsibleDept = document.getElementById('responsible_department');
-    const concernType = document.getElementById('concern_type');
-    const form = document.getElementById('ticketForm');
-
-    // IT Equipment Dropdown
-    let itEquipmentDiv = document.createElement('div');
-    itEquipmentDiv.classList.add('col-md-6', 'mt-2');
-    itEquipmentDiv.innerHTML = `
-        <label for="it_equipment">IT Equipment</label>
-        <select name="it_equipment" id="it_equipment" class="form-control">
-            <option value="">Select IT Equipment</option>
-            <option value="Printer">Printer</option>
-            <option value="Printer Sharing">Printer Sharing</option>
-            <option value="Computer">Computer</option>
-            <option value="Monitor">Monitor</option>
-            <option value="Keyboard">Keyboard</option>
-            <option value="Mouse">Mouse</option>
-            <option value="Speaker">Speaker</option>  
-            <option value="Scanner">Scanner</option>
-            <option value="UPS">UPS</option>
-            <option value="Telephone">Telephone</option>
-            <option value="Network">Network</option>
-        </select>
-    `;
-
-    const concernOptions = {
-        "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
-        "Engineer": ["Fabrication", "Installation", "Repair", "Maintenance", "PMS"]
-    };
-
-    // Populate Concern Type Based on Responsible Department
-    responsibleDept.addEventListener('change', function () {
-        const selectedDept = this.value;
-        concernType.innerHTML = '<option value="">Select Concern Type</option>';
-
-        if (concernOptions[selectedDept]) {
-            concernOptions[selectedDept].forEach(type => {
-                let option = document.createElement('option');
-                option.value = type;
-                option.textContent = type;
-                concernType.appendChild(option);
+                removeItEquipment();
             });
-        }
-        
-        // Hide IT Equipment dropdown initially
-        removeItEquipment();
-    });
 
-    // Show IT Equipment Dropdown When "HIMS" and "Maintenance" Are Selected
-    concernType.addEventListener('change', function () {
-        if (responsibleDept.value === "HIMS" && this.value === "Repair") {
-            addItEquipment();
-        } else {
-            removeItEquipment();
-        }
-    });
+            concernType.addEventListener('change', function () {
+                if (responsibleDept.value === "HIMS" && this.value === "Repair") {
+                    addItEquipment();
+                } else {
+                    removeItEquipment();
+                }
+            });
 
-    function addItEquipment() {
-        const formRow = concernType.closest('.form-row');
-        if (!document.getElementById('it_equipment')) {
-            formRow.appendChild(itEquipmentDiv);
-        }
-    }
+            function addItEquipment() {
+                if (!document.getElementById('equipment')) {
+                    formRow.appendChild(itEquipmentDiv);
+                }
+            }
 
-    function removeItEquipment() {
-        if (document.getElementById('it_equipment')) {
-            itEquipmentDiv.remove();
-        }
-    }
-});
+            function removeItEquipment() {
+                if (document.getElementById('equipment')) {
+                    itEquipmentDiv.remove();
+                }
+            }
+        });
 
     </script>
 @endsection

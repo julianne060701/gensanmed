@@ -126,8 +126,9 @@ class TicketController extends Controller
         'department' => 'required',
         'responsible_department' => 'required',
         'concern_type' => 'required',
-        'urgency' => 'required|integer|min:1|max:5',
+        'urgency' => 'required|string|in:Not Urgent,Neutral,Urgent',
         'serial_number' => 'required',
+        'equipment' => 'nullable|string',
         'remarks' => 'nullable|string',
         'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
@@ -135,6 +136,7 @@ class TicketController extends Controller
     // Set default values
     $validated['ticket_number'] = $ticketNumber;
     $validated['status'] = 'Pending'; // Default status
+    $validated['created_by'] = auth()->id(); // Assign logged-in user's ID
 
     // Handle Image Upload (store in public folder)
     if ($request->hasFile('image_url')) {
@@ -148,7 +150,7 @@ class TicketController extends Controller
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
-        return redirect()->route('admin.ticketing.index')->with('success', 'Ticket request submitted successfully.');
+        return redirect()->route('admin.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');
     }

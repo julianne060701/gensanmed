@@ -168,6 +168,7 @@
                 <p><strong>Department:</strong> <span id="ticketDepartment"></span></p>
                 <p><strong>Responsible Department:</strong> <span id="ticketResponsibleDept"></span></p>
                 <p><strong>Concern Type:</strong> <span id="ticketConcern"></span></p>
+                <p><strong>Equipment:</strong> <span id="ticketEquipment"></span></p>
                 <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
                <p><strong>Urgency:</strong> <span id="ticketUrgency"></span></p>
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
@@ -229,6 +230,7 @@ $(document).on("click", ".view-ticket", function() {
             $("#ticketDepartment").text(response.department);
             $("#ticketResponsibleDept").text(response.responsible_department);
             $("#ticketConcern").text(response.concern_type);
+            $("#ticketEquipment").text(response.equipment);
             $("#ticketUrgency").text(response.urgency);
             $("#ticketStatus").text(response.status);
             $("#ticketRemarks").text(response.remarks);

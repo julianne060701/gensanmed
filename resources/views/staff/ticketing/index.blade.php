@@ -107,8 +107,12 @@
     <p><strong>Department:</strong> <span id= "modalDepartment"></span></p>
     <p><strong>Responsible Department:</strong> <span id= "modalResponsibleDepartment"></span></p>
     <p><strong>Concern Type:</strong> <span id= "modalConcernType"></span></p>
+    <p><strong>Equipment:</strong> <span id= "modalEquipment"></span></p>
     <p><strong>Urgency:</strong> <span id= "modalUrgency"></span></p>
+    <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
     <p><strong>Approved Date by Hopss:</strong> <span id= "modalApprovedDate"></span></p>
+    <p><strong>Complete By:</strong> <span id="modalCompletedBy"></span></p>
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -133,15 +137,22 @@
             $('#modalDepartment').text(data.department);
             $('#modalResponsibleDepartment').text(data.responsible_department);
             $('#modalConcernType').text(data.concern_type);
+            $("#modalEquipment").text(data.equipment);
             $('#modalUrgency').text(data.urgency);
+            $('#modalRemarks').text(data.remarks);
+            $('#modalCompletedBy').text(data.completed_by || 'N/A');
 
             // Format the approved date
-            if (data.updated_at) {
-                var updatedAt = new Date(data.updated_at);
-                var options = { year: 'numeric', month: 'long', day: 'numeric' };
-                $('#modalApprovedDate').text(updatedAt.toLocaleDateString('en-US', options));
+            if (data.approval_date) {
+                var approvalDate = new Date(data.approval_date);
+                var formattedDate = approvalDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                $("#modalApprovedDate").text(formattedDate);
             } else {
-                $('#modalApprovedDate').text('N/A');
+                $("#modalApprovedDate").text('N/A'); // Fix: Correct selector ID
             }
 
             // Show the modal

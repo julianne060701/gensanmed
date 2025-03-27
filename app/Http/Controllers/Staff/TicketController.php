@@ -128,6 +128,7 @@ public function getTicketDetails($id)
         'concern_type' => 'required',
         'urgency' => 'required|string|in:Not Urgent,Neutral,Urgent',
         'serial_number' => 'required',
+        'equipment' => 'nullable|string',
         'remarks' => 'nullable|string',
         'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);
@@ -177,6 +178,7 @@ public function getTicketDetails($id)
         'department' => 'required',
         'responsible_department' => 'required',
         'concern_type' => 'required',
+        'equipment' => 'nullable|string',
         'urgency' => 'required|string|in:Not Urgent,Neutral,Urgent',
         'serial_number' => 'required',
         'remarks' => 'nullable|string',
