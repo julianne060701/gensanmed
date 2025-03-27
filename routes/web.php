@@ -175,6 +175,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('staff/ticketing/{id}/edit', [App\Http\Controllers\Staff\TicketController::class, 'edit'])->name('staff.ticketing.edit');
     Route::put('/staff/ticketing/{id}', [App\Http\Controllers\Staff\TicketController::class, 'update'])->name('staff.ticketing.update');
     Route::get('/tickets/{id}', [App\Http\Controllers\Staff\TicketController::class, 'show']);
+    Route::get('/staff/ticketing/print/{id}', [App\Http\Controllers\Staff\TicketController::class, 'print'])->name('staff.ticketing.print');
 
     
   // -----------------------------------------------------

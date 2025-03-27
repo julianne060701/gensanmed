@@ -46,6 +46,13 @@ class TicketController extends Controller
                         title="View" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#ticketModal">
                         <i class="fa fa-lg fa-fw fa-eye"></i>
                         </button>';
+
+                        $btnPrint = '<button class="btn btn-xs btn-default text-secondary mx-1 shadow print-ticket" 
+                        title="Print" data-id="' . $ticket->id . '">
+                        <i class="fa fa-lg fa-fw fa-print"></i>
+                    </button>';
+                    
+
                 
     
             $pdfDisplay = $ticket->image_url 
@@ -75,13 +82,19 @@ class TicketController extends Controller
                 '<span class="badge ' . ($statusColors[$ticket->status] ?? 'badge-secondary') . '">' . $ticket->status . '</span>',
                 $ticket->created_at->format('m/d/Y'),
                 $ticket->total_duration > 0 ? $ticket->total_duration . ' ' . Str::plural('day', $ticket->total_duration) : null,
-               '<nobr>' . $btnShow . $btnEdit . $btnDelete . '</nobr>',
+               '<nobr>' . $btnShow . $btnEdit . $btnDelete . $btnPrint . '</nobr>',
             ];
             $data[] = $rowData;
         }
 
         return view('staff.ticketing.index', compact('data'));
     }
+    public function print($id)
+{
+    $ticket = Ticket::findOrFail($id); // Fetch ticket details
+    return view('staff.ticketing.print', compact('ticket')); // Load print view
+}
+
     
     public function accept($id)
 {

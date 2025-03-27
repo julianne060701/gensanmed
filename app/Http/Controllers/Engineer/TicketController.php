@@ -28,20 +28,20 @@ class TicketController extends Controller
             
             $btnAccept = ($ticket->status !== 'Approved By Admin')
             ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Accept Disabled" disabled>
-               <i class="fas fa-lg fa-fw fa-check-circle"></i>
+               <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
             </button>'
             : '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
             title="Accept" data-id="' . $ticket->id . '">
-           <i class="fas fa-lg fa-fw fa-check-circle"></i>
+           <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
         </button>';
 
         $btnCompleted = ($ticket->status !== 'In Progress')
         ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Complete Disabled" disabled>
-            <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
+            <i class="fas fa-lg fa-fw fa-check-circle"></i>
            </button>'
         : '<button class="btn btn-xs btn-default text-success mx-1 shadow complete-ticket" 
         title="Completed" data-id="' . $ticket->id . '">
-        <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
+        <i class="fas fa-lg fa-fw fa-check-circle"></i>
         </button>';
     
                         

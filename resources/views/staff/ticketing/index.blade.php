@@ -66,6 +66,23 @@
         </div>
     </div>
 </div>
+@if(isset($tickets))
+    <div class="ticket-container">
+        <div class="ticket-header">
+            <h2>Ticket Details</h2>
+        </div>
+        <div class="ticket-details">
+            <p><strong>Ticket Number:</strong> {{ $ticket->ticket_number }}</p>
+            <p><strong>Department:</strong> {{ $ticket->department }}</p>
+            <p><strong>Responsible Department:</strong> {{ $ticket->responsible_department }}</p>
+            <p><strong>Concern Type:</strong> {{ $ticket->concern_type }}</p>
+            <p><strong>Urgency:</strong> {{ $ticket->urgency }}</p>
+            <p><strong>Remarks:</strong> {{ $ticket->remarks }}</p>
+            <p><strong>Approved Date:</strong> {{ $ticket->approval_date ? \Carbon\Carbon::parse($ticket->approval_date)->format('F j, Y') : 'N/A' }}</p>
+            <p><strong>Completed By:</strong> {{ $ticket->completed_by ?? 'N/A' }}</p>
+        </div>
+    </div>
+@endif
 
 {{-- modal delete --}}
 <div class="modal fade" id="deleteModalTicket" tabindex="-1" role="dialog" aria-labelledby="deleteModalTicket" aria-hidden="true">
@@ -162,6 +179,30 @@
         }
     }).fail(function() {
         alert('Error fetching ticket details.');
+    });
+});
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.print-ticket').forEach(button => {
+        button.addEventListener('click', function () {
+            let ticketId = this.getAttribute('data-id');
+            let printUrl = `/staff/ticketing/print/${ticketId}`;
+            let printWindow = window.open(printUrl, '_blank');
+            if (printWindow) {
+                printWindow.focus();
+            }
+        });
+    });
+});
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.print-ticket').forEach(button => {
+        button.addEventListener('click', function () {
+            let ticketId = this.getAttribute('data-id');
+            let printUrl = `/staff/ticketing/print/${ticketId}`;
+            let printWindow = window.open(printUrl, '_blank');
+            if (printWindow) {
+                printWindow.focus();
+            }
+        });
     });
 });
 
