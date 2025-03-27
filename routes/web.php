@@ -158,8 +158,10 @@ Route::middleware(['auth'])->group(function () {
   
     // Engineer Report 
     Route::get('engineer/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');
+    Route::get('engineer/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');
 
-
+    // Engineer PMS
+    Route::get('engineer/pms', [App\Http\Controllers\Engineer\PmsController::class, 'index'])->name('engineer.pms.index');
        // -----------------------------------------------------
             // Staff Sidebar Items (Only for Staff)
             // -----------------------------------------------------

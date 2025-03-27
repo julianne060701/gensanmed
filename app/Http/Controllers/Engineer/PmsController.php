@@ -8,8 +8,7 @@ use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-
-class TicketController extends Controller
+class PmsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -92,38 +91,8 @@ class TicketController extends Controller
             ];
             $data[] = $rowData;
         }
-        return view('engineer.ticketing.index', compact('data'));
+        return view('engineer.pms.index', compact('data'));
     }
-
-    public function accept($id)
-    {
-        $ticket = Ticket::findOrFail($id);
-        $ticket->status = 'In Progress'; // Change status to "In Progress"
-        $ticket->accepted_date = now(); // Store the approval date
-        $ticket->save();
-    
-        return response()->json(['message' => 'Ticket is now In Progress!']);
-    }
-
-    public function complete(Request $request, $id)
-    {
-        $ticket = Ticket::findOrFail($id);
-        $ticket->status = 'Completed';
-        $ticket->completed_by = $request->completed_by; 
-        $ticket->completed_date = now();
-
-        // Calculate the difference in days from created_at to completed_date
-        $completed_date = \Carbon\Carbon::now();
-        $created_at = \Carbon\Carbon::parse($ticket->created_at);
-        
-        $total_duration = $created_at->diffInDays($completed_date);
-
-        $ticket->total_duration = $total_duration;
-        $ticket->save();
-        
-        return response()->json(['message' => 'Ticket marked as Completed!']);
-    }
-
 
     /**
      * Show the form for creating a new resource.
@@ -168,18 +137,8 @@ class TicketController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(Request $request)
+    public function destroy(string $id)
     {
-        $ticket = Ticket::find($request->id);
-
-        if (!$ticket) {
-            return response()->json(['error' => 'Ticket request not found.'], 404);
-        }
-    
-        $ticket->status = 'Defective';
-        $ticket->responsible_remarks = $request->responsible_remarks;
-        $ticket->save();
-    
-        return response()->json(['success' => 'Ticket marked as defective successfully.']);
+        //
     }
 }

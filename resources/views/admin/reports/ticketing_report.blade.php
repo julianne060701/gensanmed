@@ -110,7 +110,7 @@
                         ];
                         
                         $config = [
-                            'order' => [[8, 'desc']], // Default sort by Date Request
+                            'order' => [[0, 'desc']], // Default sort by Date Request
                             'columns' => array_fill(0, count($heads), null),
                         ];
                     @endphp

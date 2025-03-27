@@ -131,10 +131,7 @@
                             <select name="urgency" class="form-control" required>
                                 <option value="">Select Urgency</option>
                                 <option value="Not Urgent">1 - Not Urgent</option>
-                                <option value="Neutral">2 - Neutral</option>
-                                <option value="Urgent">3 - Urgent</option>
-                                <!-- <option value="4">4 - Urgent</option>
-                                <option value="5">5 - Very Urgent</option> -->
+                                <option value="Urgent">2 - Urgent</option>
                             </select>
                         </div>
                     </div>
@@ -240,7 +237,33 @@
                 imagePreview.style.display = 'none';
             }
         });
-        document.addEventListener('DOMContentLoaded', function () {
+    //     document.addEventListener('DOMContentLoaded', function () {
+    //     const responsibleDept = document.getElementById('responsible_department');
+    //     const concernType = document.getElementById('concern_type');
+
+    //     const concernOptions = {
+    //         "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
+    //         "Engineer": ["Fabrication", "Installation", "Repair"]
+    //     };
+
+    //     function updateConcernTypes() {
+    //         const selectedDept = responsibleDept.value;
+    //         concernType.innerHTML = '<option value="">Select Concern Type</option>';
+
+    //         if (selectedDept in concernOptions) {
+    //             concernOptions[selectedDept].forEach(type => {
+    //                 let option = document.createElement("option");
+    //                 option.value = type;
+    //                 option.textContent = type;
+    //                 concernType.appendChild(option);
+    //             });
+    //         }
+    //     }
+
+    //     responsibleDept.addEventListener('change', updateConcernTypes);
+    // });
+
+     document.addEventListener('DOMContentLoaded', function () {
         const responsibleDept = document.getElementById('responsible_department');
         const concernType = document.getElementById('concern_type');
 
@@ -265,5 +288,78 @@
 
         responsibleDept.addEventListener('change', updateConcernTypes);
     });
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const responsibleDept = document.getElementById('responsible_department');
+    const concernType = document.getElementById('concern_type');
+    const form = document.getElementById('ticketForm');
+
+    // IT Equipment Dropdown
+    let itEquipmentDiv = document.createElement('div');
+    itEquipmentDiv.classList.add('col-md-6', 'mt-2');
+    itEquipmentDiv.innerHTML = `
+        <label for="it_equipment">IT Equipment</label>
+        <select name="it_equipment" id="it_equipment" class="form-control">
+            <option value="">Select IT Equipment</option>
+            <option value="Printer">Printer</option>
+            <option value="Printer Sharing">Printer Sharing</option>
+            <option value="Computer">Computer</option>
+            <option value="Monitor">Monitor</option>
+            <option value="Keyboard">Keyboard</option>
+            <option value="Mouse">Mouse</option>
+            <option value="Speaker">Speaker</option>  
+            <option value="Scanner">Scanner</option>
+            <option value="UPS">UPS</option>
+            <option value="Telephone">Telephone</option>
+            <option value="Network">Network</option>
+        </select>
+    `;
+
+    const concernOptions = {
+        "HIMS": ["Repair", "Maintenance", "Medsys", "Software"],
+        "Engineer": ["Fabrication", "Installation", "Repair", "Maintenance", "PMS"]
+    };
+
+    // Populate Concern Type Based on Responsible Department
+    responsibleDept.addEventListener('change', function () {
+        const selectedDept = this.value;
+        concernType.innerHTML = '<option value="">Select Concern Type</option>';
+
+        if (concernOptions[selectedDept]) {
+            concernOptions[selectedDept].forEach(type => {
+                let option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                concernType.appendChild(option);
+            });
+        }
+        
+        // Hide IT Equipment dropdown initially
+        removeItEquipment();
+    });
+
+    // Show IT Equipment Dropdown When "HIMS" and "Maintenance" Are Selected
+    concernType.addEventListener('change', function () {
+        if (responsibleDept.value === "HIMS" && this.value === "Repair") {
+            addItEquipment();
+        } else {
+            removeItEquipment();
+        }
+    });
+
+    function addItEquipment() {
+        const formRow = concernType.closest('.form-row');
+        if (!document.getElementById('it_equipment')) {
+            formRow.appendChild(itEquipmentDiv);
+        }
+    }
+
+    function removeItEquipment() {
+        if (document.getElementById('it_equipment')) {
+            itEquipmentDiv.remove();
+        }
+    }
+});
+
     </script>
 @endsection

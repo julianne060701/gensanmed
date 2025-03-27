@@ -514,6 +514,12 @@ return [
                 'can'   => 'view-engineer-menu',
             ],
             [
+                'text'  => 'PMS',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'engineer/pms',
+                'can'   => 'view-engineer-menu',
+            ],
+            [
                 'text'    => 'Manage Reports',
                 'icon'    => 'fas fa-fw fa-file-alt',
                 'can'     => 'view-engineer-menu',

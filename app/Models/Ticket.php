@@ -14,6 +14,7 @@ class Ticket extends Model
         'department',
         'responsible_department',
         'concern_type',
+        'equipment',
         'urgency',
         'serial_number',
         'remarks',

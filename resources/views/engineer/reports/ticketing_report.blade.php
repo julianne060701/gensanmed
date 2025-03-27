@@ -75,7 +75,7 @@
                         ];
                         
                         $config = [
-                            'order' => [[14,'desc']], // Sort by Date Request
+                            'order' => [[0,'desc']], // Sort by Date Request
                             'columns' => array_fill(0, count($heads), null),
                         ];
                     @endphp

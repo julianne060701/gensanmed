@@ -16,7 +16,7 @@ class TicketController extends Controller
     public function index()
     {
         $tickets = Ticket::where('created_by', auth()->id())
-        ->orderBy('created_at', 'desc')
+        ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
         ->get();
 
         $data = [];

@@ -16,9 +16,11 @@ class TicketReportController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::where('responsible_department', 'HIMS')
-       -> orderBy('created_at', 'desc')->get();
-
+        $tickets = Ticket::whereIn('status', ['Denied', 'Completed', 'Defective'])
+        ->where('responsible_department', 'HIMS') 
+        ->orderBy('ticket_number', 'desc')
+        ->get();
+    
         $data = [];
     
         foreach ($tickets as $ticket) {

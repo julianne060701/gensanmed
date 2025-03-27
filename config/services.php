@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'philsms' => [
+    'api_key' => env('PHILSMS_API_KEY'),
+    'sender' => env('PHILSMS_SENDER'),
+],
+
 
 ];

@@ -43,6 +43,7 @@
 @stop
 
 @section('content')
+
 <!-- Button to trigger modal (for adding new event) -->
 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#eventModal">
     <i class="fas fa-plus"></i> Add Event

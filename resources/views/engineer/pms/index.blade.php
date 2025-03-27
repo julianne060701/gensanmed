@@ -5,13 +5,13 @@
 @section('plugins.DatatablesPlugin', true)
 <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('content_header')
-<h1 class="ml-1">Ticketing</h1>
+<h1 class="ml-1">Maintenance & Equipment</h1>
 @stop
 
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <!-- <a href="#" class="btn btn-primary px-5">Add Purchase</a> -->
+        <a href="#" class="btn btn-primary px-5">Add PMS</a>
     </div>
 
     <div class="row">
@@ -21,14 +21,14 @@
 
                     @php
                         $heads = [
-                            'Ticket #',
-                            'Department',  
-                            'Responsible Department',                        
-                            'Concern Type',   
-                            'Urgency',                                               
-                            'Image',
-                            'Status',
-                            'Date Approved',
+                            'Location',
+                            'Equipment',  
+                            'Serial #',                        
+                            'Remarks',    
+                            'Status',                                              
+                            'Current Date', 
+                            'Next Date',
+                            'In-charge',
                             'Total Duration',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
@@ -92,6 +92,7 @@
         </div>
     </div>
 </div>
+
 {{-- Ticket Details Modal --}}
 <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -120,7 +121,6 @@
         </div>
     </div>
 </div>
-
 <!-- Delete/Defective  Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -247,8 +247,9 @@ $(document).on("click", ".view-ticket", function() {
                 $("#ticketStatus").text(response.status || "N/A");
                 $("#ticketUrgency").text(response.urgency || "N/A");
                 $("#ticketRemarks").text(response.remarks || "N/A");
-                   // Format request date
-                   var requestDate = "N/A";
+
+                 // Format request date
+                 var requestDate = "N/A";
                 if (response.created_at) {
                     var date = new Date(response.created_at);
                     var options = { year: "numeric", month: "long", day: "numeric" };
@@ -281,7 +282,6 @@ $(document).on("click", ".view-ticket", function() {
             }
 
             $("#ticketCompleted").text(completedDate);
-
 
                 // Show modal
                 $("#ticketModal").modal("show");

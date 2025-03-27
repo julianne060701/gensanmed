@@ -17,8 +17,9 @@ class TicketController extends Controller
     {
         $tickets = Ticket::where('status', '!=', 'Pending')
         ->where('responsible_department', 'HIMS')
-        ->orderBy('created_at', 'desc')
+        ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
         ->get();
+
 
         $data = [];
     

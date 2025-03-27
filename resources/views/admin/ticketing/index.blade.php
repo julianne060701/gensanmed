@@ -121,7 +121,7 @@
                         ];
 
                         $config = [
-                            'order' => [[8, 'desc']], // Sort by Date Request (column index 6)
+                            'order' => [[0, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
                                 null, // Ticket #
                                 null, // Department
