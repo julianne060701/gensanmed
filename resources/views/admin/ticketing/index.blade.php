@@ -174,7 +174,7 @@
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
                <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
                <p><strong>Completed By:</strong> <span id="ticketCompletedBy"></span></p>
-
+               <p><strong>Defective Remarks:</strong> <span id="ticketDefectiveRemarks"></span></p>
             </div>
         </div>
     </div>
@@ -234,6 +234,7 @@ $(document).on("click", ".view-ticket", function() {
             $("#ticketUrgency").text(response.urgency);
             $("#ticketStatus").text(response.status);
             $("#ticketRemarks").text(response.remarks);
+            $("#ticketDefectiveRemarks").text(response.responsible_remarks || "N/A");
 
             // Format the approval date using JavaScript
             if (response.approval_date) {

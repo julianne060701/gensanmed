@@ -117,10 +117,12 @@ Route::middleware(['auth'])->group(function () {
     // Route::post('/IT/tickets/{id}/acceptTicket', [App\Http\Controllers\IT\TicketController::class, 'acceptTicket'])->name('IT.tickets.accept');
     Route::post('/tickets/{id}/acceptTicket', [TicketController::class, 'acceptTicket'])->name('tickets.accept');
     Route::post('/IT/tickets/{id}/complete', [TicketController::class, 'complete']);
-    Route::get('/IT/ticketing/{id}', [TicketController::class, 'TicketController@show']);
-
-
-  
+    // Route::get('/IT/ticketing/{id}', [TicketController::class, 'TicketController@show']);
+    Route::get('IT/ticketing/create', [App\Http\Controllers\IT\TicketController::class, 'create'])->name('IT.ticketing.create');
+    Route::post('IT/ticketing', [App\Http\Controllers\IT\TicketController::class, 'store'])->name('IT.ticketing.store');
+    Route::post('/IT/tickets/{id}/complete', [App\Http\Controllers\IT\TicketController::class, 'complete']);
+    Route::get('/IT/ticketing/{id}', [App\Http\Controllers\IT\TicketController::class, 'getTicketDetails'])->name('ticketing.details');
+    Route::post('/IT/tickets/delete', [App\Http\Controllers\IT\TicketController::class, 'delete'])->name('IT.tickets.delete');
 
       // -----------------------------------------------------
             // Purchaser Sidebar Items (Only for Purchaser)
@@ -156,7 +158,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/engineer/tickets/{id}/accept', [App\Http\Controllers\Engineer\TicketController::class, 'accept'])->name('engineer.tickets.accept');
     Route::post('/engineer/tickets/{id}/complete', [App\Http\Controllers\Engineer\TicketController::class, 'complete']);
     Route::post('/engineer/tickets/delete', [App\Http\Controllers\Engineer\TicketController::class, 'delete'])->name('engineer.tickets.delete');
-  
+    Route::get('engineer/ticketing/create', [App\Http\Controllers\Engineer\TicketController::class, 'create'])->name('engineer.ticketing.create');
+    Route::post('engineer/ticketing', [App\Http\Controllers\Engineer\TicketController::class, 'store'])->name('engineer.ticketing.store');
     // Engineer Report 
     Route::get('engineer/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');
     Route::get('engineer/ticketing_report', [App\Http\Controllers\Engineer\TicketReportController::class, 'index'])->name('engineer.reports.ticketing_report.index');

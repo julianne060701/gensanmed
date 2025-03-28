@@ -86,7 +86,7 @@
     <div class="container centered-container">
         <div class="card">
             <div class="card-body">
-                <form id="ticketForm" action="{{ route('IT.ticketing.store') }}" method="POST" enctype="multipart/form-data">
+                <form id="ticketForm" action="{{ route('engineer.ticketing.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                    

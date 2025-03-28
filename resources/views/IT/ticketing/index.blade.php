@@ -11,7 +11,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <!-- <a href="#" class="btn btn-primary px-5">Add Purchase</a> -->
+        <a href="{{route('IT.ticketing.create')}}" class="btn btn-primary px-5">Make Request</a>
     </div>
 
     <div class="row">
@@ -115,6 +115,7 @@
                <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
                <p><strong>Completed Date:</strong> <span id="ticketCompleted"></span></p>
                <p><strong>Completed By:</strong> <span id="ticketCompletedBy"></span></p>
+               <p><strong>Defective Remarks:</strong> <span id="ticketDefectiveRemarks"></span></p>
 
             </div>
         </div>
@@ -190,7 +191,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/engineer/tickets/' + ticketId + '/complete',
+                    url: '/IT/tickets/' + ticketId + '/complete',
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -235,7 +236,7 @@ $(document).on("click", ".view-ticket", function() {
     var ticketId = $(this).data("id");
 
     $.ajax({
-        url: "/admin/ticketing/" + ticketId,
+        url: "/IT/ticketing/" + ticketId,
         type: "GET",
         success: function(response) {
             if (response) {
@@ -247,6 +248,7 @@ $(document).on("click", ".view-ticket", function() {
                 $("#ticketStatus").text(response.status || "N/A");
                 $("#ticketUrgency").text(response.urgency || "N/A");
                 $("#ticketRemarks").text(response.remarks || "N/A");
+                $("#ticketDefectiveRemarks").text(response.responsible_remarks || "N/A");
                    // Format request date
                    var requestDate = "N/A";
                 if (response.created_at) {
@@ -313,7 +315,7 @@ $(document).on('click', '.Accept', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/engineer/tickets/${ticketId}/accept`,
+                url: `/tickets/${ticketId}/acceptTicket`,
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
