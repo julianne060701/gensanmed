@@ -157,60 +157,39 @@
     }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        timeZone: 'local', // Ensure it follows user local time
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,dayGridWeek,dayGridDay'
         },
         events: "{{ route('events.fetch') }}",
+        eventTimeFormat: { // Ensures correct AM/PM format
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        },
         eventClick: function(info) {
-            // Populate the event details modal with data
             document.getElementById('eventId').value = info.event.id;
             document.getElementById('eventDetailsTitle').value = info.event.title;
-            document.getElementById('eventDetailsDescription').value = info.event.extendedProps
-                .description;
-            document.getElementById('eventDetailsStart').value = info.event.start.toISOString()
-                .slice(0, 16);
-            document.getElementById('eventDetailsEnd').value = info.event.end ? info.event.end
-                .toISOString().slice(0, 16) : '';
-
-            // Show the event details modal
+            document.getElementById('eventDetailsDescription').value = info.event.extendedProps.description;
+            document.getElementById('eventDetailsStart').value = info.event.start.toISOString().slice(0, 16);
+            document.getElementById('eventDetailsEnd').value = info.event.end ? info.event.end.toISOString().slice(0, 16) : '';
             $('#eventDetailsModal').modal('show');
         },
-        eventDidMount: function (info) {
-    // Apply background color
-    if (info.event.backgroundColor) {
-        info.el.style.backgroundColor = info.event.backgroundColor;
-    }
-
-    // Ensure the event title is visible with proper color
-    let eventContent = info.el.querySelector('.fc-event-title');
-    if (eventContent) {
-        eventContent.style.color = '#ffffff'; // White text for readability
-    }
-
-    // Format time with AM/PM
-    if (info.event.start) {
-        let time = new Date(info.event.start).toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            hour12: true // Ensures AM/PM format
-        });
-
-        // Modify the event display with formatted time & title, adding a space
-        info.el.innerHTML = `<strong style="color: white;">${time}</strong> &nbsp; <span style="color: white;">${info.event.title}</span>`;
-    }
-
-    // Set text color properly
-    info.el.style.color = '#ffffff'; // Ensures visibility
-    info.el.style.borderColor = info.event.backgroundColor || '#28a745';
-}
-
-
+        eventDidMount: function(info) {
+            let time = new Date(info.event.start).toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true 
+            });
+            info.el.innerHTML = `<strong style="color: white;">${time}</strong> &nbsp; <span style="color: white;">${info.event.title}</span>`;
+            info.el.style.backgroundColor = info.event.backgroundColor || '#28a745';
+        }
     });
 
     calendar.render();

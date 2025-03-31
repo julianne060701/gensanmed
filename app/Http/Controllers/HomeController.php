@@ -57,18 +57,26 @@ class HomeController extends Controller
             'eventTitle'       => 'required|string',
             'eventDescription' => 'nullable|string',
             'fromDate'         => 'required|date',
-            'toDate'           => 'required|date',
+            'toDate'           => 'required|date|after_or_equal:fromDate',
         ]);
-
+    
+        $fromDate = Carbon::parse($validated['fromDate']);
+        $toDate = Carbon::parse($validated['toDate']);
+    
+        // Adjust the to_date to prevent overlap into the next day
+        if ($toDate->format('H:i') === '00:00') {
+            $toDate->subSecond(); // Move it back by 1 second to stay within the intended date
+        }
+    
         ScheduleList::create([
             'event'       => $validated['eventTitle'],
             'description' => $validated['eventDescription'],
-            'from_date'   => Carbon::parse($validated['fromDate'])->toDateTimeString(),
-            'to_date'     => Carbon::parse($validated['toDate'])->toDateTimeString(),
+            'from_date'   => $fromDate->toDateTimeString(),
+            'to_date'     => $toDate->toDateTimeString(),
             'status'      => 'active',
             'user_id'     => auth()->id(),
         ]);
-
+    
         return redirect()->route('admin.schedule.calendar')->with('success', 'Event saved successfully!');
     }
 
@@ -77,17 +85,26 @@ class HomeController extends Controller
         $request->validate([
             'eventTitle' => 'required|string',
             'fromDate'   => 'required|date',
-            'toDate'     => 'required|date',
+            'toDate'     => 'required|date|after_or_equal:fromDate',
         ]);
-
+    
         $event = ScheduleList::findOrFail($event);
+        
+        $fromDate = Carbon::parse($request->fromDate);
+        $toDate = Carbon::parse($request->toDate);
+    
+        // Adjust to_date if it's exactly midnight
+        if ($toDate->format('H:i') === '00:00') {
+            $toDate->subSecond();
+        }
+    
         $event->update([
             'event'       => $request->eventTitle,
             'description' => $request->eventDescription,
-            'from_date'   => Carbon::parse($request->fromDate)->toDateTimeString(),
-            'to_date'     => Carbon::parse($request->toDate)->toDateTimeString(),
+            'from_date'   => $fromDate->toDateTimeString(),
+            'to_date'     => $toDate->toDateTimeString(),
         ]);
-
+    
         return response()->json(['message' => 'Event updated successfully']);
     }
 
