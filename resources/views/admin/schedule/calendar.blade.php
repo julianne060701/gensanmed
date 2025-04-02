@@ -159,6 +159,13 @@
 
     document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+
+    function formatDateTimeLocal(date) {
+        if (!date) return '';
+        let d = new Date(date);
+        return d.toISOString().slice(0, 16); // Converts to YYYY-MM-DDTHH:MM
+    }
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         timeZone: 'local', // Ensure it follows user local time
@@ -174,25 +181,35 @@
             hour12: true
         },
         eventClick: function(info) {
+            let start = info.event.start;
+            let end = info.event.end;
+
             document.getElementById('eventId').value = info.event.id;
             document.getElementById('eventDetailsTitle').value = info.event.title;
             document.getElementById('eventDetailsDescription').value = info.event.extendedProps.description;
-            document.getElementById('eventDetailsStart').value = info.event.start.toISOString().slice(0, 16);
-            document.getElementById('eventDetailsEnd').value = info.event.end ? info.event.end.toISOString().slice(0, 16) : '';
+            document.getElementById('eventDetailsStart').value = formatDateTimeLocal(start);
+            document.getElementById('eventDetailsEnd').value = formatDateTimeLocal(end);
+
             $('#eventDetailsModal').modal('show');
         },
         eventDidMount: function(info) {
             let time = new Date(info.event.start).toLocaleTimeString([], { 
                 hour: '2-digit', 
                 minute: '2-digit', 
-                hour12: true 
+                hour12: true, 
+                timeZone: 'Asia/Manila' 
             });
-            info.el.innerHTML = `<strong style="color: white;">${time}</strong> &nbsp; <span style="color: white;">${info.event.title}</span>`;
+
+            info.el.innerHTML = `
+                <strong style="color: white;">${time}</strong> &nbsp; 
+                <span style="color: white;">${info.event.title}</span>`;
             info.el.style.backgroundColor = info.event.backgroundColor || '#28a745';
         }
     });
 
     calendar.render();
+
+
 
     // Handle saving new event
     document.getElementById('saveEvent').addEventListener('click', function(e) {

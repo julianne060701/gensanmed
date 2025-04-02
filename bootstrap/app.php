@@ -16,4 +16,4 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
-    date_default_timezone_set(env('APP_TIMEZONE', 'Asia/Manila'));
+
