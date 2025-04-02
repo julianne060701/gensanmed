@@ -50,6 +50,7 @@ class TicketReportController extends Controller
                 $ticket->department,
                 $ticket->responsible_department,
                 $ticket->concern_type,
+                $ticket->equipment,
                 $ticket->serial_number,
                 $ticket->remarks,
                 $ticket->urgency,

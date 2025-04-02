@@ -109,6 +109,7 @@
                 <p><strong>Department:</strong> <span id="ticketDepartment"></span></p>
                 <p><strong>Responsible Department:</strong> <span id="ticketResponsibleDept"></span></p>
                 <p><strong>Concern Type:</strong> <span id="ticketConcern"></span></p>
+                <p><strong>Equipment:</strong> <span id="ticketEquipment"></span></p>
                 <p><strong>Status:</strong> <span id="ticketStatus"></span></p>
                <p><strong>Urgency:</strong> <span id="ticketUrgency"></span></p>
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>

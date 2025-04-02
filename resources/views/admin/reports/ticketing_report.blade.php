@@ -96,6 +96,7 @@
                             'Department',  
                             'Responsible Department',                        
                             'Concern Type', 
+                            'Equipment',
                             'Serial No.',  
                             'Remarks',  
                             'Urgency',                               

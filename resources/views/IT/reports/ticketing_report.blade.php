@@ -60,8 +60,9 @@
                     $heads = [
                             'Ticket #',
                             'Department',  
-                            'Responsible Department',                        
+                            'Responsible Department',                  
                             'Concern Type',   
+                            'Equipment',      
                             'Serial No.',  
                             'Remarks', 
                             'Urgency',                                            

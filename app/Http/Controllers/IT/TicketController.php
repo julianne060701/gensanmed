@@ -235,5 +235,13 @@ title="Completed" data-id="' . $ticket->id . '">
         $ticket->save();
     
         return response()->json(['success' => 'Ticket marked as defective successfully.']);
+
     }
+    public function print($id)
+{
+    $ticket = Ticket::findOrFail($id);
+    return view('staff.ticketing.print', compact('ticket'));
 }
+
+}
+
