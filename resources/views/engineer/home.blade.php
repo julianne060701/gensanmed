@@ -230,60 +230,75 @@
     }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
+
+    function formatDateTimeLocal(date) {
+        if (!date) return '';
+        let d = new Date(date);
+
+        // Convert to Asia/Manila time zone
+        let options = {
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false // Use 24-hour format to match input[type="datetime-local"]
+        };
+
+        let formatter = new Intl.DateTimeFormat('en-CA', options);
+        let parts = formatter.formatToParts(d);
+        
+        let year = parts.find(p => p.type === 'year').value;
+        let month = parts.find(p => p.type === 'month').value;
+        let day = parts.find(p => p.type === 'day').value;
+        let hour = parts.find(p => p.type === 'hour').value.padStart(2, '0');
+        let minute = parts.find(p => p.type === 'minute').value.padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hour}:${minute}`; // Matches `datetime-local` input format
+    }
+
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        timeZone: 'local', // Ensure events are displayed in correct time zone
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,dayGridWeek,dayGridDay'
         },
         events: "{{ route('events.fetch') }}",
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        },
         eventClick: function(info) {
-            // Populate the event details modal with data
+            let start = info.event.start;
+            let end = info.event.end;
+
             document.getElementById('eventId').value = info.event.id;
             document.getElementById('eventDetailsTitle').value = info.event.title;
-            document.getElementById('eventDetailsDescription').value = info.event.extendedProps
-                .description;
-            document.getElementById('eventDetailsStart').value = info.event.start.toISOString()
-                .slice(0, 16);
-            document.getElementById('eventDetailsEnd').value = info.event.end ? info.event.end
-                .toISOString().slice(0, 16) : '';
+            document.getElementById('eventDetailsDescription').value = info.event.extendedProps.description;
+            document.getElementById('eventDetailsStart').value = formatDateTimeLocal(start);
+            document.getElementById('eventDetailsEnd').value = formatDateTimeLocal(end);
 
-            // Show the event details modal
             $('#eventDetailsModal').modal('show');
         },
-        eventDidMount: function (info) {
-    // Apply background color
-    if (info.event.backgroundColor) {
-        info.el.style.backgroundColor = info.event.backgroundColor;
-    }
+        eventDidMount: function(info) {
+            let time = new Date(info.event.start).toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: true, 
+                timeZone: 'Asia/Manila' 
+            });
 
-    // Ensure the event title is visible with proper color
-    let eventContent = info.el.querySelector('.fc-event-title');
-    if (eventContent) {
-        eventContent.style.color = '#ffffff'; // White text for readability
-    }
-
-    // Format time with AM/PM
-    if (info.event.start) {
-        let time = new Date(info.event.start).toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            hour12: true // Ensures AM/PM format
-        });
-
-        // Modify the event display with formatted time & title, adding a space
-        info.el.innerHTML = `<strong style="color: white;">${time}</strong> &nbsp; <span style="color: white;">${info.event.title}</span>`;
-    }
-
-    // Set text color properly
-    info.el.style.color = '#ffffff'; // Ensures visibility
-    info.el.style.borderColor = info.event.backgroundColor || '#28a745';
-}
-
-
+            info.el.innerHTML = `
+                <strong style="color: white;">${time}</strong> &nbsp; 
+                <span style="color: white;">${info.event.title}</span>`;
+            info.el.style.backgroundColor = info.event.backgroundColor || '#28a745';
+        }
     });
 
     calendar.render();

@@ -98,7 +98,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="eventDetailsModalLabel">Edit Event</h5>
+                <h5 class="modal-title" id="eventDetailsModalLabel">Details of the Event</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -163,19 +163,40 @@
     function formatDateTimeLocal(date) {
         if (!date) return '';
         let d = new Date(date);
-        return d.toISOString().slice(0, 16); // Converts to YYYY-MM-DDTHH:MM
+
+        // Convert to Asia/Manila time zone
+        let options = {
+            timeZone: 'Asia/Manila',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false // Use 24-hour format to match input[type="datetime-local"]
+        };
+
+        let formatter = new Intl.DateTimeFormat('en-CA', options);
+        let parts = formatter.formatToParts(d);
+        
+        let year = parts.find(p => p.type === 'year').value;
+        let month = parts.find(p => p.type === 'month').value;
+        let day = parts.find(p => p.type === 'day').value;
+        let hour = parts.find(p => p.type === 'hour').value.padStart(2, '0');
+        let minute = parts.find(p => p.type === 'minute').value.padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hour}:${minute}`; // Matches `datetime-local` input format
     }
 
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
-        timeZone: 'local', // Ensure it follows user local time
+        timeZone: 'local', // Ensure events are displayed in correct time zone
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
             right: 'dayGridMonth,dayGridWeek,dayGridDay'
         },
         events: "{{ route('events.fetch') }}",
-        eventTimeFormat: { // Ensures correct AM/PM format
+        eventTimeFormat: {
             hour: '2-digit',
             minute: '2-digit',
             hour12: true
