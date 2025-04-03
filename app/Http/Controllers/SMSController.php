@@ -7,11 +7,14 @@ Use App\Models\UserSMS;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
 use App\Services\ClickSendSMSService;
+use App\Services\PhilSMSService;
 
 class SMSController extends Controller
 {
     protected $smsService;
-    public function __construct(ClickSendSMSService $smsService)
+  
+
+    public function __construct(PhilSMSService $smsService)
     {
         $this->smsService = $smsService;
     }
@@ -82,54 +85,17 @@ class SMSController extends Controller
         //
     }
 
-//    public function sendSMS(Request $request)
-// {
-//     $request->validate([
-//         'message' => 'required|string',
-//         'recipients' => 'required|array',
-//     ]);
 
-//     $sid = env('TWILIO_SID');
-//     $token = env('TWILIO_AUTH_TOKEN');
-//     $from = env('TWILIO_PHONE');
-//     $client = new Client($sid, $token);
-
-//     $messageText = $request->message;
-//     $recipients = $request->recipients;
-
-//     foreach ($recipients as $phone) {
-//         try {
-//             // Ensure phone number starts with "+"
-//             if (substr($phone, 0, 1) !== "+") {
-//                 throw new \Exception("Invalid phone number format: $phone");
-//             }
-
-//             $message = $client->messages->create($phone, [
-//                 'from' => $from,
-//                 'body' => $messageText
-//             ]);
-
-//             Log::info("SMS sent successfully to $phone. SID: " . $message->sid);
-
-//         } catch (\Exception $e) {
-//             Log::error("Failed to send SMS to $phone: " . $e->getMessage());
-//             return response()->json(['success' => false, 'error' => $e->getMessage()], 400);
-//         }
-//     }
-
-//     return response()->json(['success' => true, 'message' => 'SMS sent successfully!']);
-// }
 
 public function sendSMS(Request $request)
 {
     $request->validate([
         'message' => 'required|string',
         'recipients' => 'required|array',
-        'recipients.*' => 'required|string', // Ensure each recipient is valid
+        'recipients.*' => 'required|string',
     ]);
 
-    $smsService = new \App\Services\ClickSendSMSService();
-    $response = $smsService->sendSMS($request->recipients, $request->message);
+    $response = $this->smsService->sendSMS($request->recipients, $request->message);
 
     return response()->json($response);
 }

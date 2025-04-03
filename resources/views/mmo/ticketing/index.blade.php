@@ -98,7 +98,7 @@
 <div class="container-fluid">
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('admin.ticketing.create') }}" class="btn btn-primary px-5">Create Ticket</a>
+        <a href="{{ route('mmo.ticketing.create') }}" class="btn btn-primary px-5">Create Ticket</a>
     </div>
 
     <div class="row">
@@ -121,7 +121,7 @@
                         ];
 
                         $config = [
-                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
+                            'order' => [[0, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
                                 null, // Ticket #
                                 null, // Department
@@ -202,7 +202,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Deny</button>
+                        <button type="submit" class="btn btn-danger">Denied</button>
                     </div>
                 </form>
             </div>

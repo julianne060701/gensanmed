@@ -408,6 +408,64 @@ return [
                 ],
             ],
 
+             // -----------------------------------------------------
+            // MMO Sidebar Items (Only for MMO)
+            // -----------------------------------------------------
+            [
+                'header' => 'MMO PANEL',
+                'can'    => 'view-mmo-menu',
+            ],
+            [
+                'text'  => 'Dashboard',
+                'icon'  => 'fas fa-fw fa-tachometer-alt',
+                'url'   => 'mmo/dashboard',
+                'can'   => 'view-mmo-menu',
+            ],
+            [
+                'text'    => 'Manage Schedule',
+                'icon'    => 'fas fa-calendar-alt',
+                'can'     => 'view-mmo-menu',
+                'submenu' => [
+                    [
+                        'text'        => 'Calendar Schedule',
+                        'url'         => 'mmo/schedule',
+                        'icon'        => 'far fa-fw fa-calendar',
+                        'label_color' => 'success',
+                        'can'         => 'view-mmo-menu',
+                    ],
+                ],
+            ],
+           
+
+            [
+                'text'  => 'Manage Ticket',
+                'icon'  => 'fas fa-fw fa-ticket-alt',
+                'url'   => 'mmo/ticketing',
+                'can'   => 'view-mmo-menu',
+            ],
+                       
+            [
+                'text'    => 'Manage Reports',
+                'icon'    => 'fas fa-fw fa-file-alt',
+                'can'     => 'view-mmo-menu',
+                'submenu' => [
+                    
+                        [
+                            'text'  => 'Ticketing Report',
+                            'icon'  => 'fas fa-fw fa-file-alt',
+                            'url'   => 'mmo/reports/ticketing_report',
+                            'can'   => 'view-mmo-menu',
+                        ],
+                    
+                    [
+                        'text' => 'Purchase Request Report',
+                        'icon' => 'fas fa-file-alt',
+                        // 'url'  => 'admin/purchase_request',
+                        'can'  => 'view-mmo-menu',
+                    ],
+                ],
+            ],
+
               // -----------------------------------------------------
             // IT Sidebar Items (Only for IT)
             // -----------------------------------------------------
@@ -534,7 +592,7 @@ return [
                     
                 ],
             ],
-                    // -----------------------------------------------------
+             // -----------------------------------------------------
             // Purchaser Sidebar Items (Only for Purchaser)
             // -----------------------------------------------------
             [

@@ -1,14 +1,9 @@
 <?php
 namespace App\Services;
 
-use ClickSend\Api\SMSApi;
-use ClickSend\Configuration;
 use GuzzleHttp\Client;
 
-use ClickSend\Model\SmsMessage;
-use ClickSend\Model\SmsMessageCollection;
-
-class ClickSendSMSService
+class PhilSMSService
 {
     protected $client;
     protected $apiUrl;

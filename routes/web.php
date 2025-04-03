@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/staff/home', [App\Http\Controllers\Staff\StaffController::class, 'index'])->name('staff.home');
     Route::get('/head/home', [App\Http\Controllers\Head\HeadController::class, 'home'])->name('head.home'); // Added new route for Head role
     Route::get('/IT/home', [App\Http\Controllers\IT\ITController::class, 'index'])->name('IT.home');
+    Route::get('/mmo/dashboard', [App\Http\Controllers\MMO\MMOController::class, 'index'])->name('mmo.dashboard');
 });
 
         // -----------------------------------------------------
@@ -200,3 +201,17 @@ Route::middleware(['auth'])->group(function () {
     
     // ticketing routes
     Route::get('head/ticketing', [App\Http\Controllers\Head\TicketController::class, 'index'])->name('head.ticketing.index');
+
+
+       // -----------------------------------------------------
+            // MMO Sidebar Items (Only for MMO)
+            // -----------------------------------------------------
+
+            Route::get('mmo/ticketing', [App\Http\Controllers\MMO\TicketController::class, 'index'])->name('mmo.ticketing.index');
+            Route::get('mmo/ticketing/create', [App\Http\Controllers\MMO\TicketController::class, 'create'])->name('mmo.ticketing.create');
+            Route::post('mmo/ticketing', [App\Http\Controllers\MMO\TicketController::class, 'store'])->name('mmo.ticketing.store');
+            Route::get('mmo/ticketing/{id}/edit', [App\Http\Controllers\MMO\TicketController::class, 'edit'])->name('mmo.ticketing.edit');
+            Route::put('mmo/ticketing/{id}', [App\Http\Controllers\MMO\TicketController::class, 'update'])->name('mmo.ticketing.update');
+            Route::get('mmo/schedule', [App\Http\Controllers\MMO\CalendarController::class, 'index'])->name('mmo.schedule.calendar');
+            Route::get('mmo/reports/ticketing_report', [App\Http\Controllers\MMO\TicketReportController::class, 'index'])->name('mmo.reports.ticketing_report.index');
+            

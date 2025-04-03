@@ -21,7 +21,8 @@ class RoleSeeder extends Seeder
             'Engineer',
             'Staff',
             'Employee',
-            'Head' // Added new role
+            'Head', // Added new role
+            'MMO'
         ];
 
         foreach ($roles as $roleName) {
@@ -36,7 +37,8 @@ class RoleSeeder extends Seeder
             'Engineer' => ['view-engineer-menu'],
             'Staff' => ['view-staff-menu'],
             'Employee' => ['view-employee-menu'],
-            'Head' => ['view-head-menu'] // Added new permission
+            'Head' => ['view-head-menu'],// Added new permission
+            'mmo' => ['view-mmo-menu']
         ];
 
         foreach ($permissions as $roleName => $rolePermissions) {
