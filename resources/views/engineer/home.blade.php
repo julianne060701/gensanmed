@@ -90,7 +90,7 @@
 }
 </style>
 @stop
-<h1>Admin Calendar</h1>
+<h1>Engineering Dashboard</h1>
 @stop
 
 @section('content')
