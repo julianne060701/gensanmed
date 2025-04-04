@@ -97,26 +97,35 @@
 <div class="dashboard-card">
     <div class="card bg-primary">
         <div class="card-content">
-            <h2>150</h2>
+            <h2>{{ $newTicketCount }}</h2>
             <h4>New Request Tickets</h4>
         </div>
-        <i class="fas fa-users card-icon"></i>
+        <i class="fas fa-ticket-alt card-icon"></i>
     </div>
+    <div class="card bg-danger">
+        <div class="card-content">
+            <h2>{{ $defectiveTicketCount }}</h2>
+            <h4>Defective Status</h4>
+        </div>
+        <i class="fas fa-ticket-alt card-icon"></i>
+</div>
     <div class="card bg-warning text-dark">
         <div class="card-content">
-            <h2>44</h2>
+            <h2>{{ $totalTicketCount }}</h2>
             <h4>Total Ticket Request</h4>
         </div>
         <i class="fas fa-ticket-alt card-icon"></i>
     </div>
     <div class="card bg-info">
         <div class="card-content">
-            <h2>30</h2>
+            <h2>{{ $completedTicketCount }}</h2>
             <h4>Complete Ticket Request</h4>
         </div>
-        <i class="fas fa-shopping-cart card-icon"></i>
+        <i class="fas fa-ticket-alt card-icon"></i>
     </div>
 </div>
+
+
 <!-- Button to trigger modal (for adding new event) -->
 <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#eventModal">
     <i class="fas fa-plus"></i> Add Event

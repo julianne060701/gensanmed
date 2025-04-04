@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\ScheduleList;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Ticket;
+use App\Models\PR;
+use App\Models\PurchaserPO;
 
 class HomeController extends Controller
 {
@@ -18,8 +22,17 @@ class HomeController extends Controller
         if ($request->ajax()) {
             return $this->fetchEvents();
         }
-
-        return view('admin.dashboard');
+    
+        // Fetch the counts of Users, Events, Tickets, Purchase Orders, and Purchase Requests
+        $userCount = User::count();
+        $eventCount = ScheduleList::count();
+        $ticketCount = Ticket::count();
+        $purchaseOrderCount = PurchaserPO::count();
+        $purchaseRequestCount = PR::count();
+    
+        return view('admin.dashboard', compact(
+            'userCount', 'eventCount', 'ticketCount', 'purchaseOrderCount', 'purchaseRequestCount'
+        ));
     }
 
     public function index()

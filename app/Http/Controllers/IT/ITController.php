@@ -4,6 +4,7 @@ namespace App\Http\Controllers\IT;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Ticket;
 
 class ITController extends Controller
 {
@@ -12,7 +13,25 @@ class ITController extends Controller
      */
     public function index()
     {
-        return view('IT.home');
+        
+      // Fetch and count tickets for 'HIMS' department based on status
+      $newTicketCount = Ticket::where('responsible_department', 'HIMS')
+      ->where('status', 'Approved By Admin')
+      ->count();
+
+    $completedTicketCount = Ticket::where('responsible_department', 'HIMS')
+        ->where('status', 'Completed')
+        ->count();
+
+    $totalTicketCount = Ticket::where('responsible_department', 'HIMS')->count();
+
+    $defectiveTicketCount = Ticket::where('responsible_department', 'HIMS')
+        ->where('status', 'Defective')
+        ->count();
+ 
+         // Return the view with the counts
+         return view('IT.home', compact(
+             'newTicketCount', 'completedTicketCount', 'totalTicketCount', 'defectiveTicketCount'));
     }
 
     /**

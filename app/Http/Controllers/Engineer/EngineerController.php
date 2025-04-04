@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Engineer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Ticket;
 
 class EngineerController extends Controller
 {
@@ -12,7 +13,24 @@ class EngineerController extends Controller
      */
     public function index()
     {
-        return view('engineer.home');
+        // Fetch and count tickets for 'HIMS' department based on status
+      $newTicketCount = Ticket::where('responsible_department', 'Engineer')
+      ->where('status', 'Approved By Admin')
+      ->count();
+
+    $completedTicketCount = Ticket::where('responsible_department', 'Engineer')
+        ->where('status', 'Completed')
+        ->count();
+
+    $totalTicketCount = Ticket::where('responsible_department', 'Engineer')->count();
+
+    $defectiveTicketCount = Ticket::where('responsible_department', 'Engineer')
+        ->where('status', 'Defective')
+        ->count();
+ 
+         // Return the view with the counts
+         return view('engineer.home', compact(
+             'newTicketCount', 'completedTicketCount', 'totalTicketCount', 'defectiveTicketCount'));
     }
 
     /**
