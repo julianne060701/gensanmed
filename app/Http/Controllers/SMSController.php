@@ -30,9 +30,9 @@ class SMSController extends Controller
      */
     public function index()
     {
-        $users = User::all();  // Get all users
         $groups = SmsGroup::all(); // Get all groups
         $users = UserSMS::all(); // Fetch all users from users_sms table
+        
     return view('admin.schedule.sms', compact('users', 'groups'));
 
     
@@ -146,6 +146,28 @@ public function bulkSMS()
                 ->get();
 
     return view('admin.bulk_sms', compact('groups', 'users'));
+}
+public function getRecipients(Request $request)
+{
+    $groupId = $request->input('group_id');
+
+    if (!$groupId) {
+        return response()->json([]);
+    }
+
+    // Fetch users in the selected group
+    $users = SmsGroupUser::where('group_id', $groupId)
+                ->with('user') // Ensure the User model is loaded
+                ->get()
+                ->map(function ($groupUser) {
+                    return [
+                        'id' => $groupUser->user->id,
+                        'name' => $groupUser->user->name,
+                        'phone' => $groupUser->user->phone
+                    ];
+                });
+
+    return response()->json($users);
 }
 
 

@@ -2,6 +2,7 @@
 
 @section('title', 'Create User')
 <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
+
 @section('content_header')
     <h1 class="ml-1">Create User</h1>
 @stop
@@ -14,7 +15,7 @@
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
-                <form action="{{ route('admin.user.store') }}" method="POST">
+                <form id="createUserForm" action="{{ route('IT.user.store') }}" method="POST">
                     @csrf
 
                     <div class="form-group">
@@ -58,16 +59,44 @@
                             <option value="Engineer" {{ old('role') == 'Engineer' ? 'selected' : '' }}>Engineer</option>
                             <option value="Staff" {{ old('role') == 'Staff' ? 'selected' : '' }}>Staff</option>
                             <option value="Employee" {{ old('role') == 'Employee' ? 'selected' : '' }}>Employee</option>
-                            <option value="Head" {{ old('role') == 'Head' ? 'selected' : '' }}>Head</option> <!-- Added new role -->
+                            <option value="Head" {{ old('role') == 'Head' ? 'selected' : '' }}>Head</option> 
+                            <option value="mmo" {{ old('role') == 'mmo' ? 'selected' : ''}}>MMO</option>
                         </select>
                         @error('role')
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-success">Create User</button>
+                    <button type="button" id="createUserBtn" class="btn btn-success">Create User</button>
                 </form>
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Add SweetAlert confirmation for form submission
+    $('#createUserBtn').on('click', function(e) {
+        e.preventDefault(); // Prevent immediate form submission
+
+        // Trigger SweetAlert for confirmation
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to create this user?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, create it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Submit the form if user confirms
+                $('#createUserForm').submit();
+            }
+        });
+    });
+</script>
 @endsection

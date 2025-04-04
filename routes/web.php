@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/send-sms/group', [App\Http\Controllers\SMSController::class, 'sendSMSToGroup'])->name('admin.schedule.send_sms_group');
     Route::post('/create-group', [App\Http\Controllers\SMSController::class, 'createGroup'])->name('admin.schedule.create_group');
     Route::post('/admin/sms-groups/store', [App\Http\Controllers\SMSController::class, 'createGroup'])->name('admin.sms_groups.store');
+    Route::get('/admin/sms/get-recipients', [App\Http\Controllers\SMSController::class, 'getRecipients'])->name('admin.schedule.get_recipients');
+
 
 
     // calendar routes
@@ -56,6 +58,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/user', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.user.index');
     Route::get('admin/user/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.user.create');
     Route::post('admin/user/create', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.user.store');
+    Route::get('admin/user/{id}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.user.edit');
+    Route::put('admin/user/{id}/update', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.user.update');
+    Route::delete('admin/user/{id}/delete', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.user.destroy');
 
 // Purchaser Routes
     Route::post('admin/purchase/store', [App\Http\Controllers\PurchaserController::class, 'store'])->name('admin.purchase.store');
@@ -108,6 +113,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('IT/user/{id}/update', [App\Http\Controllers\IT\UserController::class, 'update'])->name('IT.user.update');
     Route::delete('IT/user/{id}/delete', [App\Http\Controllers\IT\UserController::class, 'destroy'])->name('IT.user.destroy');
     Route::get('IT/user/{id}', [App\Http\Controllers\IT\UserController::class, 'show'])->name('IT.user.show');
+
 
     // PO Routes IT
     Route::get('IT/purchase_order', [App\Http\Controllers\IT\POController::class, 'index'])->name('IT.purchase_order.index');

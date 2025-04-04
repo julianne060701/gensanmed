@@ -79,7 +79,12 @@
 @stop
 
 @section('js')
+<!-- Include SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
+
+
     $(document).ready(function() {
         // Initialize DataTable
         $('#recipientsTable').DataTable();
@@ -142,5 +147,67 @@
             });
         });
     });
+
+        //   $('#sendSMSBtn').on('click', function() {
+//             let message = $('#message').val();
+//             let recipients = [];
+
+
+//             $('.recipient-checkbox:checked').each(function() {
+//                 recipients.push($(this).val());
+//             });
+
+//             if (message.trim() === '' || recipients.length === 0) {
+//                 Swal.fire({
+//                     icon: 'error',
+//                     title: 'Oops...',
+//                     text: 'Please enter a message and select at least one recipient.',
+//                 });
+//                 return;
+//             }
+
+
+//             Swal.fire({
+//                 title: 'Are you sure?',
+//                 text: "You are about to send this SMS to the selected recipients.",
+//                 icon: 'warning',
+//                 showCancelButton: true,
+//                 confirmButtonText: 'Yes, send it!',
+//                 cancelButtonText: 'Cancel'
+//             }).then((result) => {
+//                 if (result.isConfirmed) {
+
+//                     $.ajax({
+//                         url: "{{ route('admin.schedule.send_sms') }}",
+//                         type: "POST",
+//                         data: {
+//                             _token: "{{ csrf_token() }}",
+//                             message: message,
+//                             recipients: recipients
+//                         },
+//                         success: function(response) {
+//                             Swal.fire({
+//                                 icon: 'success',
+//                                 title: 'SMS Sent!',
+//                                 text: response.message,
+//                             });
+//                         },
+//                         error: function(error) {
+//                             Swal.fire({
+//                                 icon: 'error',
+//                                 title: 'Failed!',
+//                                 text: 'Failed to send SMS. Check the console for errors.',
+//                             });
+//                             console.log(error);
+//                         }
+//                     });
+//                 }
+//             });
+//         });
+// });
 </script>
 @stop
+
+
+
+   

@@ -47,7 +47,7 @@ class UserController extends Controller
         // Pass the processed data to the view
         return view('admin.user.index', compact('data'));
     }
-    
+ 
 
     
 
@@ -99,7 +99,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        // Find the user by ID
+        $user = User::findOrFail($id);
+        
+        // Return the edit view with user data
+        return view('admin.user.edit', compact('user'));
     }
 
     /**
@@ -107,7 +111,26 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'role' => 'required|string',
+            'password' => 'nullable|string|min:8',
+        ]);
+    
+        $user = User::findOrFail($id);
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+    
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+    
+        $user->save();
+    
+        $user->syncRoles($validated['role']);
+    
+        return redirect()->route('admin.user.index')->with('success', 'User updated successfully!');
     }
 
     /**
@@ -115,6 +138,9 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+    
+        return redirect()->route('admin.user.index')->with('success', 'User deleted successfully!');
     }
 }
