@@ -10,48 +10,36 @@ use ClickSend\Model\SmsMessageCollection;
 
 class ClickSendSMSService
 {
-    protected $client;
-    protected $apiUrl;
-    protected $apiToken;
+    protected $smsApi;
 
     public function __construct()
     {
-        $this->client = new Client();
-        $this->apiUrl = config('philsms.api_url');
-        $this->apiToken = config('philsms.api_token');
+        $config = Configuration::getDefaultConfiguration()
+            ->setUsername(config('clicksend.username'))
+            ->setPassword(config('clicksend.api_key'));
+    
+        $this->smsApi = new SMSApi(new Client(), $config);
     }
+    
 
     public function sendSMS($recipients, $message)
     {
         $messages = [];
+
         foreach ($recipients as $phone) {
             $messages[] = [
-                'recipient' => $phone,
-                'message' => $message,
+                'to' => $phone,
+                'body' => $message
             ];
         }
 
-        try {
-            $response = $this->client->post($this->apiUrl . 'send-bulk-sms', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->apiToken,
-                    'Content-Type' => 'application/json',
-                ],
-                'json' => [
-                    'messages' => $messages,
-                ],
-            ]);
+        $smsCollection = new SmsMessageCollection(['messages' => $messages]);
 
-            return [
-                'success' => true,
-                'message' => 'SMS sent successfully!',
-                'response' => json_decode($response->getBody(), true),
-            ];
+        try {
+            $response = $this->smsApi->smsSendPost($smsCollection);
+            return ['success' => true, 'message' => 'SMS sent successfully!', 'response' => $response];
         } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => 'Failed to send SMS: ' . $e->getMessage(),
-            ];
+            return ['success' => false, 'message' => 'Failed to send SMS: ' . $e->getMessage()];
         }
     }
 }

@@ -7,14 +7,21 @@ Use App\Models\UserSMS;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
 use App\Services\ClickSendSMSService;
-use App\Services\PhilSMSService;
+use App\Models\SmsGroup;
+use App\Models\User;
+use App\Models\Group;
+use App\Models\SmsGroupUser;
 
 class SMSController extends Controller
 {
     protected $smsService;
   
 
-    public function __construct(PhilSMSService $smsService)
+    // public function __construct(PhilSMSService $smsService)
+    // {
+    //     $this->smsService = $smsService;
+    // }
+    public function __construct(ClickSendSMSService $smsService)
     {
         $this->smsService = $smsService;
     }
@@ -23,8 +30,12 @@ class SMSController extends Controller
      */
     public function index()
     {
+        $users = User::all();  // Get all users
+        $groups = SmsGroup::all(); // Get all groups
         $users = UserSMS::all(); // Fetch all users from users_sms table
-    return view('admin.schedule.sms', compact('users'));
+    return view('admin.schedule.sms', compact('users', 'groups'));
+
+    
     }
 
     /**
@@ -32,7 +43,8 @@ class SMSController extends Controller
      */
     public function create()
     {
-        return view('admin.schedule.create_sms');
+        $users = UserSMS::all(); // Fetch all users
+        return view('admin.schedule.create_sms', compact('users'));
     }
 
     /**
@@ -99,4 +111,42 @@ public function sendSMS(Request $request)
 
     return response()->json($response);
 }
+public function createGroup(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|unique:sms_groups,name',
+        'users' => 'required|array',
+        'users.*' => 'exists:users_sms,id',
+    ]);
+
+    $group = SmsGroup::create(['name' => $request->name]);
+    $group->users()->attach($request->users);
+
+    return redirect()->route('admin.schedule.sms')->with('success', 'Group created successfully!');
+}
+
+public function sendSMSToGroup(Request $request)
+{
+    $request->validate([
+        'message' => 'required|string',
+        'group_id' => 'required|exists:sms_groups,id',
+    ]);
+
+    $group = SmsGroup::findOrFail($request->group_id);
+    $recipients = $group->users->pluck('phone')->toArray();
+
+    $response = $this->smsService->sendSMS($recipients, $request->message);
+
+    return response()->json($response);
+}
+public function bulkSMS()
+{
+    $groups = SmsGroup::all();  // Get all SMS groups
+    $users = User::with('group')  // Get users with their groups
+                ->get();
+
+    return view('admin.bulk_sms', compact('groups', 'users'));
+}
+
+
 }

@@ -37,6 +37,18 @@
             <textarea class="form-control" id="message" name="message" rows="4"></textarea>
         </div>
         
+        <!-- Group Selection -->
+        <div class="form-group">
+            <label for="group">Select Group:</label>
+            <select class="form-control" id="group" name="group">
+                <option value="">Select a group</option>
+                @foreach($groups as $group)
+    <option value="{{ $group->id }}">{{ $group->name }}</option>
+@endforeach
+
+            </select>
+        </div>
+
         <div class="form-group">
             <label for="recipients">Recipients:</label>
             <table id="recipientsTable" class="table table-bordered">
@@ -47,14 +59,16 @@
                         <th>Phone Number</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($users as $user)
-                        <tr>
-                            <td><input type="checkbox" class="recipient-checkbox" value="{{ $user->phone }}"></td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->phone }}</td>
-                        </tr>
-                    @endforeach
+                <tbody id="recipientsList">
+                @foreach($users as $user)
+    <tr class="recipient-row" data-group="{{ $user->group_id }}">
+        <td><input type="checkbox" class="recipient-checkbox" value="{{ $user->phone }}"></td>
+        <td>{{ $user->name }}</td>
+        <td>{{ $user->phone }}</td>
+    </tr>
+@endforeach
+
+
                 </tbody>
             </table>
         </div>
@@ -75,6 +89,26 @@
             $('.recipient-checkbox').prop('checked', this.checked);
         });
 
+        // Filter recipients based on selected group
+        $('#group').on('change', function() {
+    var selectedGroup = $(this).val();
+
+    // Show/hide rows based on the selected group
+    if (selectedGroup) {
+        $('.recipient-row').each(function() {
+            if ($(this).data('group') == selectedGroup) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    } else {
+        // Show all recipients if no group is selected
+        $('.recipient-row').show();
+    }
+});
+
+
         // Send SMS Function
         $('#sendSMSBtn').on('click', function() {
             let message = $('#message').val();
@@ -91,22 +125,21 @@
             }
 
             $.ajax({
-    url: "{{ route('admin.schedule.send_sms') }}",
-    type: "POST",
-    data: {
-        _token: "{{ csrf_token() }}",
-        message: message,
-        recipients: recipients
-    },
-    success: function(response) {
-        alert(response.message);
-    },
-    error: function(error) {
-        alert('Failed to send SMS. Check the console for errors.');
-        console.log(error);
-    }
-});
-
+                url: "{{ route('admin.schedule.send_sms') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    message: message,
+                    recipients: recipients
+                },
+                success: function(response) {
+                    alert(response.message);
+                },
+                error: function(error) {
+                    alert('Failed to send SMS. Check the console for errors.');
+                    console.log(error);
+                }
+            });
         });
     });
 </script>

@@ -13,4 +13,9 @@ class UserSMS extends Model
     protected $table = 'users_sms'; // Explicitly set the table name
 
     protected $fillable = ['name', 'phone']; // Fields that can be mass assigned
+
+    public function groups()
+    {
+        return $this->belongsToMany(SmsGroup::class, 'sms_group_user', 'user_sms_id', 'sms_group_id');
+    }
 }

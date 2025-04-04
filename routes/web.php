@@ -40,6 +40,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('admin/sms/store', [App\Http\Controllers\SMSController::class, 'store'])->name('admin.schedule.store_sms');
     Route::post('admin/sms/send', [App\Http\Controllers\SMSController::class, 'sendSMS'])->name('admin.schedule.send_sms');
     Route::post('/admin/schedule/send-sms', [App\Http\Controllers\SmsController::class, 'sendSms'])->name('admin.schedule.send_sms');
+    Route::post('/send-sms/group', [App\Http\Controllers\SMSController::class, 'sendSMSToGroup'])->name('admin.schedule.send_sms_group');
+    Route::post('/create-group', [App\Http\Controllers\SMSController::class, 'createGroup'])->name('admin.schedule.create_group');
+    Route::post('/admin/sms-groups/store', [App\Http\Controllers\SMSController::class, 'createGroup'])->name('admin.sms_groups.store');
+
 
     // calendar routes
     Route::get('admin/schedule', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.schedule.calendar');

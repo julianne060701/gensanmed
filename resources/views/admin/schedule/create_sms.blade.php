@@ -46,6 +46,23 @@
             </div>
         </div>
     </div>
+    <form method="POST" action="{{ route('admin.schedule.create_group') }}">
+
+    @csrf
+    <label>Group Name:</label>
+    <input type="text" name="name" class="form-control" required>
+
+    <label>Assign Users:</label>
+    @foreach($users as $user)
+    <div>
+        <input type="checkbox" name="users[]" value="{{ $user->id }}">
+        {{ $user->name }} ({{ $user->phone }})
+    </div>
+@endforeach
+
+
+    <button class="btn btn-success mt-3">Create Group</button>
+</form>
 
     <!-- JavaScript for Phone Number Formatting -->
     <script>
