@@ -211,6 +211,13 @@ Route::middleware(['auth'])->group(function () {
     
     // ticketing routes
     Route::get('head/ticketing', [App\Http\Controllers\Head\TicketController::class, 'index'])->name('head.ticketing.index');
+    Route::get('head/ticketing/create', [App\Http\Controllers\Head\TicketController::class, 'create'])->name('head.ticketing.create');
+    Route::post('head/ticketing', [App\Http\Controllers\Head\TicketController::class, 'store'])->name('head.ticketing.store');
+    Route::get('head/ticketing/{id}/edit', [App\Http\Controllers\Head\TicketController::class, 'edit'])->name('head.ticketing.edit');
+    Route::put('head/ticketing/{id}', [App\Http\Controllers\Head\TicketController::class, 'update'])->name('head.ticketing.update');
+    Route::get('head/ticketing/{id}', [App\Http\Controllers\Head\TicketController::class, 'show'])->name('head.ticketing.show');
+    Route::post('head/ticketing/delete', [App\Http\Controllers\Head\TicketController::class, 'delete'])->name('head.ticketing.delete');
+    Route::get('/head/ticketing/print/{id}', [App\Http\Controllers\Head\TicketController::class, 'print'])->name('head.ticketing.print');
 
 
        // -----------------------------------------------------

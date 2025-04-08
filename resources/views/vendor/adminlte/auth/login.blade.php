@@ -7,24 +7,15 @@
     <style>
         /* Body styles with animated linear gradient background */
         body {
-            background: linear-gradient(135deg, 
-                rgb(192, 196, 116), 
-                rgb(73, 152, 190), 
-                rgb(23,222,61,1), 
-                rgb(151, 158, 83),
-                rgb(43, 107, 140), 
-                rgb(26, 103, 52),
-                rgb(12, 61, 78), 
-                rgb(120, 165, 73), 
-                rgb(4, 84, 164)
-            );
-            background-size: 400% 400%;
-            animation: gradientAnimation 15s ease infinite;
-            font-family: 'Arial', sans-serif;
-            color: #333;
-            height: 100vh;
-            margin: 0;
-        }
+    background: url("{{ asset('vendor/adminlte/dist/img/bg.jpg') }}") no-repeat center center fixed;
+    background-size: cover; /* Ensures the image covers the whole screen */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff; /* White text for contrast */
+}
+
 
         /* Gradient animation to create a flowing effect */
         @keyframes gradientAnimation {
