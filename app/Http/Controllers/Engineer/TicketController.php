@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
 
 class TicketController extends Controller
 {
@@ -179,6 +180,10 @@ title="Defective" data-id="' . $ticket->id . '" data-toggle="modal" data-target=
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
+        $admins = User::role('Administrator')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketNotification($ticket));
+        }
         return redirect()->route('engineer.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');

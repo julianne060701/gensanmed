@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
 
 class TicketController extends Controller
 {
@@ -121,7 +123,7 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
-       // Get next ticket number
+          // Get next ticket number
     $nextId = Ticket::max('id') + 1;
     $ticketNumber = 'TICKET-' . $nextId;
 
@@ -154,6 +156,10 @@ class TicketController extends Controller
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
+        $admins = User::role('Administrator')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketNotification($ticket));
+        }
         return redirect()->route('head.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');

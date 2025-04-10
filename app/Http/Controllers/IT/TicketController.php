@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
 
 class TicketController extends Controller
 {
@@ -15,17 +17,17 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets1 = Ticket::where('status', '!=', 'Pending')
-            ->where('responsible_department', 'HIMS')
-            ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
-            ->get();
+        $tickets1 = Ticket::whereNotIn('status', ['Pending', 'Denied'])
+        ->where('responsible_department', 'HIMS')
+        ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
+        ->get();
     
-        $tickets2 = Ticket::where('created_by', auth()->id())
-            ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
-            ->get();
+    $tickets2 = Ticket::where('created_by', auth()->id())
+        ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
+        ->get();
     
-        // Merge both queries' results
-        $tickets = $tickets1->concat($tickets2);
+    // Merge both queries' results
+    $tickets = $tickets1->concat($tickets2);
     
         $data = [];
     
@@ -180,6 +182,10 @@ title="Completed" data-id="' . $ticket->id . '">
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
+        $admins = User::role('Administrator')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketNotification($ticket));
+        }
         return redirect()->route('IT.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');

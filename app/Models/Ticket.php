@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\User;
 class Ticket extends Model
 {
     use HasFactory;
@@ -39,4 +39,10 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+// Ticket.php (Model)
+public function user()
+{
+    return $this->belongsTo(User::class, 'user_id'); // Assuming the foreign key is 'user_id'
+}
+
 }

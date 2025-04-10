@@ -48,6 +48,7 @@
         @if($layoutHelper->isRightSidebarEnabled())
             @include('adminlte::partials.sidebar.right-sidebar')
         @endif
+        @include('partials.notification-sound')
 
     </div>
 @stop

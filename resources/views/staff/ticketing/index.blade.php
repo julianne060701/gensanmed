@@ -36,7 +36,7 @@
                         ];
 
                         $config = [
-                            'order' => [[0, 'desc']], // Sort by Date Request (column index 6)
+                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
                                 null, // Ticket #
                                 null, // Department
@@ -80,6 +80,7 @@
             <p><strong>Remarks:</strong> {{ $ticket->remarks }}</p>
             <p><strong>Approved Date:</strong> {{ $ticket->approval_date ? \Carbon\Carbon::parse($ticket->approval_date)->format('F j, Y') : 'N/A' }}</p>
             <p><strong>Completed By:</strong> {{ $ticket->completed_by ?? 'N/A' }}</p>
+            <p><strong>Denied Remarks:</strong> {{$ticket->remarks_by ?? 'N/A'}}</p>
         </div>
     </div>
 @endif
@@ -129,6 +130,7 @@
     <p><strong>Remarks:</strong> <span id="modalRemarks"></span></p>
     <p><strong>Approved Date by Hopss:</strong> <span id= "modalApprovedDate"></span></p>
     <p><strong>Complete By:</strong> <span id="modalCompletedBy"></span></p>
+    <p><strong>Denied Remarks:</strong> <span id="modalDeniedRemarks"></span></p>
 
       </div>
       <div class="modal-footer">
@@ -154,10 +156,11 @@
             $('#modalDepartment').text(data.department);
             $('#modalResponsibleDepartment').text(data.responsible_department);
             $('#modalConcernType').text(data.concern_type);
-            $("#modalEquipment").text(data.equipment);
+            $("#modalEquipment").text(data.equipment || 'N/A'); 
             $('#modalUrgency').text(data.urgency);
             $('#modalRemarks').text(data.remarks);
             $('#modalCompletedBy').text(data.completed_by || 'N/A');
+            $('#modalDeniedRemarks').text(data.remarks_by || 'N/A');
 
             // Format the approved date
             if (data.approval_date) {

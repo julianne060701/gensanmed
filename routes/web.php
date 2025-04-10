@@ -17,9 +17,26 @@ Auth::routes();
 //     [App\Http\Controllers\NotificationsController::class, 'getNotificationsData']
 // )->name('notifications.get');
 
-Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
-Route::get('/notifications/fetch', [App\Http\Controllers\NotificationController::class, 'fetch'])->name('notifications.fetch');
-Route::get('/notifications/read/{id}', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+// Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+// Route::get('/notifications/fetch', [App\Http\Controllers\NotificationController::class, 'fetch'])->name('notifications.fetch');
+// Route::get('/notifications/read/{id}', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+
+Route::get('/notifications/show', [NotificationController::class, 'show'])->name('notifications.show');
+Route::get('/notifications/get', [NotificationController::class, 'get'])->name('notifications.get');
+Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::get('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/ticket/{ticket}', [TicketController::class, 'show'])->name('ticket.show');
+});
+// Route::get('/notifications/get', [App\Http\Controllers\NotificationController::class, 'get'])->name('notifications.get');
+
+Route::get('/check-role', function () {
+    $user = auth()->user();
+    dd($user->roles, $user->hasRole('Administrator'));
+});
+
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('admin/dashboard', [HomeController::class, 'home'])->name('admin.dashboard');
@@ -95,7 +112,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tickets/{id}/accept', [App\Http\Controllers\TicketController::class, 'accept'])->name('tickets.accept');
     Route::get('admmin/ticketing/{id}/edit', [App\Http\Controllers\TicketController::class, 'edit'])->name('admin.ticketing.edit');
     Route::put('admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'update'])->name('admin.ticketing.update');
-    Route::post('/tickets/delete', [App\Http\Controllers\TicketController::class, 'delete'])->name('ticketing.delete');
+    Route::post('admin/ticketing/delete', [App\Http\Controllers\TicketController::class, 'delete'])->name('admin.ticketing.delete');
     // Route::delete('/admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'destroy'])->name('admin.ticketing.destroy');
 
 

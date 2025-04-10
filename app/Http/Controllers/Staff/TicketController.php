@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
 
 class TicketController extends Controller
 {
@@ -163,6 +165,13 @@ public function getTicketDetails($id)
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
+        // Notify all admins (you can filter them with a role or permission)
+        $admins = User::role('Administrator')->get(); // Adjust 'role' column if needed
+    
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketNotification($ticket));
+        }
+    
         return redirect()->route('staff.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');

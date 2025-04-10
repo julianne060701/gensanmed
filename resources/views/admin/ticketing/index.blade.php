@@ -41,26 +41,7 @@
 .btn-primary:hover {
     animation: spin 0.5s linear;
 }
-/* Spin-in Animation for Modal */
-@keyframes spinIn {
-    from {
-        opacity: 0;
-        transform: rotate(-360deg) scale(0.5);
-    }
-    to {
-        opacity: 1;
-        transform: rotate(0) scale(1);
-    }
-}
-/* Spin on Hover for Button */
-@keyframes spin {
-    from {
-        transform: rotate(0);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
+
 /* Fade-in and Scale Animation */
 @keyframes fadeInScale {
     from {
@@ -174,6 +155,7 @@
                <p><strong>Remarks:</strong> <span id="ticketRemarks"></span></p>
                <p><strong>Approved Date:</strong> <span id="ticketApproved"></span></p>
                <p><strong>Completed By:</strong> <span id="ticketCompletedBy"></span></p>
+               <p><strong>Denied Remarks:</strong> <span id="ticketDeniedRemarks"></span></p>
                <p><strong>Defective Remarks:</strong> <span id="ticketDefectiveRemarks"></span></p>
             </div>
         </div>
@@ -185,7 +167,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Denied Purchase Request</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Deny Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -230,11 +212,12 @@ $(document).on("click", ".view-ticket", function() {
             $("#ticketDepartment").text(response.department);
             $("#ticketResponsibleDept").text(response.responsible_department);
             $("#ticketConcern").text(response.concern_type);
-            $("#ticketEquipment").text(response.equipment);
+            $("#ticketEquipment").text(response.equipment || "N/A");
             $("#ticketUrgency").text(response.urgency);
             $("#ticketStatus").text(response.status);
             $("#ticketRemarks").text(response.remarks);
             $("#ticketDefectiveRemarks").text(response.responsible_remarks || "N/A");
+            $("#ticketDeniedRemarks").text(response.remarks_by || "N/A");
 
             // Format the approval date using JavaScript
             if (response.approval_date) {
@@ -249,7 +232,7 @@ $(document).on("click", ".view-ticket", function() {
                 $("#ticketApproved").text('N/A');
             }
 
-            $("#ticketCompletedBy").text(response.completed_by);
+            $("#ticketCompletedBy").text(response.completed_by || "N/A");
 
             // Add spin effect before showing modal
             $("#ticketModal .modal-content").css("animation", "spinIn 0.5s ease-out");
@@ -321,7 +304,7 @@ $(document).on("click", ".view-ticket", function() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('ticketing.delete') }}",
+                    url: "{{ route('admin.ticketing.delete') }}",
                     type: "POST",
                     data: {
                         _token: "{{ csrf_token() }}",

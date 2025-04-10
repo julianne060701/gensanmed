@@ -299,24 +299,23 @@ return [
     |
     */
 
-    'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-notification',
-            'id' => 'my-notification',
-            'icon' => 'fas fa-bell',
-            'icon_color' => 'warning',
-            'label' => 0,
-            'label_color' => 'danger',
-            'url' => 'notifications/show',
-            'topnav_right' => true,
-            'dropdown_mode' => true,
-            'dropdown_flabel' => 'All notifications',
-            'update_cfg' => [
-                'url' => 'notifications/get',
-                'period' => 30, // Update every 30 seconds
-            ],
+   'menu' => [
+    [
+        'type' => 'navbar-notification',
+        'id' => 'my-notification',
+        'icon' => 'fas fa-bell',
+        'icon_color' => 'warning',
+        'label' => '0',  // Default value as a fallback
+        'label_color' => 'danger',
+        'url' => 'notifications/show',
+        'topnav_right' => true,
+        'dropdown_mode' => true,
+        'dropdown_flabel' => 'See notifications',
+        'update_cfg' => [
+            'url' => 'notifications/get',
+            'period' => 30,
         ],
+    ],
         
         
 

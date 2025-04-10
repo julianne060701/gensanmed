@@ -88,6 +88,7 @@ class TicketController extends Controller
         $ticket->approval_date = now(); // Store the approval date
         $ticket->save();
 
+
         return response()->json(['message' => 'Ticket approved successfully!']);
     }
 
@@ -212,5 +213,25 @@ class TicketController extends Controller
     
         return response()->json(['error' => 'Ticket request not found.'], 404);
     }
+
+//     public function delete(Request $request)
+// {
+//     $ticket = Ticket::find($request->id);
+
+//     if (!$ticket) {
+//         return response()->json(['error' => 'Ticket not found'], 404);
+//     }
+
+//     // Optional: log the remarks or store them
+//     $ticket->remarks_by = $request->remarks_by ?? 'No remarks provided';
+//     $ticket->status = 'Denied'; // or whatever logic you use
+//     $ticket->save();
+
+//     // If you want to actually delete instead of just marking as denied:
+//     // $ticket->delete();
+
+//     return response()->json(['success' => true]);
+// }
+
     
 }

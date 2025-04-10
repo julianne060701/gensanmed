@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
 
 class TicketController extends Controller
 {
@@ -144,6 +146,10 @@ class TicketController extends Controller
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
+        $admins = User::role('Administrator')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketNotification($ticket));
+        }
         return redirect()->route('mmo.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');
