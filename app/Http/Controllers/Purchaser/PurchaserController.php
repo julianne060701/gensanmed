@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\PurchaserPO;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use App\Notifications\NewPurchaseOrderNotification;
+
+
 class PurchaserController extends Controller
 {
     /**
@@ -89,34 +92,45 @@ class PurchaserController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        
-        // Validate the incoming data
-        $validated = $request->validate([
-            'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
-        ]);
-    
-        $pdfPath = null;
-        if ($request->hasFile('image_url')) {
-            $file = $request->file('image_url');
-            $fileName = time() . '_' . $file->getClientOriginalName(); // Unique filename
-            $file->move(public_path('po_pdfs'), $fileName); // Store in public/po_pdfs/
-            $pdfPath = 'po_pdfs/' . $fileName; // Save relative path
-        }
-    
-        // Save PO data to the database
-        PurchaserPO::create([
-            'po_number' => $validated['po_number'],
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'image_url' => $pdfPath, // Store file path
-        ]);
+{
+    // Validate the incoming data
+    $validated = $request->validate([
+        'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string|max:1000',
+        'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+    ]);
 
-    return redirect()->route('purchaser.purchase.index')->with('success', 'PO uploaded successfully!');
+    $pdfPath = null;
+    if ($request->hasFile('image_url')) {
+        $file = $request->file('image_url');
+        $fileName = time() . '_' . $file->getClientOriginalName(); // Unique filename
+        $file->move(public_path('po_pdfs'), $fileName); // Store in public/po_pdfs/
+        $pdfPath = 'po_pdfs/' . $fileName; // Save relative path
     }
+
+    // Save PO data to the database
+    $purchaseRequestOrder = PurchaserPO::create([ // Add this line
+        'po_number' => $validated['po_number'],
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'image_url' => $pdfPath, // Store file path
+    ]);
+
+    if ($purchaseRequestOrder) {
+        // Find all admins and notify them
+        $admins = User::role('Administrator')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewPurchaseOrderNotification($purchaseRequestOrder));
+        }
+        
+
+        return redirect()->route('purchaser.purchase.index')->with('success', 'PO uploaded successfully!');
+    } else {
+        return back()->with('error', 'Failed to create PO.');
+    }
+}
+
     
 
     /**

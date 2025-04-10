@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Purchaser;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PR;
-
+use App\Notifications\NewPurchaseRequestNotification;
+use App\Models\User;
 class PurchaseRequestController extends Controller
 {
     /**

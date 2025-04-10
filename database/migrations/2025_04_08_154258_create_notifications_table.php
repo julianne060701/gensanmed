@@ -3,12 +3,14 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Notifications\Notifiable;
 
 return new class extends Migration
 {
     /**
      * Run the migrations.
      */
+    use Notifiable;
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {

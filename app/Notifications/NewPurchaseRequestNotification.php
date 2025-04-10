@@ -2,56 +2,32 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Messages\DatabaseMessage;
+use App\Notifications\NewPurchaseRequestNotification;
+use Illuminate\Bus\Queueable;
 
 class NewPurchaseRequestNotification extends Notification
 {
-    use Queueable;
+    protected $purchaseRequest;
 
-    public $pr;
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct($pr)
+    public function __construct($purchaseRequest)
     {
-        $this->pr = $pr;
+        $this->purchaseRequest = $purchaseRequest;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function via($notifiable)
     {
-        return ['database'];
+        return ['database']; // Using database for storing the notification
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-    // public function toMail(object $notifiable): MailMessage
-    // {
-    //     return (new MailMessage)
-    //                 ->line('The introduction to the notification.')
-    //                 ->action('Notification Action', url('/'))
-    //                 ->line('Thank you for using our application!');
-    // }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase($notifiable)
     {
         return [
-            'message' => "A new PR request #{$this->pr->request_number} has been submitted.",
-            'url' => url('/admin/purchase_requests'), // Link to PR list page
-            'requester' => $this->pr->requester_name,
+            'title' => 'New Purchase Request Created',
+            'message' => 'A new purchase request with ID ' . $this->purchaseRequest->request_number . ' has been created.',
+            // 'url' => route('head.purchase_request.show', $this->purchaseRequest->id),
         ];
     }
 }

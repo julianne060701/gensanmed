@@ -37,9 +37,14 @@ class NotificationController extends Controller
     {
         // Mark all notifications as read for the authenticated user
         auth()->user()->notifications->markAsRead();
+        
+        // Paginate notifications again after marking them as read
         $notifications = Auth::user()->notifications()->paginate(10);
+        
+        // Return the view with the paginated notifications
         return view('notifications.index', compact('notifications'));
     }
+    
     
     public function markAsRead($id)
     {

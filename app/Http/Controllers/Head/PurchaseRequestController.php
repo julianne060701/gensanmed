@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Head;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PR;
-
+use App\Notifications\NewPurchaseRequestNotification;
+use App\Models\User;
 
 class PurchaseRequestController extends Controller
 {
@@ -89,44 +90,50 @@ class PurchaseRequestController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-          // Validate the incoming data
-          $validated = $request->validate([
-            'request_number' => 'required|integer|min:1|unique:pr,request_number',
-            'requester_name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'attachment_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
-        ]);
     
-        $pdfPath = null;
-        if ($request->hasFile('attachment_url')) {
-            $file = $request->file('attachment_url');
-            $fileName = time() . '_' . $file->getClientOriginalName(); // Unique filename
-            $file->move(public_path('pr_pdfs'), $fileName); // Store in public/pr_pdfs/
-            $pdfPath = 'pr_pdfs/' . $fileName; // Save relative path
-        }
+     public function store(Request $request)
+     {
+         // Validate the incoming data
+         $validated = $request->validate([
+             'request_number' => 'required|integer|min:1|unique:pr,request_number',
+             'requester_name' => 'required|string|max:255',
+             'description' => 'nullable|string|max:1000',
+             'attachment_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+         ]);
+     
+         // Handle file upload if present
+         $pdfPath = null;
+         if ($request->hasFile('attachment_url')) {
+             $file = $request->file('attachment_url');
+             $fileName = time() . '_' . $file->getClientOriginalName(); // Unique filename
+             $file->move(public_path('pr_pdfs'), $fileName); // Store in public/pr_pdfs/
+             $pdfPath = 'pr_pdfs/' . $fileName; // Save relative path
+         }
+     
+         // Save PR data to the database
+         $purchaseRequest = PR::create([
+             'request_number' => $validated['request_number'],
+             'requester_name' => $validated['requester_name'],
+             'description' => $validated['description'] ?? null,
+             'attachment_url' => $pdfPath, // Store file path
+             'created_by' => auth()->id(), // Store the ID of the authenticated user
+             'status' => 'Pending For Admin',
+         ]);
+     
+         if ($purchaseRequest) {
+             // Find all admins and notify them
+             $admins = User::role('Administrator')->get(); 
+             foreach ($admins as $admin) {
+                 $admin->notify(new NewPurchaseRequestNotification($purchaseRequest));
+             }
+     
+             return redirect()->route('head.purchase_request.index')->with('success', 'PR uploaded successfully!');
+         } else {
+             return back()->with('error', 'Failed to create PR.');
+         }
+     }
+     
     
-        // Save PR data to the database
-        PR::create([
-            'request_number' => $validated['request_number'],
-            'requester_name' => $validated['requester_name'],
-            'description' => $validated['description'] ?? null,
-            'attachment_url' => $pdfPath, // Store file path
-            'created_by' => auth()->id(), // Store the ID of the authenticated user
-            'status' => 'Pending For Admin',
-        ]);
-
-         // Find all admins and notify them
-    // $admins = User::whereHas('roles', function ($query) {
-    //     $query->where('name', 'admin');
-    // })->get();
-
-    // foreach ($admins as $admin) {
-    //     $admin->notify(new NewPurchaseRequestNotification($pr));
-    // }
-        return redirect()->route('head.purchase_request.index')->with('success', 'PR uploaded successfully!');
-    }
 
     /**
      * Display the specified resource.
