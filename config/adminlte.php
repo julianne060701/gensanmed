@@ -477,13 +477,13 @@ return [
                 'url'         => 'IT/home',
                 'icon'        => 'far fa-fw fa-calendar',
                 'label_color' => 'success',
-                'can'         => 'view-it-menu',
+                'can'         => 'view-HIMS-menu',
             ],
             [
                 'text'  => 'Manage User',
                 'icon'  => 'fas fa-user',
                 'url'   => 'IT/user',
-                'can'   => 'view-it-menu',
+                'can'   => 'view-HIMS-menu',
             ],
             // [
             //     'text'    => 'Manage Purchase',
@@ -509,21 +509,21 @@ return [
                 'text'  => 'Manage Ticket',
                 'icon'  => 'fas fa-fw fa-ticket-alt',
                 'url'   => 'IT/ticketing',
-                'can'   => 'view-it-menu',
+                'can'   => 'view-HIMS-menu',
             ],
 
             
             [
                 'text'    => 'Manage Reports',
                 'icon'    => 'fas fa-fw fa-file-alt',
-                'can'     => 'view-it-menu',
+                'can'     => 'view-HIMS-menu',
                 'submenu' => [
                     
                         [
                             'text'  => 'Ticketing Report',
                             'icon'  => 'fas fa-fw fa-file-alt',
                             'url'   => 'IT/reports/ticketing_report',
-                            'can'   => 'view-it-menu',
+                            'can'   => 'view-HIMS-menu',
                         ],
                 ],
             ],

@@ -2,12 +2,20 @@
 
 @section('content')
     <div class="container-fluid">
+
         <!-- Section Header -->
         <div class="row mb-4">
             <div class="col">
                 <h4>Notifications</h4>
             </div>
         </div>
+
+        <!-- Success Message -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
         <!-- Button to mark all as read -->
         <div class="row mb-3">
@@ -19,26 +27,32 @@
         <!-- Notification List -->
         <div class="row mb-4">
             <div class="col">
-                <ul class="list-group">
-                    @foreach ($notifications as $notification)
-                        <li class="list-group-item {{ $notification->read_at ? '' : 'list-group-item-info' }}">
-                            <a href="{{ route('notifications.read', $notification->id) }}">
-                                <strong>{{ $notification->data['title'] ?? 'Notification' }}</strong><br>
-                                {{ $notification->data['message'] ?? '' }}
-                                <span class="float-right text-muted">{{ $notification->created_at->diffForHumans() }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
+                @if ($notifications->count())
+                    <ul class="list-group">
+                        @foreach ($notifications as $notification)
+                            <li class="list-group-item {{ $notification->read_at ? '' : 'list-group-item-info' }}">
+                                <a href="{{ route('notifications.read', $notification->id) }}" class="d-block text-decoration-none text-dark">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>{{ $notification->data['title'] ?? 'Notification' }}</strong><br>
+                                            <small>{{ $notification->data['message'] ?? '' }}</small>
+                                        </div>
+                                        <div class="text-muted text-end">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                            @if (!$notification->read_at)
+                                                <span class="badge bg-warning text-dark">New</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <div class="alert alert-info">No notifications available.</div>
+                @endif
             </div>
         </div>
-
-        <!-- Success Message -->
-        @if(session('success'))
-            <div class="alert alert-success mt-4">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <!-- Pagination -->
         <div class="row">
@@ -53,7 +67,6 @@
 
 @push('css')
 <style>
-    /* Fix oversized pagination arrows */
     .pagination .page-link {
         font-size: 1rem !important;
         padding: 0.375rem 0.75rem;
@@ -69,6 +82,12 @@
     .pagination .page-link i {
         font-size: 1rem !important;
         vertical-align: middle;
+    }
+
+    .badge.bg-warning {
+        font-size: 0.75rem;
+        padding: 0.25em 0.5em;
+        border-radius: 0.2rem;
     }
 </style>
 @endpush

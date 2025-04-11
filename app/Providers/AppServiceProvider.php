@@ -36,8 +36,8 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('head'); // Added new gate for Head role
         });
 
-        Gate::define('view-it-menu', function ($user) {
-            return $user->hasRole('IT');
+        Gate::define('view-HIMS-menu', function ($user) {
+            return $user->hasRole('HIMS');
         });
 
         Gate::define('view-mmo-menu', function ($user) {

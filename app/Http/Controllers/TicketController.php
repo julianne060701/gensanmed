@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Ticket;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Notifications\NewTicketNotification;
+use App\Notifications\AcceptedTicketNotification;
+
 
 class TicketController extends Controller
 {
@@ -85,12 +89,27 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($id);
         $ticket->status = 'Approved By Admin';
-        $ticket->approval_date = now(); // Store the approval date
+        $ticket->approval_date = now();
         $ticket->save();
-
-
-        return response()->json(['message' => 'Ticket approved successfully!']);
+    
+        if ($ticket) {
+            // Notify only users whose role matches the responsible_department
+            $departmentUsers = User::whereHas("roles", function($q) use ($ticket) {
+                $q->where("name", $ticket->responsible_department); // e.g. "Engineer" or "IT"
+            })->get();
+    
+            foreach ($departmentUsers as $user) {
+                $user->notify(new AcceptedTicketNotification($ticket));
+            }
+    
+            return redirect()->route('admin.ticketing.index')->with('success', 'Ticket approved successfully!');
+        } else {
+            return back()->with('error', 'Failed to approve ticket.');
+        }
     }
+    
+    
+    
 
     public function getTicketDetails($id)
     {

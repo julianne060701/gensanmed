@@ -41,7 +41,7 @@ class LoginController extends Controller
             return redirect()->route('admin.dashboard'); // Fix route naming
         } elseif ($user->hasRole('Engineer')) {
             return redirect()->route('engineer.home');
-        } elseif ($user->hasRole('IT')) {
+        } elseif ($user->hasRole('HIMS')) {
             return redirect()->route('IT.home');
         } elseif ($user->hasRole('Purchaser')) {
             return redirect()->route('purchaser.home');

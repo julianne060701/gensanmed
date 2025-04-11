@@ -54,7 +54,7 @@
                         <label for="role">User Role</label>
                         <select name="role" id="role" class="form-control" required>
                             <option value="Administrator" {{ old('role') == 'Administrator' ? 'selected' : '' }}>Administrator</option>
-                            <option value="IT" {{ old('role') == 'IT' ? 'selected' : '' }}>IT</option>
+                            <option value="HIMS" {{ old('role') == 'IT' ? 'selected' : '' }}>HIMS</option>
                             <option value="Purchaser" {{ old('role') == 'Purchaser' ? 'selected' : '' }}>Purchaser</option>
                             <option value="Engineer" {{ old('role') == 'Engineer' ? 'selected' : '' }}>Engineer</option>
                             <option value="Staff" {{ old('role') == 'Staff' ? 'selected' : '' }}>Staff</option>

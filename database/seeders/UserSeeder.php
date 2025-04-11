@@ -23,9 +23,9 @@ class UserSeeder extends Seeder
                 'password' => 'password',
             ],
             [
-                'name' => 'IT',
-                'email' => 'IT@gensanmed',
-                'role' => 'IT',
+                'name' => 'HIMS',
+                'email' => 'HIMS@gensanmed',
+                'role' => 'HIMS',
                // 'profile_image_url' => 'images/default-image.jpg',
                 'password' => 'password',
             ],

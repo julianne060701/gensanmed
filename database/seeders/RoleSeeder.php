@@ -17,7 +17,7 @@ class RoleSeeder extends Seeder
         $roles = [
             'Administrator',
             'Purchaser',
-            'IT',
+            'HIMS',
             'Engineer',
             'Staff',
             'Employee',
@@ -33,7 +33,7 @@ class RoleSeeder extends Seeder
         $permissions = [
             'Administrator' => ['view-admin-menu'],
             'Purchaser' => ['view-purchaser-menu'],
-            'IT' => ['view-it-menu'],
+            'HIMS' => ['view-HIMS-menu'],
             'Engineer' => ['view-engineer-menu'],
             'Staff' => ['view-staff-menu'],
             'Employee' => ['view-employee-menu'],
