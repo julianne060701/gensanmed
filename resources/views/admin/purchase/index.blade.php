@@ -6,7 +6,7 @@
 <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 
 @section('content_header')
-<h1 class="ml-1">Purchaser</h1>
+<h1 class="ml-1">Purchase Order</h1>
 @stop
 
 @section('content')
@@ -245,7 +245,7 @@ $(document).on('click', '.view-purchase', function() {
         $('#modalPoNumber').text(data.po_number);
         $('#modalName').text(data.name);
         $('#modalDescription').text(data.description);
-        $('#modalRemarks').text(data.admin_remarks);
+        $('#modalRemarks').text(data.remarks);
         
         // Format approval date if available
         var formattedDate = data.approval_date ? new Date(data.approval_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';

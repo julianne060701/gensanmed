@@ -8,7 +8,8 @@ use App\Models\PurchaserPO;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Notifications\NewPurchaseOrderNotification;
-
+use App\Models\Ticket;
+use App\Models\PR;
 
 class PurchaserController extends Controller
 {
@@ -17,7 +18,22 @@ class PurchaserController extends Controller
      */
     public function home()
     {
-        return view('purchaser.home');
+
+      $newPRCount = PR::where('status', 'Pending For PO')
+      ->count();
+
+    $newPOCount = PurchaserPO::where('status', 'Pending')
+        ->count();
+
+    $totalPRCount = PR::where('status', 'Approved')
+        ->count();
+    
+    $totalPOCount = PurchaserPO::where('status', 'Send to Supplier')
+        ->count();
+
+        return view('purchaser.home', compact(
+            'newPRCount', 'newPOCount', 'totalPRCount', 'totalPOCount'
+        ));
     }
 
     public function index()
@@ -159,7 +175,7 @@ class PurchaserController extends Controller
             'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number,' . $id,
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'status' => 'required|in:Pending,Approved,Denied,Send to Supplier',
+            'status' => 'required|in:Pending,Approved,Denied,Send to Supplier, Pending For PO',
             'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
         ]);
     
