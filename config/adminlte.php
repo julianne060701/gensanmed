@@ -629,7 +629,7 @@ return [
             // Head Sidebar Items (Only for Head Request)
             // -----------------------------------------------------
             [
-                'header' => 'PURCHASER REQUEST PANEL',
+                'header' => 'For Head Panel',
                 'can'    => 'view-head-menu',
             ],
             [

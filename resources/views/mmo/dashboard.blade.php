@@ -66,40 +66,27 @@
 
 @section('content')
 <div class="dashboard-card">
-    <div class="card bg-primary">
+    <div class="card bg-danger">
         <div class="card-content">
-            <h2>150</h2>
-            <h4>Total Users</h4>
+            <h2>{{ $eventCount }}</h2>
+            <h4>Events</h4>
         </div>
-        <i class="fas fa-users card-icon"></i>
-    </div>
-    <div class="card bg-success">
-        <div class="card-content">
-            <h2>53</h2>
-            <h4>Total Events</h4>
-        </div>
-        <i class="fas fa-calendar-alt card-icon"></i>
+        <i class="fas fa-calendar-check card-icon"></i>
+
     </div>
     <div class="card bg-warning text-dark">
         <div class="card-content">
-            <h2>44</h2>
+            <h2>{{ $totalTicketCount }}</h2>
             <h4>Total Tickets</h4>
         </div>
         <i class="fas fa-ticket-alt card-icon"></i>
     </div>
     <div class="card bg-info">
         <div class="card-content">
-            <h2>30</h2>
-            <h4>Purchase Orders</h4>
+            <h2>{{ $requestTicketCount }}</h2>
+            <h4>Request Ticket</h4>
         </div>
         <i class="fas fa-shopping-cart card-icon"></i>
-    </div>
-    <div class="card bg-danger">
-        <div class="card-content">
-            <h2>20</h2>
-            <h4>Purchase Requests</h4>
-        </div>
-        <i class="fas fa-file-invoice card-icon"></i>
     </div>
 </div>
 @stop
