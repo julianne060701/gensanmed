@@ -30,10 +30,10 @@ class SMSController extends Controller
      */
     public function index()
     {
-        $groups = SmsGroup::all(); // Get all groups
+        // $groups = SmsGroup::all(); // Get all groups
         $users = UserSMS::all(); // Fetch all users from users_sms table
         
-    return view('admin.schedule.sms', compact('users', 'groups'));
+    return view('admin.schedule.sms', compact('users'));
 
     
     }

@@ -80,7 +80,9 @@
             <p><strong>Remarks:</strong> {{ $ticket->remarks }}</p>
             <p><strong>Approved Date:</strong> {{ $ticket->approval_date ? \Carbon\Carbon::parse($ticket->approval_date)->format('F j, Y') : 'N/A' }}</p>
             <p><strong>Completed By:</strong> {{ $ticket->completed_by ?? 'N/A' }}</p>
-            <p><strong>Denied Remarks:</strong> {{$ticket->remarks_by ?? 'N/A'}}</p>
+            <p><strong>Denied Remarks By Admin:</strong> {{$ticket->remarks_by ?? 'N/A'}}</p>
+            <p><strong>Defective Remarks:</strong> {{$ticket->responsible_remarks ?? 'N/A'}}</p>
+
         </div>
     </div>
 @endif
@@ -131,7 +133,7 @@
     <p><strong>Approved Date by Hopss:</strong> <span id= "modalApprovedDate"></span></p>
     <p><strong>Complete By:</strong> <span id="modalCompletedBy"></span></p>
     <p><strong>Denied Remarks:</strong> <span id="modalDeniedRemarks"></span></p>
-
+    <p><strong>Defective Remarks:</strong> <span id="modalDefectiveRemarks"></span></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -161,6 +163,7 @@
             $('#modalRemarks').text(data.remarks);
             $('#modalCompletedBy').text(data.completed_by || 'N/A');
             $('#modalDeniedRemarks').text(data.remarks_by || 'N/A');
+            $('#modalDefectiveRemarks').text(data.responsible_remarks || 'N/A');
 
             // Format the approved date
             if (data.approval_date) {

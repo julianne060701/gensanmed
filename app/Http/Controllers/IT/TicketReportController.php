@@ -16,7 +16,7 @@ class TicketReportController extends Controller
      */
     public function index()
     {
-        $tickets = Ticket::whereIn('status', ['Denied', 'Completed', 'Defective'])
+        $tickets = Ticket::whereIn('status', ['Completed', 'Defective'])
         ->where('responsible_department', 'HIMS') 
         ->orderBy('ticket_number', 'desc')
         ->get();

@@ -194,6 +194,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Engineer PMS
     Route::get('engineer/pms', [App\Http\Controllers\Engineer\PmsController::class, 'index'])->name('engineer.pms.index');
+    Route::get('engineer/pms/create', [App\Http\Controllers\Engineer\PmsController::class, 'create'])->name('engineer.pms.create');
        // -----------------------------------------------------
             // Staff Sidebar Items (Only for Staff)
             // -----------------------------------------------------

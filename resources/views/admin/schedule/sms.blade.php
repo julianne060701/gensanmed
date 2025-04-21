@@ -38,16 +38,7 @@
         </div>
         
         <!-- Group Selection -->
-        <div class="form-group">
-            <label for="group">Select Group:</label>
-            <select class="form-control" id="group" name="group">
-                <option value="">Select a group</option>
-                @foreach($groups as $group)
-    <option value="{{ $group->id }}">{{ $group->name }}</option>
-@endforeach
-
-            </select>
-        </div>
+   
 
         <div class="form-group">
             <label for="recipients">Recipients:</label>
@@ -61,12 +52,12 @@
                 </thead>
                 <tbody id="recipientsList">
                 @foreach($users as $user)
-    <tr class="recipient-row" data-group="{{ $user->group_id }}">
-        <td><input type="checkbox" class="recipient-checkbox" value="{{ $user->phone }}"></td>
-        <td>{{ $user->name }}</td>
-        <td>{{ $user->phone }}</td>
-    </tr>
-@endforeach
+                <tr class="recipient-row" data-group="{{ $user->group_id }}">
+                    <td><input type="checkbox" class="recipient-checkbox" value="{{ $user->phone }}"></td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->phone }}</td>
+                </tr>
+            @endforeach
 
 
                 </tbody>

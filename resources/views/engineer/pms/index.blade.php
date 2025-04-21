@@ -11,7 +11,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <a href="#" class="btn btn-primary px-5">Add PMS</a>
+        <a href="{{route ('engineer.pms.create')}}" class="btn btn-primary px-5">Add PMS</a>
     </div>
 
     <div class="row">

@@ -99,7 +99,7 @@ class PmsController extends Controller
      */
     public function create()
     {
-        //
+       return view('engineer.pms.create');
     }
 
     /**
