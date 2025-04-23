@@ -79,7 +79,7 @@
 <div class="container-fluid">
 
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('admin.ticketing.create') }}" class="btn btn-primary px-5">Create Ticket</a>
+        <a href="{{ route('admin.ticketing.create') }}" class="btn btn-primary px-5">Ticket Request</a>
     </div>
 
     <div class="row">

@@ -64,7 +64,11 @@ class PurchaserController extends Controller
                     View PO (PDF)
                    </a>' 
                 : 'No PDF';
-    
+                $pdfAdmin = $purchase->admin_attachment 
+                ? '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
+                    View Admin Attachment
+                   </a>' 
+                : 'No Attachment From Admin';
             // Assign colors to status badges
             $statusColors = [
                 'Approved' => 'badge-success', // Green
@@ -85,6 +89,7 @@ class PurchaserController extends Controller
                 $purchase->description ?? 'N/A',
                 $statusBadge,
                 $pdfDisplay,
+                $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnEdit .  '</nobr>',
             ];

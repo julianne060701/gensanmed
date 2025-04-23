@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('description')->nullable(); // Added description column
             $table->enum('status', ['Pending For Admin', 'Pending For PO', 'Approved', 'Denied', 'Pending Delivery', 'Hold'])->default('Pending For Admin');
             $table->string('attachment_url')->nullable();
+            $table->string('admin_attachment')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->text('remarks')->nullable(); // Moved remarks column
             $table->timestamps();

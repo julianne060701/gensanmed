@@ -71,7 +71,11 @@ class PurchaserController extends Controller
                     View PO (PDF)
                    </a>' 
                 : 'No PDF';
-    
+                $pdfAdmin = $purchase->admin_attachment 
+                ? '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
+                    View Admin Attachment
+                   </a>' 
+                : 'No Attachment From Admin';
             // Assign colors to status badges
             $statusColors = [
                 'Approved' => 'badge-success', // Green
@@ -92,6 +96,7 @@ class PurchaserController extends Controller
                 $purchase->description ?? 'N/A',
                 $statusBadge,
                 $pdfDisplay,
+                $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
             ];
@@ -115,6 +120,33 @@ class PurchaserController extends Controller
         }
     
         return response()->json(['error' => 'Purchase order not found.'], 404);
+    }
+
+    public function uploadAndAcceptOrder(Request $request)
+    {
+        $request->validate([
+            'upload_id' => 'required|exists:purchaser_po,id',
+            'pdf_file' => 'required|mimes:pdf|max:2048',
+        ]);
+    
+        // Handle file upload
+        $file = $request->file('pdf_file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('pr_pdfs'), $fileName);
+        $filePath = 'po_pdfs/' . $fileName;
+    
+        // Update the PR record with attachment and status
+        $purchase = PurchaserPO::find($request->upload_id);
+        if ($purchase) {
+            $purchase->admin_attachment = $filePath;
+            $purchase->status = 'Approved';
+            $purchase->approval_date = now();
+            $purchase->save();
+    
+            return response()->json(['message' => 'Uploaded and accepted successfully.']);
+        }
+    
+        return response()->json(['error' => 'Purchase Order not found.'], 404);
     }
 
     /**

@@ -16,6 +16,6 @@ class UserSMS extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(SmsGroup::class, 'sms_group_user', 'user_sms_id', 'sms_group_id');
+        return $this->belongsToMany(SmsGroup::class, 'sms_group_user');
     }
 }

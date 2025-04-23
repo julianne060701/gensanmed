@@ -29,15 +29,16 @@
                             'Name',
                             'Remarks',
                             'Status',
-                            'Image',
+                            'Attachment',
+                            'My Attachment',
                             'Date Created',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 
                         $config = [
                             'data' => $data,
-                            'order' => [[0, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
-                            'columns' => [null, null, null, null, null, null, null, ['orderable' => false]],
+                            'order' => [[7, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
+                            'columns' => [null, null, null, null, null, null, null, null, ['orderable' => false]],
                         ];
                     @endphp
 
@@ -54,6 +55,33 @@
             </div>
 
         </div>
+    </div>
+</div>
+<!-- Upload PDF Modal -->
+<div class="modal fade" id="uploadPdfModal" tabindex="-1" aria-labelledby="uploadPdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="uploadPdfForm" enctype="multipart/form-data">
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="uploadPdfModalLabel">Upload PDF before Acceptance</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="upload_id" name="upload_id">
+                    <div class="form-group">
+                        <label for="pdfFile">Select PDF File</label>
+                        <input type="file" name="pdf_file" id="pdfFile" class="form-control-file" accept="application/pdf" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Upload & Accept</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 <!-- Hold Remarks Modal -->
@@ -259,45 +287,60 @@ $(document).on('click', '.view-purchase', function() {
 });
 
           
-    $(document).on('click', '.Accept', function () {
-        var id = $(this).data('id');
+$(document).on('click', '.Accept', function () {
+    const id = $(this).data('id');
+    $('#upload_id').val(id);
+    $('#pdfFile').val(''); // clear file input
+    $('#uploadPdfModal').modal('show');
+});
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You are about to accept this purchase order.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Accept',
-            cancelButtonText: 'Cancel'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "{{ route('admin.purchase.accept') }}",
-                    type: "POST",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id: id
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            title: 'Accepted!',
-                            text: 'The purchase order has been accepted.',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            location.reload(); // Reload page after action
-                        });
-                    },
-                    error: function(response) {
-                        Swal.fire('Error', 'Something went wrong!', 'error');
-                    }
-                });
-            }
-        });
+$('#uploadPdfForm').submit(function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'Are you sure you want to accept and upload this Purchase Order?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, upload and accept',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = new FormData(this);
+            formData.append('_token', '{{ csrf_token() }}');
+
+            Swal.fire({
+                title: 'Uploading...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('purchase.uploadAndAcceptOrder') }}", // Make sure this route exists
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    Swal.fire({
+                        title: 'Accepted!',
+                        text: response.message || 'PDF uploaded and request accepted.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire('Error', xhr.responseJSON?.message || 'Something went wrong!', 'error');
+                }
+            });
+        }
     });
+});
 </script>
 @endsection
 

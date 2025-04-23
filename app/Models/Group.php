@@ -9,5 +9,5 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name']; // Add any fields that can be mass-assigned
+    protected $fillable = ['name', 'phone']; // Add any fields that can be mass-assigned
 }

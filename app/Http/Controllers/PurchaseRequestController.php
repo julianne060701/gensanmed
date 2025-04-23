@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\PR;
-
+use Illuminate\Support\Facades\DB;
 class PurchaseRequestController extends Controller
 {
     /**
@@ -65,6 +65,12 @@ class PurchaseRequestController extends Controller
                     View PR (PDF)
                    </a>' 
                 : 'No PDF';
+
+            $pdfAdmin = $purchase->admin_attachment 
+                ? '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
+                    View Admin Attachment
+                   </a>' 
+                : 'No PDF';
     
             // Assign colors to status badges
             $statusColors = [
@@ -88,6 +94,7 @@ class PurchaseRequestController extends Controller
                 $purchase->description,
                 $statusBadge,
                 $pdfDisplay,
+                $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
                 '<nobr>' . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
             ];
@@ -101,10 +108,10 @@ class PurchaseRequestController extends Controller
     public function accept(Request $request)
     {
         $purchase = PR::find($request->id);
-        
+    
         if ($purchase) {
-            $purchase->status = 'Pending For PO'; 
-            $purchase->approval_date = now(); 
+            $purchase->status = 'Pending For PO';
+            $purchase->approval_date = now();
             $purchase->save();
     
             return response()->json(['success' => 'Purchase request accepted successfully.']);
@@ -113,7 +120,34 @@ class PurchaseRequestController extends Controller
         return response()->json(['error' => 'Purchase request not found.'], 404);
     }
     
-
+    public function uploadAndAccept(Request $request)
+    {
+        $request->validate([
+            'upload_id' => 'required|exists:pr,id',
+            'pdf_file' => 'required|mimes:pdf|max:2048',
+        ]);
+    
+        // Handle file upload
+        $file = $request->file('pdf_file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('pr_pdfs'), $fileName);
+        $filePath = 'pr_pdfs/' . $fileName;
+    
+        // Update the PR record with attachment and status
+        $purchase = PR::find($request->upload_id);
+        if ($purchase) {
+            $purchase->admin_attachment = $filePath;
+            $purchase->status = 'Pending For PO';
+            $purchase->approval_date = now();
+            $purchase->save();
+    
+            return response()->json(['message' => 'Uploaded and accepted successfully.']);
+        }
+    
+        return response()->json(['error' => 'Purchase request not found.'], 404);
+    }
+    
+    
 
     /**
      * Show the form for creating a new resource.

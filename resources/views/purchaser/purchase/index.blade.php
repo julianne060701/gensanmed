@@ -25,15 +25,16 @@
                             'Name',
                             'Remarks',
                             'Status',
-                            'Image',
+                            'Attachment',
+                            'My Attachment',
                             'Date Created',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 
                         $config = [
                             'data' => $data,
-                            'order' => [[0, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
-                            'columns' => [null, null, null, null, null, null, null, ['orderable' => false]],
+                            'order' => [[7, 'desc']], // Sort by the 'Date Created' column (index 6) in descending order
+                            'columns' => [null, null, null, null, null, null, null, null, ['orderable' => false]],
                         ];
                     @endphp
 

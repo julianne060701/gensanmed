@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->enum('status', ['Pending',  'Approved', 'Denied', 'Send to Supplier'])->default('Pending');
             $table->string('image_url')->nullable();
+            $table->string('admin_attachment')->nullable();
             $table->string('remarks')->nullable();
             $table->timestamps();
             $table->timestamp('approval_date')->nullable();

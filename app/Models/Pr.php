@@ -20,6 +20,7 @@ class Pr extends Model
         'description', // Added description field
         'remarks',
         'attachment_url',
+        'admin_attachment',
         'created_by',
         'status',
         'approval_date',

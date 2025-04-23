@@ -18,6 +18,7 @@ class PurchaserPO extends Model
         'description',
         'status',
         'image_url',
+        'admin_attachment',
         'remarks',
         'approval_date',
         'accepted_date',

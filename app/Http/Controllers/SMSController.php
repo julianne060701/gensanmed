@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 Use App\Models\UserSMS;
 use Twilio\Rest\Client;
 use Illuminate\Support\Facades\Log;
-use App\Services\ClickSendSMSService;
 use App\Models\SmsGroup;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\SmsGroupUser;
+use App\Services\IPROGSMSService;
+
 
 class SMSController extends Controller
 {
@@ -21,7 +22,7 @@ class SMSController extends Controller
     // {
     //     $this->smsService = $smsService;
     // }
-    public function __construct(ClickSendSMSService $smsService)
+    public function __construct(IPROGSMSService $smsService)
     {
         $this->smsService = $smsService;
     }
@@ -30,10 +31,10 @@ class SMSController extends Controller
      */
     public function index()
     {
-        // $groups = SmsGroup::all(); // Get all groups
+        $groups = SmsGroup::all(); // Get all groups
         $users = UserSMS::all(); // Fetch all users from users_sms table
         
-    return view('admin.schedule.sms', compact('users'));
+    return view('admin.schedule.sms', compact('users', 'groups'));
 
     
     }
@@ -60,7 +61,7 @@ class SMSController extends Controller
         UserSMS::create([
             'name' => $request->name,
             'phone' => $request->phone,
-        ]);
+        ]);    
 
         return redirect()->route('admin.schedule.sms')->with('success', 'User added successfully!');
     }
@@ -99,18 +100,27 @@ class SMSController extends Controller
 
 
 
-public function sendSMS(Request $request)
-{
-    $request->validate([
-        'message' => 'required|string',
-        'recipients' => 'required|array',
-        'recipients.*' => 'required|string',
-    ]);
-
-    $response = $this->smsService->sendSMS($request->recipients, $request->message);
-
-    return response()->json($response);
-}
+    public function sendSMS(Request $request, IPROGSMSService $smsService)
+    {
+        $request->validate([
+            'message' => 'required|string',
+            'recipients' => 'required|array|min:1',
+        ]);
+    
+        $message = $request->message;
+        $recipients = $request->recipients;
+    
+        $response = $smsService->sendSMS($recipients, $message);
+    
+        if ($response['success']) {
+            return response()->json(['message' => 'SMS successfully sent!']);
+        }
+    
+        return response()->json([
+            'message' => 'Failed to send SMS.',
+            'error' => $response['response'] ?? 'Unknown error'
+        ], 500);
+    }
 public function createGroup(Request $request)
 {
     $request->validate([

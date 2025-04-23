@@ -32,13 +32,22 @@
 <div class="sms-container">
     <form id="smsForm">
         @csrf
+
         <div class="form-group">
             <label for="message">Message:</label>
-            <textarea class="form-control" id="message" name="message" rows="4"></textarea>
+            <textarea class="form-control" id="message" name="message" rows="4" placeholder="Enter your SMS message..."></textarea>
         </div>
-        
-        <!-- Group Selection -->
-   
+
+        <!-- Group Selection (if applicable) -->
+        <div class="form-group">
+            <label for="group">Filter by Group (optional):</label>
+            <select class="form-control" id="group">
+                <option value="">-- All Groups --</option>
+                @foreach($groups as $group)
+                    <option value="{{ $group->id }}">{{ $group->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
         <div class="form-group">
             <label for="recipients">Recipients:</label>
@@ -51,19 +60,17 @@
                     </tr>
                 </thead>
                 <tbody id="recipientsList">
-                @foreach($users as $user)
-                <tr class="recipient-row" data-group="{{ $user->group_id }}">
-                    <td><input type="checkbox" class="recipient-checkbox" value="{{ $user->phone }}"></td>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->phone }}</td>
-                </tr>
-            @endforeach
-
-
+                    @foreach($users as $user)
+                        <tr class="recipient-row" data-group="{{ $user->group_id }}">
+                            <td><input type="checkbox" class="recipient-checkbox" value="{{ $user->phone }}"></td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->phone }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
-        
+
         <button type="button" class="btn btn-send" id="sendSMSBtn">Send SMS</button>
     </form>
 </div>
@@ -74,131 +81,84 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+$(document).ready(function() {
+    $('#recipientsTable').DataTable();
 
+    // Select All functionality
+    $('#selectAll').on('click', function() {
+        $('.recipient-checkbox').prop('checked', this.checked);
+    });
 
-    $(document).ready(function() {
-        // Initialize DataTable
-        $('#recipientsTable').DataTable();
-
-        // Select All Checkbox Functionality
-        $('#selectAll').on('click', function() {
-            $('.recipient-checkbox').prop('checked', this.checked);
-        });
-
-        // Filter recipients based on selected group
-        $('#group').on('change', function() {
-    var selectedGroup = $(this).val();
-
-    // Show/hide rows based on the selected group
-    if (selectedGroup) {
+    // Group filter
+    $('#group').on('change', function() {
+        const selectedGroup = $(this).val();
         $('.recipient-row').each(function() {
-            if ($(this).data('group') == selectedGroup) {
+            if (!selectedGroup || $(this).data('group') == selectedGroup) {
                 $(this).show();
             } else {
                 $(this).hide();
             }
         });
-    } else {
-        // Show all recipients if no group is selected
-        $('.recipient-row').show();
-    }
-});
-
-
-        // Send SMS Function
-        $('#sendSMSBtn').on('click', function() {
-            let message = $('#message').val();
-            let recipients = [];
-
-            // Collect selected phone numbers
-            $('.recipient-checkbox:checked').each(function() {
-                recipients.push($(this).val());
-            });
-
-            if (message.trim() === '' || recipients.length === 0) {
-                alert('Please enter a message and select at least one recipient.');
-                return;
-            }
-
-            $.ajax({
-                url: "{{ route('admin.schedule.send_sms') }}",
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}",
-                    message: message,
-                    recipients: recipients
-                },
-                success: function(response) {
-                    alert(response.message);
-                },
-                error: function(error) {
-                    alert('Failed to send SMS. Check the console for errors.');
-                    console.log(error);
-                }
-            });
-        });
     });
 
-        //   $('#sendSMSBtn').on('click', function() {
-//             let message = $('#message').val();
-//             let recipients = [];
+    // Send SMS with SweetAlert confirmation
+    $('#sendSMSBtn').on('click', function() {
+        const message = $('#message').val().trim();
+        const recipients = $('.recipient-checkbox:checked').map(function() {
+            return $(this).val();
+        }).get();
 
+        if (!message || recipients.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Missing Info',
+                text: 'Please enter a message and select at least one recipient.'
+            });
+            return;
+        }
 
-//             $('.recipient-checkbox:checked').each(function() {
-//                 recipients.push($(this).val());
-//             });
-
-//             if (message.trim() === '' || recipients.length === 0) {
-//                 Swal.fire({
-//                     icon: 'error',
-//                     title: 'Oops...',
-//                     text: 'Please enter a message and select at least one recipient.',
-//                 });
-//                 return;
-//             }
-
-
-//             Swal.fire({
-//                 title: 'Are you sure?',
-//                 text: "You are about to send this SMS to the selected recipients.",
-//                 icon: 'warning',
-//                 showCancelButton: true,
-//                 confirmButtonText: 'Yes, send it!',
-//                 cancelButtonText: 'Cancel'
-//             }).then((result) => {
-//                 if (result.isConfirmed) {
-
-//                     $.ajax({
-//                         url: "{{ route('admin.schedule.send_sms') }}",
-//                         type: "POST",
-//                         data: {
-//                             _token: "{{ csrf_token() }}",
-//                             message: message,
-//                             recipients: recipients
-//                         },
-//                         success: function(response) {
-//                             Swal.fire({
-//                                 icon: 'success',
-//                                 title: 'SMS Sent!',
-//                                 text: response.message,
-//                             });
-//                         },
-//                         error: function(error) {
-//                             Swal.fire({
-//                                 icon: 'error',
-//                                 title: 'Failed!',
-//                                 text: 'Failed to send SMS. Check the console for errors.',
-//                             });
-//                             console.log(error);
-//                         }
-//                     });
-//                 }
-//             });
-//         });
-// });
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will send the SMS to the selected recipients.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, send it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('admin.schedule.send_sms') }}",
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        message: message,
+                        recipients: recipients
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: response.message
+                        });
+                        $('#smsForm')[0].reset();
+                        $('#selectAll').prop('checked', false);
+                    },
+                    error: function(xhr) {
+                        let msg = 'Failed to send SMS.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = xhr.responseJSON.message;
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: msg
+                        });
+                        console.log(xhr);
+                    }
+                });
+            }
+        });
+    });
+});
 </script>
 @stop
-
-
-
-   

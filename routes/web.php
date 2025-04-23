@@ -5,7 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PurchaserController;
 use App\Http\Controllers\IT\TicketController;
 use App\Http\Controllers\NotificationController;
-
+use App\Http\Controllers\PurchaseRequestController;
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -86,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/purchase/{id}/edit', [App\Http\Controllers\PurchaserController::class, 'edit'])->name('admin.purchase.edit');
     Route::put('admin/purchase/{id}/update', [App\Http\Controllers\PurchaserController::class, 'update'])->name('admin.purchase.update');
     Route::post('admin/purchase/accept', [App\Http\Controllers\PurchaserController::class, 'accept'])->name('admin.purchase.accept');
+    Route::post('/purchase/upload-and-accept', [PurchaserController::class, 'uploadAndAcceptOrder'])->name('purchase.uploadAndAcceptOrder');
     Route::post('admin/purchase/delete', [App\Http\Controllers\PurchaserController::class, 'delete'])->name('admin.purchase.delete');
     Route::post('admin/purchase/{id}/hold', [App\Http\Controllers\PurchaserController::class, 'hold'])->name('admin.purchase.hold');
     Route::get('admin/purchase/{id}', [App\Http\Controllers\PurchaserController::class, 'show'])->name('admin.purchase.show');
@@ -99,6 +100,8 @@ Route::middleware(['auth'])->group(function () {
     // PR Routes
     Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
     Route::post('/purchase/accept', [App\Http\Controllers\PurchaseRequestController::class, 'accept'])->name('purchase.accept');
+    Route::post('/purchase_requests/upload-and-accept', [PurchaseRequestController::class, 'uploadAndAccept'])->name('purchase.uploadAndAccept');
+
     Route::post('/purchase/delete', [App\Http\Controllers\PurchaseRequestController::class, 'delete'])->name('purchase.delete');
     Route::get('/purchase_requests/{id}', [App\Http\Controllers\PurchaseRequestController::class, 'show']);
     Route::post('/purchase_requests/{id}/hold', [App\Http\Controllers\PurchaseRequestController::class, 'hold']);
@@ -106,7 +109,7 @@ Route::middleware(['auth'])->group(function () {
 
     // ticketing routes
     Route::get('admin/ticketing', [App\Http\Controllers\TicketController::class, 'index'])->name('admin.ticketing.index');
-    Route::get('admin/ticket/create', [App\Http\Controllers\TicketController::class, 'create'])->name('admin.ticketing.create');
+    Route::get('admin/ticketing/create', [App\Http\Controllers\TicketController::class, 'create'])->name('admin.ticketing.create');
     Route::post('admin/ticket/store', [App\Http\Controllers\TicketController::class, 'store'])->name('admin.ticketing.store');
     Route::get('/admin/ticketing/{id}', [App\Http\Controllers\TicketController::class, 'getTicketDetails'])->name('ticketing.details');
     Route::post('/tickets/{id}/accept', [App\Http\Controllers\TicketController::class, 'accept'])->name('tickets.accept');
