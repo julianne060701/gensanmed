@@ -173,7 +173,7 @@
     <!-- Print Area -->
     <div id="printArea">
         <img src="{{ asset('img/logo.png') }}" alt="Company Logo" style="width: 200px;">
-        <h1 style="text-align: center;">Concern Ticket</h1>
+        <h1 style="text-align: center;">Support Ticket Form</h1>
         <hr style="border-top: 3px solid #bbb;">
 
         <p style="font-size: 20px;"><strong>Ticket Number:</strong> <span id="printTicketNumber"></span></p>

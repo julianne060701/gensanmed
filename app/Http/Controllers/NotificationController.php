@@ -50,9 +50,20 @@ class NotificationController extends Controller
     {
         $notification = Auth::user()->notifications()->findOrFail($id);
         $notification->markAsRead();
-
-        return redirect()->route('admin.ticketing.index');
+    
+        $title = $notification->data['title'] ?? '';
+    
+        if (str_contains($title, 'Ticket')) {
+            return redirect()->route('admin.ticketing.index');
+        } elseif (str_contains($title, 'Purchase Order')) {
+            return redirect()->route('admin.purchase.index');
+        } elseif (str_contains($title, 'Purchase Request')) {
+            return redirect()->route('admin.purchase_request.index');
+        } else {
+            return redirect()->route('notifications.show'); // fallback to notifications page
+        }
     }
+    
     
 }
 

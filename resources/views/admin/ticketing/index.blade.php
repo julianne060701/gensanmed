@@ -94,7 +94,7 @@
                             'Responsible Department',                        
                             'Concern Type',        
                             'Urgency',                                          
-                            'Image',
+                            'Attachment',
                             'Status',
                             'Date Request',
                             'Total Duration',

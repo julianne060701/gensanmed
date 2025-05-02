@@ -7,7 +7,7 @@
     <div id="printArea">
         <div class="ticket-header">
             <img src="{{ asset('img/logo.png') }}" alt="Company Logo">
-            <h1>Concern Ticket</h1>
+            <h1>Support Ticket Form</h1>
         </div>
 
         <hr>

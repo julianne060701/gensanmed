@@ -58,7 +58,7 @@
                             <option value="Purchaser" {{ old('role') == 'Purchaser' ? 'selected' : '' }}>Purchaser</option>
                             <option value="Engineer" {{ old('role') == 'Engineer' ? 'selected' : '' }}>Engineer</option>
                             <option value="Staff" {{ old('role') == 'Staff' ? 'selected' : '' }}>Staff</option>
-                            <option value="Employee" {{ old('role') == 'Employee' ? 'selected' : '' }}>Employee</option>
+                            <!-- <option value="Employee" {{ old('role') == 'Employee' ? 'selected' : '' }}>Employee</option> -->
                             <option value="Head" {{ old('role') == 'Head' ? 'selected' : '' }}>Head</option> 
                             <option value="mmo" {{ old('role') == 'mmo' ? 'selected' : ''}}>MMO</option>
                         </select>

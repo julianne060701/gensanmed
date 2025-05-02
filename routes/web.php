@@ -23,7 +23,7 @@ Auth::routes();
 
 Route::get('/notifications/show', [NotificationController::class, 'show'])->name('notifications.show');
 Route::get('/notifications/get', [NotificationController::class, 'get'])->name('notifications.get');
-Route::post('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 Route::get('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
 
 Route::prefix('admin')->name('admin.')->group(function () {

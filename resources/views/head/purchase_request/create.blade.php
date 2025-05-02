@@ -24,7 +24,7 @@
 
                     <!-- Name of Requester -->
                     <div class="form-group">
-                        <label for="requester_name">Name of Requester</label>
+                        <label for="requester_name">Name of Requester and Department</label>
                         <input type="text" name="requester_name" id="requester_name" class="form-control" placeholder="Enter requester name" required>
                     </div>
                     
