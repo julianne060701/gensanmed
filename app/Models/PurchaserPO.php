@@ -22,6 +22,8 @@ class PurchaserPO extends Model
         'remarks',
         'approval_date',
         'accepted_date',
+        'send_date',         // ← make sure this is included
+        'total_duration',
     ];
     public function user()
     {

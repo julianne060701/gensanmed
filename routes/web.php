@@ -96,6 +96,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Report Routes
     Route::get('admin/reports/ticketing_report', [App\Http\Controllers\Admin\TicketReportController::class, 'index'])->name('admin.reports.ticketing_report.index');
+    Route::get('admin/reports/purchase_request', [App\Http\Controllers\Admin\PRreportController::class, 'index'])->name('admin.reports.purchase_request');
+    Route::get('admin/reports/purchase_order', [App\Http\Controllers\Admin\POreportController::class, 'index'])->name('admin.reports.purchase_order');
 
     // PR Routes
     Route::get('admin/purchase_request', [App\Http\Controllers\PurchaseRequestController::class, 'index'])->name('admin.purchase_request.index');
@@ -252,4 +254,13 @@ Route::middleware(['auth'])->group(function () {
             Route::put('mmo/ticketing/{id}', [App\Http\Controllers\MMO\TicketController::class, 'update'])->name('mmo.ticketing.update');
             Route::get('mmo/schedule', [App\Http\Controllers\MMO\CalendarController::class, 'index'])->name('mmo.schedule.calendar');
             Route::get('mmo/reports/ticketing_report', [App\Http\Controllers\MMO\TicketReportController::class, 'index'])->name('mmo.reports.ticketing_report.index');
+            Route::get('mmo/reports/purchase_request', [App\Http\Controllers\MMO\PRreportController::class, 'index'])->name('mmo.reports.purchase_request');
+            Route::get('mmo/reports/purchase_order', [App\Http\Controllers\MMO\POreportController::class, 'index'])->name('mmo.reports.purchase_order');
+        
+            // PR Routes
+                // Purchase Request Route
+            Route::get('mmo/purchase_request', [App\Http\Controllers\MMO\PurchaseRequestController::class, 'index'])->name('mmo.purchase_request.index');
+            Route::get('mmo/purchase_request/create', [App\Http\Controllers\MMO\PurchaseRequestController::class, 'create'])->name('mmo.purchase_request.create');
+            Route::post('mmo/purchase_request', [App\Http\Controllers\MMO\PurchaseRequestController::class, 'store'])->name('mmo.purchase_request.store');
+            Route::get('mmo/purchase_requests/{id}', [App\Http\Controllers\MMO\PurchaseRequestController::class, 'show']);
             

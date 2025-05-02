@@ -25,6 +25,8 @@ class Pr extends Model
         'status',
         'approval_date',
         'accepted_date',
+        'PO_date',
+        'total_duration',
     ];
 
     /**

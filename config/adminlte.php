@@ -401,7 +401,13 @@ return [
                     [
                         'text' => 'Purchase Request Report',
                         'icon' => 'fas fa-file-alt',
-                        // 'url'  => 'admin/purchase_request',
+                        'url'  => 'admin/reports/purchase_request',
+                        'can'  => 'view-admin-menu',
+                    ],
+                    [
+                        'text' => 'Purchase Order Report',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'admin/reports/purchase_order',
                         'can'  => 'view-admin-menu',
                     ],
                 ],
@@ -434,6 +440,27 @@ return [
                     ],
                 ],
             ],
+            [
+                'text'    => 'Manage Purchase',
+                'icon'    => 'fas fa-cart-plus',
+                'can'     => 'view-mmo-menu',
+                'submenu' => [
+        
+                    [
+                        'text' => 'Purchase Request',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'mmo/purchase_request',
+                        'can'  => 'view-mmo-menu',
+                    ],
+                   
+                    [
+                        'text' => 'Purchase Order Report',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'admin/reports/purchase_order',
+                        'can'  => 'view-admin-menu',
+                    ],
+                ],
+            ],
            
 
             [
@@ -456,12 +483,18 @@ return [
                             'can'   => 'view-mmo-menu',
                         ],
                     
-                    [
-                        'text' => 'Purchase Request Report',
-                        'icon' => 'fas fa-file-alt',
-                        // 'url'  => 'admin/purchase_request',
-                        'can'  => 'view-mmo-menu',
-                    ],
+                        [
+                            'text' => 'Purchase Request Report',
+                            'icon' => 'fas fa-file-alt',
+                            'url'  => 'mmo/reports/purchase_request',
+                            'can'  => 'view-mmo-menu',
+                        ],
+                        [
+                            'text' => 'Purchase Order Report',
+                            'icon' => 'fas fa-file-alt',
+                            'url'  => 'mmo/reports/purchase_order',
+                            'can'  => 'view-mmo-menu',
+                        ],
                 ],
             ],
 
