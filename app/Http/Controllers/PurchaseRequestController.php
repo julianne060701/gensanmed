@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Models\PR;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
 class PurchaseRequestController extends Controller
 {
     /**
@@ -96,6 +98,7 @@ class PurchaseRequestController extends Controller
                 $pdfDisplay,
                 $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
+                $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null ,
                 '<nobr>' . $btnShow . $btnAccept . $btnHold . $btnDelete . '</nobr>',
             ];
     

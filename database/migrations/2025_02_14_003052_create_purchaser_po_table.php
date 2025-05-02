@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->timestamp('approval_date')->nullable();
             $table->timestamp('accepted_date')->nullable();
+            $table->integer('total_duration')->nullable();
             $table->softDeletes();
         });
     }

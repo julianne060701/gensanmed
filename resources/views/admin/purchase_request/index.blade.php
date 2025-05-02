@@ -27,16 +27,16 @@
                             'Description',
                             'Status',
                             'Attachment',
-                            'My Attachment',
-                          
+                            'My Attachment',                         
                             'Date Requested',
+                            'Total Duration',
                             ['label' => 'Actions', 'no-export' => true, 'width' => 5],
                         ];
 
                         $config = [
                             'data' => $data,
                             'order' => [[8, 'desc']], // Sort by the 'Date Created' column (index 7) in descending order
-                            'columns' => [null, null, null, null, null, null, null, null, null,  ['orderable' => false]],
+                            'columns' => [null, null, null, null, null, null, null, null, null,null,  ['orderable' => false]],
                         ];
                     @endphp
 

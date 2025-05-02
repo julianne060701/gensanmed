@@ -611,7 +611,7 @@ return [
                 'can'     => 'view-purchaser-menu',
                 'submenu' => [
                     [
-                        'text' => 'Manage PO',
+                        'text' => 'Purchase Order',
                         'icon' => 'fas fa-file-invoice',
                         'url'  => 'purchaser/purchase',
                         'can'  => 'view-purchaser-menu',

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\PR;
 use App\Notifications\NewPurchaseRequestNotification;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class PurchaseRequestController extends Controller
 {
@@ -75,6 +76,7 @@ class PurchaseRequestController extends Controller
                 $pdfDisplay,
                 $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
+                $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null ,
                 '<nobr>' . $btnShow . '</nobr>',
             ];
     

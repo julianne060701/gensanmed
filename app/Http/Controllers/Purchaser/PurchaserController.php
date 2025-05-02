@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\NewPurchaseOrderNotification;
 use App\Models\Ticket;
 use App\Models\PR;
+use Illuminate\Support\Str;
 
 class PurchaserController extends Controller
 {
@@ -91,6 +92,7 @@ class PurchaserController extends Controller
                 $pdfDisplay,
                 $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
+                $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null ,
                 '<nobr>' . $btnEdit .  '</nobr>',
             ];
     
@@ -175,43 +177,54 @@ class PurchaserController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $validated = $request->validate([
-            'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number,' . $id,
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'status' => 'required|in:Pending,Approved,Denied,Send to Supplier, Pending For PO',
-            'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
-        ]);
-    
-        $purchase = PurchaserPO::findOrFail($id);
-    
-        if ($request->hasFile('image_url')) {
-            // Delete old file if exists
-            if ($purchase->image_url && file_exists(public_path($purchase->image_url))) {
-                unlink(public_path($purchase->image_url));
-            }
-    
-            // Store new file
-            $file = $request->file('image_url');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('po_pdfs'), $fileName);
-            $pdfPath = 'po_pdfs/' . $fileName;
-        } else {
-            $pdfPath = $purchase->image_url;
-        }
-    
-        // Update the purchase order
-        $purchase->update([
-            'po_number' => $validated['po_number'],
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'status' => $validated['status'],
-            'image_url' => $pdfPath,
-        ]);
+{
+    $validated = $request->validate([
+        'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number,' . $id,
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string|max:1000',
+        'status' => 'required|in:Pending,Approved,Denied,Send to Supplier, Pending For PO',
+        'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+    ]);
 
-        return redirect()->route('purchaser.purchase.index')->with('success', 'PO updated successfully!');
+    $purchase = PurchaserPO::findOrFail($id);
+
+    if ($request->hasFile('image_url')) {
+        if ($purchase->image_url && file_exists(public_path($purchase->image_url))) {
+            unlink(public_path($purchase->image_url));
+        }
+
+        $file = $request->file('image_url');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('po_pdfs'), $fileName);
+        $pdfPath = 'po_pdfs/' . $fileName;
+    } else {
+        $pdfPath = $purchase->image_url;
     }
+
+    // Default values for additional fields
+    $sendDate = $purchase->send_date;
+    $totalDuration = $purchase->total_duration;
+
+    // If status is being updated to "Send to Supplier"
+    if ($validated['status'] === 'Send to Supplier') {
+        $sendDate = now(); // store current date
+        $totalDuration = $purchase->created_at->diffInDays($sendDate);
+    }
+
+    // Update fields
+    $purchase->update([
+        'po_number' => $validated['po_number'],
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'status' => $validated['status'],
+        'image_url' => $pdfPath,
+        'send_date' => $sendDate,
+        'total_duration' => $totalDuration,
+    ]);
+
+    return redirect()->route('purchaser.purchase.index')->with('success', 'PO updated successfully!');
+}
+
 
     /**
      * Remove the specified resource from storage.

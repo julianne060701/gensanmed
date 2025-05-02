@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\PR;
 use App\Notifications\NewPurchaseRequestNotification;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+
 class PurchaseRequestController extends Controller
 {
     /**
@@ -18,20 +21,27 @@ class PurchaseRequestController extends Controller
         $data = [];
     
         foreach ($purchases as $purchase) {
-            $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
-          
-            $btnEdit = '<a href="' . route('purchaser.purchase_request.edit', $purchase->id) . '" 
-            class="btn btn-xs btn-default text-primary mx-1 shadow" 
-            title="Edit">
-            <i class="fa fa-lg fa-fw fa-pen"></i>
-            </a>';
-
+            $isDisabled = in_array($purchase->status, ['Denied', 'Send to Supplier', 'Approved']) ? 'disabled' : '';
+        
+            // Disable edit if status is Approved
+            $btnEdit = ($purchase->status === 'Approved')
+                ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Edit Disabled" disabled>
+                       <i class="fa fa-lg fa-fw fa-pen"></i>
+                   </button>'
+                : '<a href="' . route('purchaser.purchase_request.edit', $purchase->id) . '" 
+                     class="btn btn-xs btn-default text-primary mx-1 shadow" 
+                     title="Edit">
+                     <i class="fa fa-lg fa-fw fa-pen"></i>
+                   </a>';
+        
+        
     
-            $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-            title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
-            data-delete=" ">
-            <i class="fa fa-lg fa-fw fa-trash"></i>
-            </button>';
+    
+            // $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
+            // title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
+            // data-delete=" ">
+            // <i class="fa fa-lg fa-fw fa-trash"></i>
+            // </button>';
         
             // Display a PDF link
             $pdfDisplay = $purchase->attachment_url 
@@ -66,7 +76,8 @@ class PurchaseRequestController extends Controller
                 $statusBadge,
                 $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
-                '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
+                $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null ,
+                '<nobr>' . $btnEdit . '</nobr>',
             ];
     
             $data[] = $rowData;
@@ -113,16 +124,22 @@ class PurchaseRequestController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $purchase = PR::findOrFail($id); // Ensure you use the correct model
+        $purchase = PR::findOrFail($id);
 
         $purchase->request_number = $request->request_number;
         $purchase->po_number = $request->po_number;
         $purchase->requester_name = $request->requester_name;
         $purchase->description = $request->description;
     
-        // If a PO number is provided, update the status to "Approved"
+        // If a PO number is provided, update the status and PO_date
         if (!empty($request->po_number)) {
             $purchase->status = 'Approved';
+            $purchase->PO_date = now(); // or today() if you only want the date
+    
+            // Calculate duration between created_at and PO_date
+            $createdDate = Carbon::parse($purchase->created_at);
+            $poDate = Carbon::parse($purchase->PO_date);
+            $purchase->total_duration = $createdDate->diffInDays($poDate);
         }
     
         // Handle file upload
@@ -137,6 +154,7 @@ class PurchaseRequestController extends Controller
         return redirect()->route('purchaser.purchase_request.index')
             ->with('success', 'Purchase request updated successfully!');
     }
+    
     
 
     /**

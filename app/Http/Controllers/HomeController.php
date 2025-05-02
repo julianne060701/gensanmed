@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\Ticket;
 use App\Models\PR;
 use App\Models\PurchaserPO;
+use App\Notifications\EventCreatedNotification;
+use Illuminate\Support\Facades\Notification;
 
 class HomeController extends Controller
 {
@@ -76,9 +78,8 @@ class HomeController extends Controller
         $fromDate = Carbon::parse($validated['fromDate']);
         $toDate = Carbon::parse($validated['toDate']);
     
-        // Adjust the to_date to prevent overlap into the next day
         if ($toDate->format('H:i') === '00:00') {
-            $toDate->subSecond(); // Move it back by 1 second to stay within the intended date
+            $toDate->subSecond();
         }
     
         ScheduleList::create([
@@ -90,7 +91,13 @@ class HomeController extends Controller
             'user_id'     => auth()->id(),
         ]);
     
-        return redirect()->route('admin.schedule.calendar')->with('success', 'Event saved successfully!');
+        // Notify all users
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new EventCreatedNotification($validated['eventTitle'], $validated['eventDescription']));
+        }
+    
+        return redirect()->route('admin.schedule.calendar')->with('success', 'Event saved and notifications sent!');
     }
 
     public function update(Request $request, $event)
