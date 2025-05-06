@@ -3,7 +3,7 @@
 @section('title', 'Edit PO')
 <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
 @section('content_header')
-<h1 class="ml-1">Edit PO</h1>
+<h1 class="ml-1">Edit PR</h1>
 @stop
 
 @section('content')
@@ -38,14 +38,6 @@
                     <textarea name="description" class="form-control" placeholder="Enter description (Optional)" >{{ old('description', $purchase->description ?? '') }}</textarea>
                 </div>
                 
-                <!-- Attachment -->
-                <div class="form-group">
-                    <label for="attachment_url">Attachment (PDF, Max: 5MB)</label>
-                    <input type="file" name="attachment_url" class="form-control" accept=".pdf">
-                    @if(isset($purchase) && $purchase->attachment_url)
-                        <p><a href="{{ asset($purchase->attachment_url) }}" target="_blank">View Current Attachment</a></p>
-                    @endif
-                </div>
                 
                 <!-- Submit Button -->
                 <div class="form-group mt-3">

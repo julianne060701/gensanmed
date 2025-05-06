@@ -41,26 +41,7 @@
                     <textarea name="description" id="remarks" class="form-control" readonly rows="3">{{ $purchase->description }}</textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="fileUpload">Upload PO Document (PDF)</label>
-                    <div class="input-group">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" name="image_url" id="fileUpload" accept=".pdf">
-                            <label class="custom-file-label" for="fileUpload">Choose file</label>
-                        </div>
-                    </div>
-                    <small id="fileName" class="text-muted mt-2">No file selected</small>
-                </div>
-
-                @if($purchase->image_url)
-                    <div class="form-group">
-                        <p>Current Document:</p>
-                        <a href="{{ asset($purchase->image_url) }}" target="_blank" class="btn btn-primary">
-                            View PDF
-                        </a>
-                    </div>
-                @endif
-
+         
                 <button type="button" class="btn btn-success mt-4" id="confirmEdit">Update</button>
             </form>
         </div>

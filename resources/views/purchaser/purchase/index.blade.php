@@ -5,7 +5,7 @@
 @section('plugins.DatatablesPlugin', true)
 
 @section('content_header')
-<h1 class="ml-1">Purchaser</h1>
+<h1 class="ml-1">Purchase Order</h1>
 @stop
 
 @section('content')

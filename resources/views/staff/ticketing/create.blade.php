@@ -113,7 +113,7 @@
                             <select name="responsible_department" id="responsible_department" class="form-control" required>
                                 <option value="">Select Responsible Department</option>
                                 <option value="HIMS">HIMS</option>
-                                <option value="Engineer">Engineer</option>
+                                <option value="Engineer">Engineering</option>
                             </select>
                         </div>
                     </div>
