@@ -7,6 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\DatabaseMessage;
+use App\Models\User;
+use App\Jobs\SendEventCreatedNotification;
 
 class EventCreatedNotification extends Notification implements ShouldQueue
 {
@@ -34,4 +36,14 @@ class EventCreatedNotification extends Notification implements ShouldQueue
             'url' => route('admin.schedule.calendar'),
         ];
     }
+
+    public function toArray($notifiable)
+{
+    return [
+        'title' => 'New Event Created',
+        'message' => $this->eventTitle . ' - ' . $this->eventDescription,
+        'url' => route('admin.schedule.calendar'),
+    ];
+}
+
 }

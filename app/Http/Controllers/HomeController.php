@@ -11,6 +11,7 @@ use App\Models\PR;
 use App\Models\PurchaserPO;
 use App\Notifications\EventCreatedNotification;
 use Illuminate\Support\Facades\Notification;
+use App\Jobs\SendEventCreatedNotification;
 
 class HomeController extends Controller
 {
@@ -82,7 +83,7 @@ class HomeController extends Controller
             $toDate->subSecond();
         }
     
-        ScheduleList::create([
+        $event = ScheduleList::create([
             'event'       => $validated['eventTitle'],
             'description' => $validated['eventDescription'],
             'from_date'   => $fromDate->toDateTimeString(),
@@ -91,14 +92,12 @@ class HomeController extends Controller
             'user_id'     => auth()->id(),
         ]);
     
-        // Notify all users
-        $users = User::all();
-        foreach ($users as $user) {
-            $user->notify(new EventCreatedNotification($validated['eventTitle'], $validated['eventDescription']));
-        }
+        // Dispatch the SendEventCreatedNotification job synchronously
+        SendEventCreatedNotification::dispatchSync($event);
     
-        return redirect()->route('admin.schedule.calendar')->with('success', 'Event saved and notifications sent!');
+        return redirect()->route('admin.schedule.calendar')->with('success', 'Event saved and users notified successfully!');
     }
+    
 
     public function update(Request $request, $event)
     {
