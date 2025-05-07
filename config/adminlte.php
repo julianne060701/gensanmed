@@ -587,7 +587,7 @@ return [
             // Engineer Sidebar Items (Only for Engineers)
             // -----------------------------------------------------
             [
-                'header' => 'ENGINEER PANEL',
+                'header' => 'ENGINEERING PANEL',
                 'can'    => 'view-engineer-menu',
             ],
             [
@@ -603,12 +603,12 @@ return [
                 'url'   => 'engineer/ticketing',
                 'can'   => 'view-engineer-menu',
             ],
-            [
-                'text'  => 'PMS',
-                'icon'  => 'fas fa-fw fa-ticket-alt',
-                'url'   => 'engineer/pms',
-                'can'   => 'view-engineer-menu',
-            ],
+            // [
+            //     'text'  => 'PMS',
+            //     'icon'  => 'fas fa-fw fa-ticket-alt',
+            //     'url'   => 'engineer/pms',
+            //     'can'   => 'view-engineer-menu',
+            // ],
             [
                 'text'    => 'Manage Reports',
                 'icon'    => 'fas fa-fw fa-file-alt',
