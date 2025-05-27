@@ -105,7 +105,8 @@ class PurchaseRequestController extends Controller
              'request_number' => 'required|integer|min:1|unique:pr,request_number',
              'requester_name' => 'required|string|max:255',
              'description' => 'nullable|string|max:1000',
-             'attachment_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+            'attachment_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB
+
          ]);
      
          // Handle file upload if present
