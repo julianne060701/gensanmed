@@ -133,7 +133,7 @@ class PurchaserController extends Controller
         // Handle file upload
         $file = $request->file('pdf_file');
         $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('pr_pdfs'), $fileName);
+        $file->move(public_path('po_pdfs'), $fileName);
         $filePath = 'po_pdfs/' . $fileName;
     
         // Update the PR record with attachment and status
