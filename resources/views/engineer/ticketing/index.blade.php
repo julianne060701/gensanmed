@@ -159,14 +159,21 @@
 
 <script>
 $(document).ready(function () {
-    // Open modal on "Completed" button click
-    $('.complete-ticket').on('click', function () {
+    // Handle Completed Button Click (opens modal)
+    $(document).on('click', '.complete-ticket', function () {
         let ticketId = $(this).data('id');
         $('#ticketId').val(ticketId);
         $('#completeByModal').modal('show');
     });
 
-    // Submit completion with Complete By using SweetAlert
+    // Handle Accept Button Click (also opens modal)
+    $(document).on('click', '.Accept', function () {
+        let ticketId = $(this).data('id');
+        $('#ticketId').val(ticketId);
+        $('#completeByModal').modal('show');
+    });
+
+    // Handle Submit Completion Button inside modal
     $('#submitCompletion').on('click', function () {
         let ticketId = $('#ticketId').val();
         let completedBy = $('#completedByName').val().trim();
