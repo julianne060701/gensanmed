@@ -14,6 +14,7 @@ class ScheduleList extends Model
     protected $fillable = [
         'event',
         'description',
+        'from_department',
         'from_date',
         'to_date',
         'status',

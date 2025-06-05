@@ -121,7 +121,7 @@ class PurchaserController extends Controller
         'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
         'name' => 'required|string|max:255',
         'description' => 'nullable|string|max:1000',
-        'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+        'image_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB
     ]);
 
     $pdfPath = null;

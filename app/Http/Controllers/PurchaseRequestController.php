@@ -10,6 +10,8 @@ use App\Http\Controllers\Controller;
 use App\Models\PR;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Notifications\PurchaseRequestAccepted;
+use Illuminate\Support\Facades\Notification; 
 
 class PurchaseRequestController extends Controller
 {
@@ -124,31 +126,37 @@ class PurchaseRequestController extends Controller
     }
     
     public function uploadAndAccept(Request $request)
-    {
-        $request->validate([
-            'upload_id' => 'required|exists:pr,id',
-            'pdf_file' => 'required|mimes:pdf|max:2048',
-        ]);
-    
-        // Handle file upload
-        $file = $request->file('pdf_file');
-        $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('pr_pdfs'), $fileName);
-        $filePath = 'pr_pdfs/' . $fileName;
-    
-        // Update the PR record with attachment and status
-        $purchase = PR::find($request->upload_id);
-        if ($purchase) {
-            $purchase->admin_attachment = $filePath;
-            $purchase->status = 'Pending For PO';
-            $purchase->approval_date = now();
-            $purchase->save();
-    
-            return response()->json(['message' => 'Uploaded and accepted successfully.']);
+{
+    $request->validate([
+        'upload_id' => 'required|exists:pr,id',
+        'pdf_file' => 'required|mimes:pdf|max:2048',
+    ]);
+
+    // Handle file upload
+    $file = $request->file('pdf_file');
+    $fileName = time() . '_' . $file->getClientOriginalName();
+    $file->move(public_path('pr_pdfs'), $fileName);
+    $filePath = 'pr_pdfs/' . $fileName;
+
+    // Update the PR record with attachment and status
+    $purchase = PR::find($request->upload_id);
+    if ($purchase) {
+        $purchase->admin_attachment = $filePath;
+        $purchase->status = 'Pending For PO';
+        $purchase->approval_date = now();
+        $purchase->save();
+
+        // Notify purchaser
+        $purchaser = User::find($purchase->user_id); // Make sure PR has `user_id` field
+        if ($purchaser) {
+            $purchaser->notify(new PurchaseRequestAccepted($purchase));
         }
-    
-        return response()->json(['error' => 'Purchase request not found.'], 404);
+
+        return response()->json(['message' => 'Uploaded and accepted successfully.']);
     }
+
+    return response()->json(['error' => 'Purchase request not found.'], 404);
+}
     
     
 

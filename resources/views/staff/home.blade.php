@@ -75,6 +75,11 @@
                         <textarea class="form-control" id="eventDescription" name="eventDescription"></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="fromDepartment">From Department</label>
+                        <textarea class="form-control" id="fromDepartment" name="fromDepartment"></textarea>
+
+                    </div>
+                    <div class="form-group">
                         <label for="fromDate">Start Date & Time</label>
                         <input type="datetime-local" class="form-control" id="fromDate" name="fromDate" required>
                     </div>
@@ -110,32 +115,38 @@
                     <input type="hidden" id="eventId" name="eventId">
                     <div class="form-group">
                         <label for="eventDetailsTitle">Event Title</label>
-                        <input type="text" class="form-control" id="eventDetailsTitle" name="eventTitle" required>
+                        <input type="text" class="form-control" id="eventDetailsTitle" name="eventTitle" readonly>
                     </div>
                     <div class="form-group">
                         <label for="eventDetailsDescription">Event Description</label>
-                        <textarea class="form-control" id="eventDetailsDescription" name="eventDescription"></textarea>
+                        <textarea class="form-control" id="eventDetailsDescription" name="eventDescription" readonly></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDetailsDepartment">From Department</label>
+                        <textarea class="form-control" id="eventDetailsDepartment" name="fromDepartment" readonly></textarea>
+
+
                     </div>
                     <div class="form-group">
                         <label for="eventDetailsStart">Start Date & Time</label>
                         <input type="datetime-local" class="form-control" id="eventDetailsStart" name="fromDate"
-                            required>
+                        readonly>
                     </div>
                     <div class="form-group">
                         <label for="eventDetailsEnd">End Date & Time</label>
-                        <input type="datetime-local" class="form-control" id="eventDetailsEnd" name="toDate" required>
+                        <input type="datetime-local" class="form-control" id="eventDetailsEnd" name="toDate" readonly>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-            
+                <!-- <button type="button" class="btn btn-danger" id="deleteEvent">Delete</button>
+                <button type="button" class="btn btn-primary" id="updateEvent">Update Event</button> -->
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
 @stop
-
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
@@ -207,6 +218,9 @@
             document.getElementById('eventId').value = info.event.id;
             document.getElementById('eventDetailsTitle').value = info.event.title;
             document.getElementById('eventDetailsDescription').value = info.event.extendedProps.description;
+            document.getElementById('eventDetailsDepartment').value = info.event.extendedProps.department;
+
+
             document.getElementById('eventDetailsStart').value = formatDateTimeLocal(start);
             document.getElementById('eventDetailsEnd').value = formatDateTimeLocal(end);
 
@@ -237,6 +251,7 @@
 
             var title = document.getElementById('eventTitle').value;
             var description = document.getElementById('eventDescription').value;
+            var fromDepartment = document.getElementById('fromDepartment').value;
             var fromDate = document.getElementById('fromDate').value;
             var toDate = document.getElementById('toDate').value;
 
@@ -257,6 +272,7 @@
                             data: {
                                 eventTitle: title,
                                 eventDescription: description,
+                                fromDepartment: fromDepartment,
                                 fromDate: fromDate,
                                 toDate: toDate,
                                 _token: "{{ csrf_token() }}"
@@ -285,6 +301,7 @@
             var eventId = document.getElementById('eventId').value;
             var title = document.getElementById('eventDetailsTitle').value;
             var description = document.getElementById('eventDetailsDescription').value;
+            var fromDepartment = document.getElementById('eventDetailsDepartment').value;
             var fromDate = document.getElementById('eventDetailsStart').value;
             var toDate = document.getElementById('eventDetailsEnd').value;
 
@@ -305,6 +322,7 @@
                             data: {
                                 eventTitle: title,
                                 eventDescription: description,
+                                fromDepartment: fromDepartment,
                                 fromDate: fromDate,
                                 toDate: toDate,
                                 _token: "{{ csrf_token() }}"

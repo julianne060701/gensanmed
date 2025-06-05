@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->text('event');
             $table->text('description');
+            $table->text('from_department');
             $table->dateTime('from_date');
             $table->dateTime('to_date');
             $table->enum('status', ['Active', 'Done', 'Inactive'])->default('Active');
