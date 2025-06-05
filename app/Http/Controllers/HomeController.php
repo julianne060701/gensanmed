@@ -58,6 +58,7 @@ class HomeController extends Controller
                 'id'          => $event->id,
                 'title'       => $event->event,
                 'description' => $event->description,
+                'department'  => $event->from_department,
                 'start'       => Carbon::parse($event->from_date)->toIso8601String(),
                 'end'         => Carbon::parse($event->to_date)->toIso8601String(),
                 'color'       => $event->color ?? $this->getEventColor(),
@@ -72,6 +73,7 @@ class HomeController extends Controller
         $validated = $request->validate([
             'eventTitle'       => 'required|string',
             'eventDescription' => 'nullable|string',
+            'fromDepartment'   => 'required|string',
             'fromDate'         => 'required|date',
             'toDate'           => 'required|date|after_or_equal:fromDate',
         ]);
@@ -86,6 +88,7 @@ class HomeController extends Controller
         $event = ScheduleList::create([
             'event'       => $validated['eventTitle'],
             'description' => $validated['eventDescription'],
+            'from_department' => $validated['fromDepartment'],
             'from_date'   => $fromDate->toDateTimeString(),
             'to_date'     => $toDate->toDateTimeString(),
             'status'      => 'active',
@@ -103,6 +106,8 @@ class HomeController extends Controller
     {
         $request->validate([
             'eventTitle' => 'required|string',
+            'eventDescription' => 'nullable|string',
+            'fromDepartment' => 'required|string',
             'fromDate'   => 'required|date',
             'toDate'     => 'required|date|after_or_equal:fromDate',
         ]);
@@ -119,6 +124,8 @@ class HomeController extends Controller
     
         $event->update([
             'event'       => $request->eventTitle,
+            'description' => $request->eventDescription,
+            'from_department' => $request->fromDepartment,
             'description' => $request->eventDescription,
             'from_date'   => $fromDate->toDateTimeString(),
             'to_date'     => $toDate->toDateTimeString(),
