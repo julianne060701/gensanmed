@@ -104,14 +104,13 @@
                         $config = [
                             'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
                             'columns' => [
-                                null, // Ticket #
-                                null, // Department
-                                null, // Responsible Department
-                                null, // Concern Type
-                                null, // Urgency
-                                ['orderable' => false], // Image (disable sorting)
-                                null, // Status
-                                null, // Date Request (Ensure this is sortable)
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null, 
+                                null, 
                                 null,
                                 ['orderable' => false], // Actions (disable sorting)
                             ],

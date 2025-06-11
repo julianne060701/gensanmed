@@ -71,5 +71,18 @@
         fileLabel.textContent = fileName;
         fileNameDisplay.textContent = `Selected file: ${fileName}`;
     });
+
+
+    document.getElementById('pdfUpload').addEventListener('change', function(event) {
+    const inputFile = event.target;
+    const files = inputFile.files;
+    const fileNames = Array.from(files).map(file => file.name).join(', ');
+    const fileLabel = inputFile.nextElementSibling;
+    const fileNameDisplay = document.getElementById('fileName');
+
+    fileLabel.textContent = fileNames || 'Choose file';
+    fileNameDisplay.textContent = `Selected file(s): ${fileNames}`;
+});
+
 </script>
 @endsection

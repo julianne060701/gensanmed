@@ -102,7 +102,8 @@ class PurchaseRequestController extends Controller
      {
          // Validate the incoming data
          $validated = $request->validate([
-             'request_number' => 'required|integer|min:1|unique:pr,request_number',
+            //  'request_number' => 'required|integer|min:1|unique:pr,request_number',
+            'request_number' => 'required|string|max:255',
              'requester_name' => 'required|string|max:255',
              'description' => 'nullable|string|max:1000',
             'attachment_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB

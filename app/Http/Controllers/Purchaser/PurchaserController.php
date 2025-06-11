@@ -118,7 +118,8 @@ class PurchaserController extends Controller
 {
     // Validate the incoming data
     $validated = $request->validate([
-        'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
+        // 'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
+        'po_number' => 'required|string|max:255',
         'name' => 'required|string|max:255',
         'description' => 'nullable|string|max:1000',
         'image_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB

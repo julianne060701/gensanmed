@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('pr', function (Blueprint $table) {
             $table->id();
-            $table->integer('request_number')->unique();
+            // $table->integer('request_number')->unique();
+            $table->string('request_number');
             $table->string('po_number')->nullable(); // Added po_number column
             $table->string('requester_name');
             $table->text('description')->nullable(); // Added description column
