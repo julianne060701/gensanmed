@@ -73,25 +73,26 @@
 
 <!-- Complete By Modal -->
 <div class="modal fade" id="completeByModal" tabindex="-1" aria-labelledby="completeByModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="completeByModalLabel">Complete By</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <textarea id="completedByName" class="form-control" rows="4" placeholder="Enter Full Name..."></textarea>
-                <input type="hidden" id="ticketId">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" id="submitCompletion">Submit</button>
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="completeByModalLabel">Complete By</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <textarea id="completedByName" class="form-control" rows="4" placeholder="Enter Full Name..."></textarea>
+        <input type="hidden" id="ticketId">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="submitCompletion">Submit</button>
+      </div>
     </div>
+  </div>
 </div>
+
 {{-- Ticket Details Modal --}}
 <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="ticketModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -159,80 +160,81 @@
 
 <script>
 $(document).ready(function () {
-    // Open modal on "Completed" button click
-    $('.complete-ticket').on('click', function () {
-        let ticketId = $(this).data('id');
-        $('#ticketId').val(ticketId);
-        $('#completeByModal').modal('show');
-    });
+  // Event delegation for dynamically added elements
+  $(document).on('click', '.complete-ticket', function () {
+    let ticketId = $(this).data('id');
+    $('#ticketId').val(ticketId);
+    $('#completeByModal').modal('show');
+  });
 
-    // Submit completion with Complete By using SweetAlert
-    $('#submitCompletion').on('click', function () {
-        let ticketId = $('#ticketId').val();
-        let completedBy = $('#completedByName').val().trim();
+  // Submit completion with Complete By using SweetAlert
+  $('#submitCompletion').on('click', function () {
+    let ticketId = $('#ticketId').val();
+    let completedBy = $('#completedByName').val().trim();
 
-        if (completedBy === '') {
+    if (completedBy === '') {
+      Swal.fire({
+        title: 'Warning!',
+        text: 'Please enter your name before submitting.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "Do you want to mark this ticket as completed?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#28a745',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, submit it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          url: '/IT/tickets/' + ticketId + '/complete',
+          type: 'POST',
+          data: {
+            _token: '{{ csrf_token() }}',
+            completed_by: completedBy
+          },
+          beforeSend: function () {
             Swal.fire({
-                title: 'Warning!',
-                text: 'Please enter your name before submitting.',
-                icon: 'warning',
-                confirmButtonText: 'OK'
+              title: 'Processing...',
+              text: 'Submitting completion details, please wait...',
+              icon: 'info',
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              didOpen: () => {
+                Swal.showLoading();
+              }
             });
-            return;
-        }
-
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to mark this ticket as completed?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/IT/tickets/' + ticketId + '/complete',
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        completed_by: completedBy
-                    },
-                    beforeSend: function () {
-                        Swal.fire({
-                            title: 'Processing...',
-                            text: 'Submitting completion details, please wait...',
-                            icon: 'info',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            didOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'The ticket has been marked as completed.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Something went wrong: ' + xhr.responseText,
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                });
-            }
+          },
+          success: function (response) {
+            Swal.fire({
+              title: 'Success!',
+              text: 'The ticket has been marked as completed.',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then(() => {
+              location.reload();
+            });
+          },
+          error: function (xhr) {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Something went wrong: ' + xhr.responseText,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
         });
+      }
     });
+  });
 });
+
 $(document).on("click", ".view-ticket", function() {
     var ticketId = $(this).data("id");
 
