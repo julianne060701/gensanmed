@@ -112,6 +112,7 @@
                                 null, 
                                 null, 
                                 null,
+                                null,
                                 ['orderable' => false], // Actions (disable sorting)
                             ],
                         ];
