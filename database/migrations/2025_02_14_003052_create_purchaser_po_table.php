@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('po_number')->unique();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->enum('status', ['Pending',  'Approved', 'Denied', 'Send to Supplier'])->default('Pending');
+            $table->enum('status', ['Pending',  'Approved', 'Denied', 'Send to Supplier', 'Hold'])->default('Pending');
             $table->string('image_url')->nullable();
             $table->string('admin_attachment')->nullable();
             $table->string('remarks')->nullable();
