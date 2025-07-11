@@ -17,56 +17,48 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets1 = Ticket::whereNotIn('status', [ 'Denied'])
-        ->where('responsible_department', 'HIMS')
-        ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
-        ->get();
-    
-        $tickets2 = Ticket::where('created_by', auth()->id())
+        $tickets = Ticket::where(function ($query) {
+                $query->whereNotIn('status', ['Denied'])
+                      ->where('responsible_department', 'HIMS');
+            })
+            ->orWhere('created_by', auth()->id())
             ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
-            ->get();
-    
-    // Merge both queries' results
-    $tickets = $tickets1->concat($tickets2);
+            ->paginate(10); // Laravel pagination
     
         $data = [];
     
         foreach ($tickets as $ticket) {
-    
             $btnAccept = ($ticket->status !== 'Pending' || $ticket->created_by == auth()->id())
                 ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Accept Disabled" disabled>
-                <i class="fas fa-lg fa-fw fa-check-circle"></i>
-                </button>'
+                    <i class="fas fa-lg fa-fw fa-check-circle"></i>
+                  </button>'
                 : '<button class="btn btn-xs btn-default text-success mx-1 shadow Accept" 
-                title="Accept" data-id="' . $ticket->id . '">
-            <i class="fas fa-lg fa-fw fa-check-circle"></i>
-            </button>';
-
-                
+                    title="Accept" data-id="' . $ticket->id . '">
+                    <i class="fas fa-lg fa-fw fa-check-circle"></i>
+                  </button>';
+    
             $btnCompleted = ($ticket->status !== 'In Progress' || $ticket->created_by == auth()->id())
-            ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Complete Disabled" disabled>
-                <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
-            </button>'
-            : '<button class="btn btn-xs btn-default text-success mx-1 shadow complete-ticket" 
-            title="Completed" data-id="' . $ticket->id . '">
-            <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
-            </button>';
-
+                ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Complete Disabled" disabled>
+                    <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
+                  </button>'
+                : '<button class="btn btn-xs btn-default text-success mx-1 shadow complete-ticket" 
+                    title="Completed" data-id="' . $ticket->id . '">
+                    <i class="fas fa-lg fa-fw fa-thumbs-up"></i>
+                  </button>';
     
             $btnShow = '<button class="btn btn-xs btn-default text-info mx-1 shadow view-ticket" 
-                title="View" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#ticketModal">
-                <i class="fa fa-lg fa-fw fa-eye"></i>
-            </button>';
+                    title="View" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#ticketModal">
+                    <i class="fa fa-lg fa-fw fa-eye"></i>
+                </button>';
     
-          $btnDelete = ($ticket->status !== 'In Progress' || $ticket->created_by == auth()->id())
-                    ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Delete Disabled" disabled>
-                        <i class="fas fa-lg fa-fw fa-times-circle"></i>
-                    </button>'
-                    : '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete"
+            $btnDelete = ($ticket->status !== 'In Progress' || $ticket->created_by == auth()->id())
+                ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Delete Disabled" disabled>
+                    <i class="fas fa-lg fa-fw fa-times-circle"></i>
+                  </button>'
+                : '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete"
                     title="Defective" data-id="' . $ticket->id . '" data-toggle="modal" data-target="#deleteModal">
                     <i class="fas fa-lg fa-fw fa-times-circle"></i>
-                </button>';
-
+                  </button>';
     
             $pdfDisplay = $ticket->image_url
                 ? '<a href="' . asset($ticket->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
@@ -100,7 +92,7 @@ class TicketController extends Controller
             $data[] = $rowData;
         }
     
-        return view('IT.ticketing.index', compact('data'));
+        return view('IT.ticketing.index', compact('data', 'tickets'));
     }
     
 
