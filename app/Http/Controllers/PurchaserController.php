@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class PurchaserController extends Controller
 {
@@ -67,10 +68,11 @@ class PurchaserController extends Controller
     
             // Display a PDF link
             $pdfDisplay = $purchase->image_url 
-                ? '<a href="' . asset($purchase->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
-                    View PO (PDF)
-                   </a>' 
-                : 'No PDF';
+            ? '<a href="' . asset('po_pdfs/' . rawurlencode(basename($purchase->image_url))) . '" target="_blank" class="btn btn-primary btn-sm">
+                View PO (PDF)
+               </a>'
+            : 'No PDF';
+        
                 $pdfAdmin = $purchase->admin_attachment 
                 ? '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
                     View Admin Attachment
