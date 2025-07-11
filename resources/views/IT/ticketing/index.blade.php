@@ -20,52 +20,50 @@
                 <div class="card-body">
 
                     @php
-                        $heads = [
-                            'Ticket #',
-                            'Department',  
-                            'Responsible Department',                        
-                            'Concern Type',   
-                            'Urgency',                                               
-                            'Image',
-                            'Status',
-                            'Date Approved',
-                            'Total Duration',
-                            ['label' => 'Actions', 'no-export' => true, 'width' => 5],
-                        ];
+                    $heads = [
+                        'Ticket #',
+                        'Department',
+                        'Responsible Department',
+                        'Concern Type',
+                        'Urgency',
+                        'Image',
+                        'Status',
+                        'Date Approved',
+                        'Total Duration',
+                        ['label' => 'Actions', 'no-export' => true, 'width' => 5],
+                    ];
 
-                        $config = [
-                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
-                            'columns' => [
-                                null, // Ticket #
-                                null, // Department
-                                null, // Responsible Department
-                                null, // Concern Type
-                                null, // Urgency
-                                ['orderable' => false], // Image (disable sorting)
-                                null, // Status
-                                null, // Date Request (Ensure this is sortable)
-                                ['orderable' => false], // Actions (disable sorting)
-                                null,
-                            ],
-                        ];
-
-
-
-
-
+                    $config = [
+                        'order' => [[0, 'desc']],
+                        'columns' => [
+                            null, // Hidden numeric ticket #
+                            null, // Ticket #
+                            null, // Department
+                            null, // Responsible Department
+                            null, // Concern Type
+                            null, // Urgency
+                            ['orderable' => false], // Image
+                            null, // Status
+                            null, // Date Approved
+                            null, // Total Duration
+                            ['orderable' => false], // Actions
+                        ],
+                    ];
 
                     @endphp
 
                     <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" hoverable class="table-custom">
-                        @foreach ($data as $row)
-                            <tr>
-                                @foreach ($row as $cell)
-                                    <td>{!! $cell !!}</td>
-                                @endforeach
-                            </tr>
-                        @endforeach
-                    </x-adminlte-datatable>
-                </div>
+                    @foreach ($data as $row)
+                        <tr>
+                            {{-- Extract the numeric part from "TICKET-12" --}}
+                            <td style="display: none;">{{ preg_replace('/\D/', '', $row[0]) }}</td>
+
+                            @foreach ($row as $cell)
+                                <td>{!! $cell !!}</td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </x-adminlte-datatable>
             </div>
         </div>
     </div>

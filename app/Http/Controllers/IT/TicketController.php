@@ -17,14 +17,14 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $tickets1 = Ticket::whereNotIn('status', ['Pending', 'Denied'])
+        $tickets1 = Ticket::whereNotIn('status', [ 'Denied'])
         ->where('responsible_department', 'HIMS')
         ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
         ->get();
     
-    $tickets2 = Ticket::where('created_by', auth()->id())
-        ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
-        ->get();
+        $tickets2 = Ticket::where('created_by', auth()->id())
+            ->orderByRaw("CAST(SUBSTRING(ticket_number, 8) AS UNSIGNED) DESC")
+            ->get();
     
     // Merge both queries' results
     $tickets = $tickets1->concat($tickets2);
@@ -33,7 +33,7 @@ class TicketController extends Controller
     
         foreach ($tickets as $ticket) {
     
-            $btnAccept = ($ticket->status !== 'Approved By Admin' || $ticket->created_by == auth()->id())
+            $btnAccept = ($ticket->status !== 'Pending' || $ticket->created_by == auth()->id())
                 ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Accept Disabled" disabled>
                 <i class="fas fa-lg fa-fw fa-check-circle"></i>
                 </button>'
