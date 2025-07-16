@@ -19,38 +19,42 @@
             <div class="card">
                 <div class="card-body">
 
-                @php
-                    $heads = [
-                        ['label' => 'Sort', 'width' => 0], // Hidden column for sorting
-                        'Ticket #',
-                        'Department',  
-                        'Responsible Department',                        
-                        'Concern Type',   
-                        'Urgency',                                               
-                        'Image',
-                        'Status',
-                        'Date Approved',
-                        'Total Duration',
-                        ['label' => 'Actions', 'no-export' => true, 'width' => 5],
-                    ];
+                    @php
+                        $heads = [
+                            'Ticket #',
+                            'Department',  
+                            'Responsible Department',                        
+                            'Concern Type',   
+                            'Urgency',                                               
+                            'Image',
+                            'Status',
+                            'Date Approved',
+                            'Total Duration',
+                            ['label' => 'Actions', 'no-export' => true, 'width' => 5],
+                        ];
 
-                    $config = [
-                        'order' => [[0, 'desc']], // Sort by hidden column (column index 0)
-                        'columns' => [
-                            ['visible' => false], // Hidden sort column
-                            null, // Ticket #
-                            null, // Department
-                            null, // Responsible Department
-                            null, // Concern Type
-                            null, // Urgency
-                            ['orderable' => false], // Image (disable sorting)
-                            null, // Status
-                            null, // Date Approved
-                            null, // Total Duration
-                            ['orderable' => false], // Actions (disable sorting)
-                        ],
-                    ];
-                @endphp
+                        $config = [
+                            'order' => [[7, 'desc']], // Sort by Date Request (column index 6)
+                            'columns' => [
+                                null, // Ticket #
+                                null, // Department
+                                null, // Responsible Department
+                                null, // Concern Type
+                                null, // Urgency
+                                ['orderable' => false], // Image (disable sorting)
+                                null, // Status
+                                null, // Date Request (Ensure this is sortable)
+                                ['orderable' => false], // Actions (disable sorting)
+                                null,
+                            ],
+                        ];
+
+
+
+
+
+
+                    @endphp
 
                     <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" hoverable class="table-custom">
                         @foreach ($data as $row)
