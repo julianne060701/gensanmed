@@ -156,11 +156,22 @@ class TicketController extends Controller
     $ticket = Ticket::create($validated);
 
     if ($ticket) {
+        // Notify administrators
         $admins = User::role('Administrator')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new NewTicketNotification($ticket));
+        
+        // Notify users whose role matches the responsible_department
+        $departmentUsers = User::whereHas("roles", function($q) use ($ticket) {
+            $q->where("name", $ticket->responsible_department); // e.g. "Engineer" or "IT"
+        })->get();
+
+        // Combine both collections and remove duplicates (in case admin has both roles)
+        $usersToNotify = $admins->merge($departmentUsers)->unique('id');
+
+        foreach ($usersToNotify as $user) {
+            $user->notify(new NewTicketNotification($ticket));
         }
-        return redirect()->route('head.ticketing.index')->with('success', 'Ticket created successfully.');
+
+        return redirect()->route('staff.ticketing.index')->with('success', 'Ticket created successfully.');
     } else {
         return back()->with('error', 'Failed to create ticket.');
     }

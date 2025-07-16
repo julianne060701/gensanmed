@@ -4,42 +4,53 @@
 @section('plugins.Datatables', true)
 @section('plugins.DatatablesPlugin', true)
 <link rel="icon" type="image/x-icon" href="{{ asset('LOGO.ico') }}">
-
 @section('content_header')
-    <h1 class="ml-1">Ticketing</h1>
+<h1 class="ml-1">Ticketing</h1>
 @stop
 
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ route('IT.ticketing.create') }}" class="btn btn-primary px-5">Make Request</a>
+        <a href="{{route('IT.ticketing.create')}}" class="btn btn-primary px-5">Make Request</a>
     </div>
 
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    @php
-                        $heads = [
-                            'Ticket #',
-                            'Department',
-                            'Responsible Department',
-                            'Concern Type',
-                            'Urgency',
-                            'Image',
-                            'Status',
-                            'Date Approved',
-                            'Total Duration',
-                            ['label' => 'Actions', 'no-export' => true, 'width' => 5],
-                        ];
 
-                        $config = [
-                            'paging' => true, // Disable client-side pagination
-                            'searching' => true,
-                            'info' => false,
-                            'ordering' => false,
-                        ];
-                    @endphp
+                @php
+                    $heads = [
+                        ['label' => 'Sort', 'width' => 0], // Hidden column for sorting
+                        'Ticket #',
+                        'Department',  
+                        'Responsible Department',                        
+                        'Concern Type',   
+                        'Urgency',                                               
+                        'Image',
+                        'Status',
+                        'Date Approved',
+                        'Total Duration',
+                        ['label' => 'Actions', 'no-export' => true, 'width' => 5],
+                    ];
+
+                    $config = [
+                        'order' => [[0, 'desc']], // Sort by hidden column (column index 0)
+                        'columns' => [
+                            ['visible' => false], // Hidden sort column
+                            null, // Ticket #
+                            null, // Department
+                            null, // Responsible Department
+                            null, // Concern Type
+                            null, // Urgency
+                            ['orderable' => false], // Image (disable sorting)
+                            null, // Status
+                            null, // Date Approved
+                            null, // Total Duration
+                            ['orderable' => false], // Actions (disable sorting)
+                        ],
+                    ];
+                @endphp
 
                     <x-adminlte-datatable id="table1" :heads="$heads" :config="$config" hoverable class="table-custom">
                         @foreach ($data as $row)
@@ -50,11 +61,6 @@
                             </tr>
                         @endforeach
                     </x-adminlte-datatable>
-
-                    {{-- Laravel server-side pagination --}}
-                    <div class="d-flex justify-content-center mt-3">
-                        {{ $tickets->links() }}
-                    </div>
                 </div>
             </div>
         </div>
