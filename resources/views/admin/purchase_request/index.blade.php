@@ -37,6 +37,8 @@
                             'data' => $data,
                             'order' => [[8, 'desc']], // Sort by the 'Date Created' column (index 7) in descending order
                             'columns' => [null, null, null, null, null, null, null, null, null,null,  ['orderable' => false]],
+                            'pageLength' => 10, // Set default page length
+                            'displayStart' => 0, // This will be overridden by our JS
                         ];
                     @endphp
 
@@ -166,127 +168,231 @@
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-  $(document).on('click', '.Hold', function () {
-    var id = $(this).data('id');
-    $('#hold_id').val(id); // Store ID in hidden input
-    $('#hold_remarks').val(''); // Clear previous input
-    $('#holdModal').modal('show'); // Show modal
-});
-
-// Handle Hold Request Submission
-$('#saveHoldBtn').click(function () {
-    var id = $('#hold_id').val();
-    var remarks = $('#hold_remarks').val().trim();
-
-    if (remarks === '') {
-        Swal.fire('Error', 'Remarks cannot be empty!', 'error');
-        return;
+    let dataTable;
+    
+    // Function to save current pagination and search state
+    function saveTableState() {
+        if (dataTable) {
+            const currentPage = dataTable.page();
+            const pageLength = dataTable.page.len();
+            const searchValue = dataTable.search();
+            const orderData = dataTable.order();
+            
+            const tableState = {
+                page: currentPage,
+                length: pageLength,
+                search: searchValue,
+                order: orderData,
+                timestamp: Date.now()
+            };
+            
+            localStorage.setItem('purchaseRequestTableState', JSON.stringify(tableState));
+        }
     }
 
-    $.ajax({
-        url: '/purchase_requests/' + id + '/hold',
-        type: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}',
-            remarks: remarks
-        },
-        success: function (response) {
-            $('#holdModal').modal('hide'); // Hide modal
-            Swal.fire(
-                'Held!',
-                'The purchase request has been put on hold.',
-                'success'
-            ).then(() => {
-                location.reload();
-            });
-        },
-        error: function () {
-            Swal.fire('Error', 'Something went wrong!', 'error');
-        }
-    });
-});
-
-$(document).on('click', '.view-purchase', function() { 
-    var purchaseId = $(this).data('id');
-
-    // Make an AJAX request to fetch the purchase request details
-    $.get('/purchase_requests/' + purchaseId, function(data) {
-        // Populate the modal with the fetched data
-        $('#modalRequestNumber').text(data.request_number);
-        $('#modalRequesterName').text(data.requester_name);
-        $('#modalDescription').text(data.description);
-        $('#modalRemarks').text(data.remarks);
-
-        // Check if approval date is null
-        var formattedDate = data.approval_date ? new Date(data.approval_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
-
-        $('#modalApprovedDate').text(formattedDate);
-    });
-});
-
-$(document).on('click', '.Accept', function () {
-    const id = $(this).data('id');
-    $('#upload_id').val(id);
-    $('#pdfFile').val(''); // clear file input
-    $('#uploadPdfModal').modal('show');
-});
-
-$('#uploadPdfForm').submit(function (e) {
-    e.preventDefault();
-
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'Are you sure you want to accept and upload this Purchase Request?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, upload and accept',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const formData = new FormData(this);
-            formData.append('_token', '{{ csrf_token() }}');
-
-            Swal.fire({
-                title: 'Uploading...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
+    // Function to restore table state
+    function restoreTableState() {
+        const savedState = localStorage.getItem('purchaseRequestTableState');
+        if (savedState) {
+            try {
+                const state = JSON.parse(savedState);
+                
+                // Check if state is not too old (optional, prevents stale state)
+                const maxAge = 5 * 60 * 1000; // 5 minutes
+                if (Date.now() - state.timestamp > maxAge) {
+                    localStorage.removeItem('purchaseRequestTableState');
+                    return;
                 }
-            });
-
-            $.ajax({
-                url: "{{ route('purchase.uploadAndAccept') }}", // Make sure this route exists
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (response) {
-                    Swal.fire({
-                        title: 'Accepted!',
-                        text: response.message || 'PDF uploaded and request accepted.',
-                        icon: 'success',
-                        timer: 2000,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
-                },
-                error: function (xhr) {
-                    Swal.fire('Error', xhr.responseJSON?.message || 'Something went wrong!', 'error');
+                
+                // Apply saved state
+                if (dataTable) {
+                    // Set search
+                    if (state.search) {
+                        dataTable.search(state.search);
+                    }
+                    
+                    // Set page length
+                    if (state.length) {
+                        dataTable.page.len(state.length);
+                    }
+                    
+                    // Set order
+                    if (state.order && state.order.length > 0) {
+                        dataTable.order(state.order);
+                    }
+                    
+                    // Set page (must be last)
+                    if (state.page >= 0) {
+                        dataTable.page(state.page);
+                    }
+                    
+                    // Redraw table
+                    dataTable.draw(false);
                 }
-            });
+                
+                // Clear saved state after successful restore
+                localStorage.removeItem('purchaseRequestTableState');
+                
+            } catch (e) {
+                console.log('Error restoring table state:', e);
+                localStorage.removeItem('purchaseRequestTableState');
+            }
         }
+    }
+
+    // Initialize DataTable with proper event handling
+    $(document).ready(function() {
+        // Wait for AdminLTE to initialize the DataTable
+        setTimeout(function() {
+            dataTable = $('#table1').DataTable();
+            
+            // Restore state after DataTable is fully initialized
+            restoreTableState();
+            
+            // Save state whenever table state changes
+            dataTable.on('page.dt length.dt search.dt order.dt', function () {
+                // Use setTimeout to ensure state is saved after the change is applied
+                setTimeout(saveTableState, 100);
+            });
+            
+        }, 500); // Give AdminLTE time to initialize
     });
-});
 
+    // Alternative approach: Hook into AdminLTE's DataTable initialization
+    $(document).on('init.dt', '#table1', function() {
+        dataTable = $(this).DataTable();
+        setTimeout(restoreTableState, 100);
+    });
 
+    // Hold Request Event Handler
+    $(document).on('click', '.Hold', function () {
+        var id = $(this).data('id');
+        $('#hold_id').val(id);
+        $('#hold_remarks').val('');
+        $('#holdModal').modal('show');
+    });
 
+    // Handle Hold Request Submission
+    $('#saveHoldBtn').click(function () {
+        var id = $('#hold_id').val();
+        var remarks = $('#hold_remarks').val().trim();
+
+        if (remarks === '') {
+            Swal.fire('Error', 'Remarks cannot be empty!', 'error');
+            return;
+        }
+
+        // Save current state before reload
+        saveTableState();
+
+        $.ajax({
+            url: '/purchase_requests/' + id + '/hold',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                remarks: remarks
+            },
+            success: function (response) {
+                $('#holdModal').modal('hide');
+                Swal.fire(
+                    'Held!',
+                    'The purchase request has been put on hold.',
+                    'success'
+                ).then(() => {
+                    location.reload();
+                });
+            },
+            error: function () {
+                Swal.fire('Error', 'Something went wrong!', 'error');
+            }
+        });
+    });
+
+    // View Purchase Event Handler
+    $(document).on('click', '.view-purchase', function() { 
+        var purchaseId = $(this).data('id');
+
+        $.get('/purchase_requests/' + purchaseId, function(data) {
+            $('#modalRequestNumber').text(data.request_number);
+            $('#modalRequesterName').text(data.requester_name);
+            $('#modalDescription').text(data.description);
+            $('#modalRemarks').text(data.remarks);
+
+            var formattedDate = data.approval_date ? new Date(data.approval_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+
+            $('#modalApprovedDate').text(formattedDate);
+        });
+    });
+
+    // Accept Event Handler
+    $(document).on('click', '.Accept', function () {
+        const id = $(this).data('id');
+        $('#upload_id').val(id);
+        $('#pdfFile').val('');
+        $('#uploadPdfModal').modal('show');
+    });
+
+    // Upload PDF Form Submission
+    $('#uploadPdfForm').submit(function (e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Are you sure you want to accept and upload this Purchase Request?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, upload and accept',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = new FormData(this);
+                formData.append('_token', '{{ csrf_token() }}');
+
+                // Save current state before reload
+                saveTableState();
+
+                Swal.fire({
+                    title: 'Uploading...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: "{{ route('purchase.uploadAndAccept') }}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#uploadPdfModal').modal('hide');
+                        Swal.fire({
+                            title: 'Accepted!',
+                            text: response.message || 'PDF uploaded and request accepted.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Error', xhr.responseJSON?.message || 'Something went wrong!', 'error');
+                    }
+                });
+            }
+        });
+    });
+
+    // Delete Event Handler
     $(document).on('click', '.Delete', function () {
         var id = $(this).data('id');
-        $('#delete_id').val(id); // Set the ID in the modal
-        $('#deleteModal').modal('show'); // Show the modal
+        $('#delete_id').val(id);
+        $('#deleteModal').modal('show');
     });
 
+    // Delete Form Submission
     $('#deleteForm').submit(function (e) {
         e.preventDefault();
 
@@ -309,6 +415,9 @@ $('#uploadPdfForm').submit(function (e) {
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
+                // Save current state before reload
+                saveTableState();
+
                 $.ajax({
                     url: "{{ route('purchase.delete') }}",
                     type: "POST",
@@ -318,6 +427,7 @@ $('#uploadPdfForm').submit(function (e) {
                         remarks: remarks
                     },
                     success: function (response) {
+                        $('#deleteModal').modal('hide');
                         Swal.fire({
                             title: 'Deny!',
                             text: 'The purchase request has been Denied.',
@@ -325,7 +435,7 @@ $('#uploadPdfForm').submit(function (e) {
                             timer: 2000,
                             showConfirmButton: false
                         }).then(() => {
-                            location.reload(); // Reload page after deletion
+                            location.reload();
                         });
                     },
                     error: function () {
@@ -335,6 +445,17 @@ $('#uploadPdfForm').submit(function (e) {
             }
         });
     });
+
+    // Debug function to check table state (remove in production)
+    window.checkTableState = function() {
+        if (dataTable) {
+            console.log('Current page:', dataTable.page());
+            console.log('Page length:', dataTable.page.len());
+            console.log('Search:', dataTable.search());
+            console.log('Order:', dataTable.order());
+        } else {
+            console.log('DataTable not initialized yet');
+        }
+    };
 </script>
 @endsection
-

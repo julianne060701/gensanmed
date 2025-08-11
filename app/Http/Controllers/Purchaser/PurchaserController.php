@@ -115,45 +115,62 @@ class PurchaserController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    // Validate the incoming data
-    $validated = $request->validate([
-        // 'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number',
-        'po_number' => 'required|string|max:255',
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string|max:1000',
-        'image_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB
-    ]);
-
-    $pdfPath = null;
-    if ($request->hasFile('image_url')) {
-        $file = $request->file('image_url');
-        $fileName = time() . '_' . $file->getClientOriginalName(); // Unique filename
-        $file->move(public_path('po_pdfs'), $fileName); // Store in public/po_pdfs/
-        $pdfPath = 'po_pdfs/' . $fileName; // Save relative path
-    }
-
-    // Save PO data to the database
-    $purchaseRequestOrder = PurchaserPO::create([ // Add this line
-        'po_number' => $validated['po_number'],
-        'name' => $validated['name'],
-        'description' => $validated['description'] ?? null,
-        'image_url' => $pdfPath, // Store file path
-    ]);
-
-    if ($purchaseRequestOrder) {
-        // Find all admins and notify them
-        $admins = User::role('Administrator')->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new NewPurchaseOrderNotification($purchaseRequestOrder));
+    {
+        // Validate the incoming data
+        $validated = $request->validate([
+            'po_number' => 'required|string|max:255',
+            'name' => 'required|string|max:255', 
+            'description' => 'nullable|string|max:1000',
+            'image_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB
+        ]);
+    
+        $pdfPath = null;
+        if ($request->hasFile('image_url')) {
+            $file = $request->file('image_url');
+            $fileName = time() . '_' . $file->getClientOriginalName(); // Unique filename
+            
+            // Create directory if it doesn't exist
+            if (!file_exists(public_path('po_pdfs'))) {
+                mkdir(public_path('po_pdfs'), 0755, true);
+            }
+            
+            $file->move(public_path('po_pdfs'), $fileName); // Store in public/po_pdfs/
+            $pdfPath = 'po_pdfs/' . $fileName; // Save relative path
         }
-        
-
-        return redirect()->route('purchaser.purchase.index')->with('success', 'PO uploaded successfully!');
-    } else {
-        return back()->with('error', 'Failed to create PO.');
+    
+        try {
+            // Save PO data to the database with automatic 'Pending' status
+            $purchaseRequestOrder = PurchaserPO::create([
+                'po_number' => $validated['po_number'],
+                'name' => $validated['name'],
+                'description' => $validated['description'] ?? null,
+                'image_url' => $pdfPath,
+                'status' => 'Pending', // Explicitly set status to 'Pending'
+                'created_by' => auth()->id(), // Optional: track who created it
+            ]);
+    
+            // Find all admins and notify them
+            $admins = User::role('Administrator')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new NewPurchaseOrderNotification($purchaseRequestOrder));
+            }
+            
+            return redirect()->route('purchaser.purchase.index')
+                            ->with('success', 'Purchase Order created successfully with Pending status!');
+                            
+        } catch (\Exception $e) {
+            // Log the error
+            \Log::error('Failed to create Purchase Order: ' . $e->getMessage());
+            
+            // Delete uploaded file if database save failed
+            if ($pdfPath && file_exists(public_path($pdfPath))) {
+                unlink(public_path($pdfPath));
+            }
+            
+            return back()->withInput()
+                        ->with('error', 'Failed to create Purchase Order. Please try again.');
+        }
     }
-}
 
     
 
