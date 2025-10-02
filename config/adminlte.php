@@ -518,6 +518,12 @@ return [
                 'url'   => 'IT/user',
                 'can'   => 'view-HIMS-menu',
             ],
+            [
+                'text' => 'Borrow Equipment',
+                'icon' => 'fas fa-laptop',
+                'url'  => 'IT/borrower',
+                'can'  => 'view-HIMS-menu',
+            ],
             // [
             //     'text'    => 'Manage Purchase',
             //     'icon'    => 'fas fa-cart-plus',
@@ -562,7 +568,7 @@ return [
             ],
             
 
-                  // -----------------------------------------------------
+            // -----------------------------------------------------
             // Staff Sidebar Items (Only for Staff)
             // -----------------------------------------------------
             [
@@ -693,6 +699,12 @@ return [
                 'url'   => 'head/ticketing',
                 'can'   => 'view-head-menu',
             ],
+              [
+                'text' => 'Borrow Equipment',
+                'icon' => 'fas fa-laptop',
+                'url'  => 'head/borrow',
+                'can'  => 'view-head-menu',
+              ]          
        
         ],
 

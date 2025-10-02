@@ -6,6 +6,7 @@ use App\Http\Controllers\PurchaserController;
 use App\Http\Controllers\IT\TicketController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PurchaseRequestController;
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -157,6 +158,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/IT/ticketing/{id}', [App\Http\Controllers\IT\TicketController::class, 'getTicketDetails'])->name('ticketing.details');
     Route::post('/IT/tickets/delete', [App\Http\Controllers\IT\TicketController::class, 'delete'])->name('IT.tickets.delete');
 
+    Route::get('/IT/borrower', [App\Http\Controllers\IT\BorrowerController::class, 'index'])->name('IT.borrower.index');
+
       // -----------------------------------------------------
             // Purchaser Sidebar Items (Only for Purchaser)
             // -----------------------------------------------------
@@ -242,7 +245,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('head/ticketing/delete', [App\Http\Controllers\Head\TicketController::class, 'delete'])->name('head.ticketing.delete');
     Route::get('/head/ticketing/print/{id}', [App\Http\Controllers\Head\TicketController::class, 'print'])->name('head.ticketing.print');
 
-
+    // borrow routes
+    Route::get('head/borrow', [App\Http\Controllers\Head\BorrowController::class, 'index'])->name('head.borrow.index');
+    Route::get('head/borrow/create', [App\Http\Controllers\Head\BorrowController::class, 'create'])->name('head.borrow.create');
+    Route::post('head/borrow', [App\Http\Controllers\Head\BorrowController::class, 'store'])->name('head.borrow.store');
+    Route::get('head/borrow/{id}/edit', [App\Http\Controllers\Head\BorrowController::class, 'edit'])->name('head.borrow.edit');
+    Route::put('head/borrow/{id}', [App\Http\Controllers\Head\BorrowController::class, 'update'])->name('head.borrow.update');
+    Route::get('head/borrow/{id}', [App\Http\Controllers\Head\BorrowController::class, 'show'])->name('head.borrow.show');
+    Route::post('head/borrow/delete', [App\Http\Controllers\Head\BorrowController::class, 'delete'])->name('head.borrow.delete');
        // -----------------------------------------------------
             // MMO Sidebar Items (Only for MMO)
             // -----------------------------------------------------
