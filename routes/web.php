@@ -159,6 +159,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/IT/tickets/delete', [App\Http\Controllers\IT\TicketController::class, 'delete'])->name('IT.tickets.delete');
 
     Route::get('/IT/borrower', [App\Http\Controllers\IT\BorrowerController::class, 'index'])->name('IT.borrower.index');
+    Route::get('/IT/borrower/{id}', [App\Http\Controllers\IT\BorrowerController::class, 'show'])->name('IT.borrower.show');
+    Route::post('/IT/borrower/{id}/accept', [App\Http\Controllers\IT\BorrowerController::class, 'accept'])->name('IT.borrower.accept');
+    Route::post('/IT/borrower/{id}/deny', [App\Http\Controllers\IT\BorrowerController::class, 'deny'])->name('IT.borrower.deny');
+    Route::post('/IT/borrower/{id}/return', [App\Http\Controllers\IT\BorrowerController::class, 'return'])->name('IT.borrower.return');
 
       // -----------------------------------------------------
             // Purchaser Sidebar Items (Only for Purchaser)
