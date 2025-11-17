@@ -9,6 +9,7 @@ use App\Notifications\NewPurchaseRequestNotification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class PurchaseRequestController extends Controller
 {
@@ -17,7 +18,11 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        $purchases = PR::whereIn('status', ['Pending for PO', 'Approved'])->orderBy('created_at', 'desc')->get();
+        // Show only PRs created by the currently logged-in user
+        $purchases = PR::where('created_by', Auth::id())
+            ->whereIn('status', ['Pending for PO', 'Approved'])
+            ->orderBy('created_at', 'desc')
+            ->get();
         $data = [];
     
         foreach ($purchases as $purchase) {

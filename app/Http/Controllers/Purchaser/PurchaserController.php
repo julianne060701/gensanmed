@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Purchaser;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PurchaserPO;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Notifications\NewPurchaseOrderNotification;
@@ -39,7 +40,10 @@ class PurchaserController extends Controller
 
     public function index()
     {
-        $purchases = PurchaserPO::orderBy('created_at', 'desc')->get();
+        // Show only PO created by the currently logged-in user
+        $purchases = PurchaserPO::where('created_by', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
