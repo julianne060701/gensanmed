@@ -146,10 +146,10 @@ class PurchaseRequestController extends Controller
         $purchase->approval_date = now();
         $purchase->save();
 
-        // Notify purchaser
-        $purchaser = User::find($purchase->user_id); // Make sure PR has `user_id` field
-        if ($purchaser) {
-            $purchaser->notify(new PurchaseRequestAccepted($purchase));
+        // Notify the user who created the purchase request
+        $creator = User::find($purchase->created_by);
+        if ($creator) {
+            $creator->notify(new PurchaseRequestAccepted($purchase));
         }
 
         return response()->json(['message' => 'Uploaded and accepted successfully.']);

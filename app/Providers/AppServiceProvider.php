@@ -44,5 +44,9 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('mmo');
         });
 
+        Gate::define('view-pharmpurch-menu', function ($user) {
+            return $user->hasRole('PharmPurch');
+        });
+
     }
 }

@@ -106,6 +106,7 @@
                             <option value="Employee">Employee</option>
                             <option value="Head">Head</option>
                             <option value="mmo">MMO</option>
+                            <option value="PharmPurch">Pharmacy Purchaser</option>
                         </select>
                     </div>
                     <div class="form-group">

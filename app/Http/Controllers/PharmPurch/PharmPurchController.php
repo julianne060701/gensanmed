@@ -1,77 +1,51 @@
 <?php
 
-namespace App\Http\Controllers\Purchaser;
+namespace App\Http\Controllers\PharmPurch;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PurchaserPO;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use App\Models\PR;
 use App\Models\User;
 use App\Notifications\NewPurchaseOrderNotification;
-use App\Models\Ticket;
-use App\Models\PR;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
-class PurchaserController extends Controller
+class PharmPurchController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display the dashboard.
      */
     public function home()
     {
-        // Get all user IDs with PharmPurch role to exclude them
-        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
-        $pharmPurchUserIds = [];
-        
-        if ($pharmPurchRole) {
-            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
-        }
-
         $newPRCount = PR::where('status', 'Pending For PO')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
-            })
+            ->where('created_by', Auth::id())
             ->count();
 
         $newPOCount = PurchaserPO::where('status', 'Pending')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
-            })
+            ->where('created_by', Auth::id())
             ->count();
 
         $totalPRCount = PR::where('status', 'Approved')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
-            })
+            ->where('created_by', Auth::id())
             ->count();
-    
+        
         $totalPOCount = PurchaserPO::where('status', 'Send to Supplier')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
-            })
+            ->where('created_by', Auth::id())
             ->count();
 
-        return view('purchaser.home', compact(
+        return view('pharmpurch.home', compact(
             'newPRCount', 'newPOCount', 'totalPRCount', 'totalPOCount'
         ));
     }
 
+    /**
+     * Display a listing of purchase orders.
+     */
     public function index()
     {
-        // Get all user IDs with PharmPurch role to exclude them
-        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
-        $pharmPurchUserIds = [];
-        
-        if ($pharmPurchRole) {
-            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
-        }
-        
-        // Show all POs excluding those created by PharmPurch users, but disable actions/attachments for records not created by the logged-in user
-        $purchases = PurchaserPO::when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
-            })
+        // Show all POs, but disable actions/attachments for records not created by the logged-in user
+        $purchases = PurchaserPO::where('created_by', Auth::id())
             ->orderBy('created_at', 'desc')
             ->get();
         $data = [];
@@ -84,7 +58,7 @@ class PurchaserController extends Controller
             $canEdit = !($statusDisabled || $notOwner);
 
             if ($canEdit) {
-                $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" 
+                $btnEdit = '<a href="' . route('pharmpurch.purchase.edit', $purchase->id) . '" 
                     class="btn btn-xs btn-default text-primary mx-1 shadow" 
                     title="Edit">
                     <i class="fa fa-lg fa-fw fa-pen"></i>
@@ -95,14 +69,6 @@ class PurchaserController extends Controller
                     <i class="fa fa-lg fa-fw fa-pen"></i>
                 </button>';
             }
-    
-            // $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
-            // title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
-            // data-delete="'. $purchase->id .'" data-name="'. $purchase->name .'">
-            // <i class="fa fa-lg fa-fw fa-trash"></i>
-            // </button>';
-        
-
     
             // Display a PDF link - disable link if not the creator
             if ($purchase->image_url) {
@@ -132,6 +98,7 @@ class PurchaserController extends Controller
             } else {
                 $pdfAdmin = 'No Attachment From Admin';
             }
+            
             // Assign colors to status badges
             $statusColors = [
                 'Approved' => 'badge-success', // Green
@@ -154,23 +121,22 @@ class PurchaserController extends Controller
                 $pdfDisplay,
                 $pdfAdmin,
                 $purchase->created_at->format('m/d/Y'),
-                $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null ,
+                $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null,
                 '<nobr>' . $btnEdit .  '</nobr>',
             ];
     
             $data[] = $rowData;
         }
         
-        return view('purchaser.purchase.index', compact('data'));
+        return view('pharmpurch.purchase.index', compact('data'));
     }
-    
-    
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('purchaser.purchase.create');
+        return view('pharmpurch.purchase.create');
     }
 
     /**
@@ -208,7 +174,7 @@ class PurchaserController extends Controller
                 'description' => $validated['description'] ?? null,
                 'image_url' => $pdfPath,
                 'status' => 'Pending', // Explicitly set status to 'Pending'
-                'created_by' => auth()->id(), // Optional: track who created it
+                'created_by' => auth()->id(), // Track who created it
             ]);
     
             // Find all admins and notify them
@@ -217,7 +183,7 @@ class PurchaserController extends Controller
                 $admin->notify(new NewPurchaseOrderNotification($purchaseRequestOrder));
             }
             
-            return redirect()->route('purchaser.purchase.index')
+            return redirect()->route('pharmpurch.purchase.index')
                             ->with('success', 'Purchase Order created successfully with Pending status!');
                             
         } catch (\Exception $e) {
@@ -234,23 +200,20 @@ class PurchaserController extends Controller
         }
     }
 
-    
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
         $purchase = PurchaserPO::findOrFail($id);
-        return view('purchaser.purchase.edit', compact('purchase'));
+        
+        // Ensure only the creator can edit
+        if ($purchase->created_by !== Auth::id()) {
+            return redirect()->route('pharmpurch.purchase.index')
+                ->with('error', 'You are not authorized to edit this Purchase Order.');
+        }
+        
+        return view('pharmpurch.purchase.edit', compact('purchase'));
     }
 
     /**
@@ -259,14 +222,20 @@ class PurchaserController extends Controller
     public function update(Request $request, string $id)
     {
         $validated = $request->validate([
-            'po_number' => 'required|integer|min:1|unique:purchaser_po,po_number,' . $id,
+            'po_number' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'status' => 'required|in:Pending,Approved,Denied,Send to Supplier, Pending For PO',
-            'image_url' => 'nullable|mimes:pdf|max:5120', // Accept only PDFs, max 5MB
+            'status' => 'required|in:Pending,Approved,Denied,Send to Supplier,Pending For PO',
+            'image_url' => 'nullable|mimes:pdf|max:20480', // Accept only PDFs, max 20MB
         ]);
 
         $purchase = PurchaserPO::findOrFail($id);
+        
+        // Ensure only the creator can update
+        if ($purchase->created_by !== Auth::id()) {
+            return redirect()->route('pharmpurch.purchase.index')
+                ->with('error', 'You are not authorized to update this Purchase Order.');
+        }
 
         if ($request->hasFile('image_url')) {
             if ($purchase->image_url && file_exists(public_path($purchase->image_url))) {
@@ -275,6 +244,12 @@ class PurchaserController extends Controller
 
             $file = $request->file('image_url');
             $fileName = time() . '_' . $file->getClientOriginalName();
+            
+            // Create directory if it doesn't exist
+            if (!file_exists(public_path('po_pdfs'))) {
+                mkdir(public_path('po_pdfs'), 0755, true);
+            }
+            
             $file->move(public_path('po_pdfs'), $fileName);
             $pdfPath = 'po_pdfs/' . $fileName;
         } else {
@@ -302,33 +277,7 @@ class PurchaserController extends Controller
             'total_duration' => $totalDuration,
         ]);
 
-        return redirect()->route('purchaser.purchase.index')->with('success', 'PO updated successfully!');
+        return redirect()->route('pharmpurch.purchase.index')->with('success', 'PO updated successfully!');
     }
-
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $purchase = PurchaserPO::find($id);
-    
-        if (!$purchase) {
-            return redirect()->route('purchaser.purchase.index')->with('error', 'Purchase Order not found!');
-        }
-    
-        // Delete the associated file if it exists
-        if ($purchase->image_url && file_exists(public_path($purchase->image_url))) {
-            unlink(public_path($purchase->image_url));
-        }
-    
-        // Delete the record from the database
-        $purchase->delete();
-    
-        return redirect()->route('purchaser.purchase.index')->with('success', 'PO deleted successfully!');
-        
-    }
-    
-    
-    
 }
+

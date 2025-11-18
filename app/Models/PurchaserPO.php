@@ -24,6 +24,7 @@ class PurchaserPO extends Model
         'accepted_date',
         'send_date',         // ← make sure this is included
         'total_duration',
+        'created_by',        // Track who created the purchase order
     ];
     public function user()
     {

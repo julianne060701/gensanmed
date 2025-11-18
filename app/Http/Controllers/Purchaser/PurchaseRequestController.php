@@ -9,7 +9,8 @@ use App\Notifications\NewPurchaseRequestNotification;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+
 
 class PurchaseRequestController extends Controller
 {
@@ -18,16 +19,30 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        // Show only PRs created by the currently logged-in user
-        $purchases = PR::where('created_by', Auth::id())
-            ->whereIn('status', ['Pending for PO', 'Approved'])
+        // Get all user IDs with PharmPurch role to exclude them
+        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
+        $pharmPurchUserIds = [];
+        
+        if ($pharmPurchRole) {
+            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
+        }
+        
+        // Fetch purchase requests excluding those created by PharmPurch users
+        $purchases = PR::whereIn('status', ['Pending for PO', 'Approved'])
+            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
+                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+            })
             ->orderBy('created_at', 'desc')
             ->get();
+
+
+
+
         $data = [];
-    
+
         foreach ($purchases as $purchase) {
             $isDisabled = in_array($purchase->status, ['Denied', 'Send to Supplier', 'Approved']) ? 'disabled' : '';
-        
+
             // Disable edit if status is Approved
             $btnEdit = ($purchase->status === 'Approved')
                 ? '<button class="btn btn-xs btn-default text-muted mx-1 shadow" title="Edit Disabled" disabled>
@@ -38,16 +53,16 @@ class PurchaseRequestController extends Controller
                      title="Edit">
                      <i class="fa fa-lg fa-fw fa-pen"></i>
                    </a>';
-        
-        
-    
-    
+
+
+
+
             // $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
             // title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
             // data-delete=" ">
             // <i class="fa fa-lg fa-fw fa-trash"></i>
             // </button>';
-        
+
             // Display a PDF link
             $pdfDisplay = $purchase->attachment_url 
                 ? '<a href="' . asset($purchase->attachment_url) . '" target="_blank" class="btn btn-primary btn-sm">
@@ -67,10 +82,10 @@ class PurchaseRequestController extends Controller
                 'Send to Supplier' => 'badge-warning', // Yellow
                  'Pending For PO' => 'badge-warning', // Gray
             ];
-    
+
             // Ensure status key exists
             $statusBadge = '<span class="badge ' . ($statusColors[$purchase->status] ?? 'badge-secondary') . '">' . $purchase->status . '</span>';
-    
+
             // Build row data
             $rowData = [
                 $purchase->id,
@@ -84,10 +99,10 @@ class PurchaseRequestController extends Controller
                 $purchase->total_duration > 0 ? $purchase->total_duration . ' ' . Str::plural('day', $purchase->total_duration) : null ,
                 '<nobr>' . $btnEdit . '</nobr>',
             ];
-    
+
             $data[] = $rowData;
         }
-    
+
         return view('purchaser.purchase_request.index', compact('data'));
     }
 
@@ -135,32 +150,32 @@ class PurchaseRequestController extends Controller
         $purchase->po_number = $request->po_number;
         $purchase->requester_name = $request->requester_name;
         $purchase->description = $request->description;
-    
+
         // If a PO number is provided, update the status and PO_date
         if (!empty($request->po_number)) {
             $purchase->status = 'Approved';
             $purchase->PO_date = now(); // or today() if you only want the date
-    
+
             // Calculate duration between created_at and PO_date
             $createdDate = Carbon::parse($purchase->created_at);
             $poDate = Carbon::parse($purchase->PO_date);
             $purchase->total_duration = $createdDate->diffInDays($poDate);
         }
-    
+
         // Handle file upload
         if ($request->hasFile('attachment_url')) {
             $file = $request->file('attachment_url');
             $path = $file->store('attachments', 'public');
             $purchase->attachment_url = $path;
         }
-    
+
         $purchase->save();
-    
+
         return redirect()->route('purchaser.purchase_request.index')
             ->with('success', 'Purchase request updated successfully!');
     }
-    
-    
+
+
 
     /**
      * Remove the specified resource from storage.

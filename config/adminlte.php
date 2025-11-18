@@ -704,7 +704,41 @@ return [
                 'icon' => 'fas fa-laptop',
                 'url'  => 'head/borrow',
                 'can'  => 'view-head-menu',
-              ]          
+              ],
+
+            // -----------------------------------------------------
+            // Pharmacy Purchaser Sidebar Items (Only for PharmPurch)
+            // -----------------------------------------------------
+            [
+                'header' => 'PHARMACY PURCHASER PANEL',
+                'can'    => 'view-pharmpurch-menu',
+            ],
+            [
+                'text'        => 'Schedule',
+                'url'         => 'pharmpurch/home',
+                'icon'        => 'far fa-fw fa-calendar',
+                'label_color' => 'success',
+                'can'         => 'view-pharmpurch-menu',
+            ],
+            [
+                'text'    => 'Manage Purchase',
+                'icon'    => 'fas fa-cart-plus',
+                'can'     => 'view-pharmpurch-menu',
+                'submenu' => [
+                    [
+                        'text' => 'Purchase Order',
+                        'icon' => 'fas fa-file-invoice',
+                        'url'  => 'pharmpurch/purchase',
+                        'can'  => 'view-pharmpurch-menu',
+                    ],
+                    [
+                        'text' => 'Purchase Request',
+                        'icon' => 'fas fa-file-alt',
+                        'url'  => 'pharmpurch/purchase_request',
+                        'can'  => 'view-pharmpurch-menu',
+                    ],
+                ],
+            ],
        
         ],
 

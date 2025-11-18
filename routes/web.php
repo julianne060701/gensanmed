@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/head/home', [App\Http\Controllers\Head\HeadController::class, 'home'])->name('head.home'); // Added new route for Head role
     Route::get('/IT/home', [App\Http\Controllers\IT\ITController::class, 'index'])->name('IT.home');
     Route::get('/mmo/dashboard', [App\Http\Controllers\MMO\MMOController::class, 'index'])->name('mmo.dashboard');
+    Route::get('/pharmpurch/home', [App\Http\Controllers\PharmPurch\PharmPurchController::class, 'home'])->name('pharmpurch.home');
 });
 
         // -----------------------------------------------------
@@ -278,3 +279,22 @@ Route::middleware(['auth'])->group(function () {
             Route::post('mmo/purchase_request', [App\Http\Controllers\MMO\PurchaseRequestController::class, 'store'])->name('mmo.purchase_request.store');
             Route::get('mmo/purchase_requests/{id}', [App\Http\Controllers\MMO\PurchaseRequestController::class, 'show']);
             
+            // -----------------------------------------------------
+            // Pharmacy Purchaser Sidebar Items (Only for PharmPurch)
+            // -----------------------------------------------------
+            
+            // Purchase Request Routes for Pharmacy Purchaser
+            Route::get('pharmpurch/purchase_request', [App\Http\Controllers\PharmPurch\PurchaseRequestController::class, 'index'])->name('pharmpurch.purchase_request.index');
+            Route::get('pharmpurch/purchase_request/create', [App\Http\Controllers\PharmPurch\PurchaseRequestController::class, 'create'])->name('pharmpurch.purchase_request.create');
+            Route::post('pharmpurch/purchase_request', [App\Http\Controllers\PharmPurch\PurchaseRequestController::class, 'store'])->name('pharmpurch.purchase_request.store');
+            Route::get('pharmpurch/purchase_request/{id}', [App\Http\Controllers\PharmPurch\PurchaseRequestController::class, 'show'])->name('pharmpurch.purchase_request.show');
+            Route::get('pharmpurch/purchase_request/{id}/edit', [App\Http\Controllers\PharmPurch\PurchaseRequestController::class, 'edit'])->name('pharmpurch.purchase_request.edit');
+            Route::put('pharmpurch/purchase_request/{id}', [App\Http\Controllers\PharmPurch\PurchaseRequestController::class, 'update'])->name('pharmpurch.purchase_request.update');
+            
+            // Purchase Order Routes for Pharmacy Purchaser
+            Route::get('pharmpurch/purchase', [App\Http\Controllers\PharmPurch\PharmPurchController::class, 'index'])->name('pharmpurch.purchase.index');
+            Route::get('pharmpurch/purchase/create', [App\Http\Controllers\PharmPurch\PharmPurchController::class, 'create'])->name('pharmpurch.purchase.create');
+            Route::post('pharmpurch/purchase/store', [App\Http\Controllers\PharmPurch\PharmPurchController::class, 'store'])->name('pharmpurch.purchase.store');
+            Route::get('pharmpurch/purchase/{id}/edit', [App\Http\Controllers\PharmPurch\PharmPurchController::class, 'edit'])->name('pharmpurch.purchase.edit');
+            Route::put('pharmpurch/purchase/{id}/update', [App\Http\Controllers\PharmPurch\PharmPurchController::class, 'update'])->name('pharmpurch.purchase.update');
+             

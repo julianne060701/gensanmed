@@ -69,7 +69,7 @@ class UserController extends Controller
             'lname' => 'nullable|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:Administrator,HIMS,Purchaser,Engineer,Staff,Employee,Head,mmo', 
+            'role' => 'required|string|in:Administrator,HIMS,Purchaser,Engineer,Staff,Employee,Head,mmo,PharmPurch', 
         ]);
     
         // Create the user

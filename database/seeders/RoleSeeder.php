@@ -22,7 +22,8 @@ class RoleSeeder extends Seeder
             'Staff',
             'Employee',
             'Head', // Added new role
-            'MMO'
+            'MMO',
+            'PharmPurch' // Pharmacy Purchaser
         ];
 
         foreach ($roles as $roleName) {
@@ -38,7 +39,8 @@ class RoleSeeder extends Seeder
             'Staff' => ['view-staff-menu'],
             'Employee' => ['view-employee-menu'],
             'Head' => ['view-head-menu'],// Added new permission
-            'mmo' => ['view-mmo-menu']
+            'mmo' => ['view-mmo-menu'],
+            'PharmPurch' => ['view-pharmpurch-menu'] // Pharmacy Purchaser permission
         ];
 
         foreach ($permissions as $roleName => $rolePermissions) {

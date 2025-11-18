@@ -53,6 +53,8 @@ class LoginController extends Controller
             return redirect()->route('head.home'); // Added new role
         } elseif ($user->hasRole('MMO')) {
             return redirect()->route('mmo.dashboard');
+        } elseif ($user->hasRole('PharmPurch')) {
+            return redirect()->route('pharmpurch.home');
         }
         
     
