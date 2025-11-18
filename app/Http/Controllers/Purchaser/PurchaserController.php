@@ -21,35 +21,35 @@ class PurchaserController extends Controller
      */
     public function home()
     {
-        // Get all user IDs with PharmPurch role to exclude them
-        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
-        $pharmPurchUserIds = [];
+        // Get all user IDs with Purchaser role to show only their data
+        $purchaserRole = Role::where('name', 'Purchaser')->first();
+        $purchaserUserIds = [];
         
-        if ($pharmPurchRole) {
-            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
+        if ($purchaserRole) {
+            $purchaserUserIds = User::role('Purchaser')->pluck('id')->toArray();
         }
 
         $newPRCount = PR::where('status', 'Pending For PO')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
+                return $query->whereIn('created_by', $purchaserUserIds);
             })
             ->count();
 
         $newPOCount = PurchaserPO::where('status', 'Pending')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
+                return $query->whereIn('created_by', $purchaserUserIds);
             })
             ->count();
 
         $totalPRCount = PR::where('status', 'Approved')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
+                return $query->whereIn('created_by', $purchaserUserIds);
             })
             ->count();
     
         $totalPOCount = PurchaserPO::where('status', 'Send to Supplier')
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
+                return $query->whereIn('created_by', $purchaserUserIds);
             })
             ->count();
 
@@ -60,27 +60,30 @@ class PurchaserController extends Controller
 
     public function index()
     {
-        // Get all user IDs with PharmPurch role to exclude them
-        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
-        $pharmPurchUserIds = [];
+        // Get all user IDs with Purchaser role to show only their Purchase Orders
+        $purchaserRole = Role::where('name', 'Purchaser')->first();
+        $purchaserUserIds = [];
         
-        if ($pharmPurchRole) {
-            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
+        if ($purchaserRole) {
+            $purchaserUserIds = User::role('Purchaser')->pluck('id')->toArray();
         }
         
-        // Show all POs excluding those created by PharmPurch users, but disable actions/attachments for records not created by the logged-in user
-        $purchases = PurchaserPO::when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+        // Show only POs created by Purchaser users, but disable actions/attachments for records not created by the logged-in user
+        $purchases = PurchaserPO::when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
+                return $query->whereIn('created_by', $purchaserUserIds);
             })
             ->orderBy('created_at', 'desc')
             ->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
-            $notOwner = $purchase->created_by !== Auth::id();
+            // Check if user is the owner (handle null created_by for old records)
+            $isOwner = ($purchase->created_by === null) || ($purchase->created_by === Auth::id());
+            $notOwner = !$isOwner;
 
             // Disable edit if status is final OR if the logged-in user is not the creator
-            $statusDisabled = in_array($purchase->status, ['Denied', 'Send to Supplier', 'Pending']);
+            // Allow editing if status is 'Pending' and user is the owner
+            $statusDisabled = in_array($purchase->status, ['Denied', 'Send to Supplier']);
             $canEdit = !($statusDisabled || $notOwner);
 
             if ($canEdit) {

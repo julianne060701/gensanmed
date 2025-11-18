@@ -19,18 +19,18 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        // Get all user IDs with PharmPurch role to exclude them
-        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
-        $pharmPurchUserIds = [];
+        // Get all user IDs with Purchaser role to show only their Purchase Requests
+        $purchaserRole = Role::where('name', 'Purchaser')->first();
+        $purchaserUserIds = [];
         
-        if ($pharmPurchRole) {
-            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
+        if ($purchaserRole) {
+            $purchaserUserIds = User::role('Purchaser')->pluck('id')->toArray();
         }
         
-        // Fetch purchase requests excluding those created by PharmPurch users
+        // Fetch purchase requests created by Purchaser users only
         $purchases = PR::whereIn('status', ['Pending for PO', 'Approved'])
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
+            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
+                return $query->whereIn('created_by', $purchaserUserIds);
             })
             ->orderBy('created_at', 'desc')
             ->get();
