@@ -40,20 +40,29 @@ class PurchaserController extends Controller
 
     public function index()
     {
-        // Show only PO created by the currently logged-in user
-        $purchases = PurchaserPO::where('created_by', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Show all POs, but disable actions/attachments for records not created by the logged-in user
+        $purchases = PurchaserPO::orderBy('created_at', 'desc')->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
-            $isDisabled = ($purchase->status === 'Denied' || $purchase->status === 'Send to Supplier' || $purchase->status === 'Pending') ? 'disabled' : '';
-          
-            $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" 
-            class="btn btn-xs btn-default text-primary mx-1 shadow ' . $isDisabled . '" 
-            title="Edit">
-            <i class="fa fa-lg fa-fw fa-pen"></i>
-            </a>';
+            $notOwner = $purchase->created_by !== Auth::id();
+
+            // Disable edit if status is final OR if the logged-in user is not the creator
+            $statusDisabled = in_array($purchase->status, ['Denied', 'Send to Supplier', 'Pending']);
+            $canEdit = !($statusDisabled || $notOwner);
+
+            if ($canEdit) {
+                $btnEdit = '<a href="' . route('purchaser.purchase.edit', $purchase->id) . '" 
+                    class="btn btn-xs btn-default text-primary mx-1 shadow" 
+                    title="Edit">
+                    <i class="fa fa-lg fa-fw fa-pen"></i>
+                </a>';
+            } else {
+                $btnEdit = '<button class="btn btn-xs btn-default text-muted mx-1 shadow" 
+                    title="Edit Disabled" disabled>
+                    <i class="fa fa-lg fa-fw fa-pen"></i>
+                </button>';
+            }
     
             // $btnDelete = '<button class="btn btn-xs btn-default text-danger mx-1 shadow Delete" 
             // title="Delete" data-toggle="modal" data-target="#deleteModalBed" 
@@ -63,17 +72,34 @@ class PurchaserController extends Controller
         
 
     
-            // Display a PDF link
-            $pdfDisplay = $purchase->image_url 
-                ? '<a href="' . asset($purchase->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
-                    View PO (PDF)
-                   </a>' 
-                : 'No PDF';
-                $pdfAdmin = $purchase->admin_attachment 
-                ? '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
-                    View Admin Attachment
-                   </a>' 
-                : 'No Attachment From Admin';
+            // Display a PDF link - disable link if not the creator
+            if ($purchase->image_url) {
+                if ($notOwner) {
+                    $pdfDisplay = '<button class="btn btn-secondary btn-sm" disabled>
+                        View PO (PDF)
+                    </button>';
+                } else {
+                    $pdfDisplay = '<a href="' . asset($purchase->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
+                        View PO (PDF)
+                    </a>';
+                }
+            } else {
+                $pdfDisplay = 'No PDF';
+            }
+
+            if ($purchase->admin_attachment) {
+                if ($notOwner) {
+                    $pdfAdmin = '<button class="btn btn-secondary btn-sm" disabled>
+                        View Admin Attachment
+                    </button>';
+                } else {
+                    $pdfAdmin = '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
+                        View Admin Attachment
+                    </a>';
+                }
+            } else {
+                $pdfAdmin = 'No Attachment From Admin';
+            }
             // Assign colors to status badges
             $statusColors = [
                 'Approved' => 'badge-success', // Green
