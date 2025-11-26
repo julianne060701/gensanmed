@@ -12,7 +12,6 @@ use App\Notifications\NewPurchaseOrderNotification;
 use App\Models\Ticket;
 use App\Models\PR;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 class PurchaserController extends Controller
 {
@@ -21,37 +20,14 @@ class PurchaserController extends Controller
      */
     public function home()
     {
-        // Get all user IDs with Purchaser role to show only their data
-        $purchaserRole = Role::where('name', 'Purchaser')->first();
-        $purchaserUserIds = [];
-        
-        if ($purchaserRole) {
-            $purchaserUserIds = User::role('Purchaser')->pluck('id')->toArray();
-        }
+        // Fetch all data regardless of role
+        $newPRCount = PR::where('status', 'Pending For PO')->count();
 
-        $newPRCount = PR::where('status', 'Pending For PO')
-            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
-                return $query->whereIn('created_by', $purchaserUserIds);
-            })
-            ->count();
+        $newPOCount = PurchaserPO::where('status', 'Pending')->count();
 
-        $newPOCount = PurchaserPO::where('status', 'Pending')
-            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
-                return $query->whereIn('created_by', $purchaserUserIds);
-            })
-            ->count();
-
-        $totalPRCount = PR::where('status', 'Approved')
-            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
-                return $query->whereIn('created_by', $purchaserUserIds);
-            })
-            ->count();
+        $totalPRCount = PR::where('status', 'Approved')->count();
     
-        $totalPOCount = PurchaserPO::where('status', 'Send to Supplier')
-            ->when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
-                return $query->whereIn('created_by', $purchaserUserIds);
-            })
-            ->count();
+        $totalPOCount = PurchaserPO::where('status', 'Send to Supplier')->count();
 
         return view('purchaser.home', compact(
             'newPRCount', 'newPOCount', 'totalPRCount', 'totalPOCount'
@@ -60,20 +36,8 @@ class PurchaserController extends Controller
 
     public function index()
     {
-        // Get all user IDs with Purchaser role to show only their Purchase Orders
-        $purchaserRole = Role::where('name', 'Purchaser')->first();
-        $purchaserUserIds = [];
-        
-        if ($purchaserRole) {
-            $purchaserUserIds = User::role('Purchaser')->pluck('id')->toArray();
-        }
-        
-        // Show only POs created by Purchaser users, but disable actions/attachments for records not created by the logged-in user
-        $purchases = PurchaserPO::when(!empty($purchaserUserIds), function($query) use ($purchaserUserIds) {
-                return $query->whereIn('created_by', $purchaserUserIds);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Fetch all Purchase Orders
+        $purchases = PurchaserPO::orderBy('created_at', 'desc')->get();
         $data = [];
     
         foreach ($purchases as $purchase) {
@@ -107,31 +71,19 @@ class PurchaserController extends Controller
         
 
     
-            // Display a PDF link - disable link if not the creator
+            // Display a PDF link - always enabled
             if ($purchase->image_url) {
-                if ($notOwner) {
-                    $pdfDisplay = '<button class="btn btn-secondary btn-sm" disabled>
-                        View PO (PDF)
-                    </button>';
-                } else {
-                    $pdfDisplay = '<a href="' . asset($purchase->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
-                        View PO (PDF)
-                    </a>';
-                }
+                $pdfDisplay = '<a href="' . asset($purchase->image_url) . '" target="_blank" class="btn btn-primary btn-sm">
+                    View PO (PDF)
+                </a>';
             } else {
                 $pdfDisplay = 'No PDF';
             }
 
             if ($purchase->admin_attachment) {
-                if ($notOwner) {
-                    $pdfAdmin = '<button class="btn btn-secondary btn-sm" disabled>
-                        View Admin Attachment
-                    </button>';
-                } else {
-                    $pdfAdmin = '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
-                        View Admin Attachment
-                    </a>';
-                }
+                $pdfAdmin = '<a href="' . asset($purchase->admin_attachment) . '" target="_blank" class="btn btn-primary btn-sm">
+                    View Admin Attachment
+                </a>';
             } else {
                 $pdfAdmin = 'No Attachment From Admin';
             }
