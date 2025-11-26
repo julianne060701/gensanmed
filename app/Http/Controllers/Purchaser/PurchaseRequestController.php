@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PR;
 use App\Notifications\NewPurchaseRequestNotification;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
 
 
 class PurchaseRequestController extends Controller
@@ -19,19 +17,8 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        // Get all user IDs with PharmPurch role to exclude them
-        $pharmPurchRole = Role::where('name', 'PharmPurch')->first();
-        $pharmPurchUserIds = [];
-        
-        if ($pharmPurchRole) {
-            $pharmPurchUserIds = User::role('PharmPurch')->pluck('id')->toArray();
-        }
-        
-        // Fetch purchase requests excluding those created by PharmPurch users
+        // Fetch all purchase requests
         $purchases = PR::whereIn('status', ['Pending for PO', 'Approved'])
-            ->when(!empty($pharmPurchUserIds), function($query) use ($pharmPurchUserIds) {
-                return $query->whereNotIn('created_by', $pharmPurchUserIds);
-            })
             ->orderBy('created_at', 'desc')
             ->get();
 
